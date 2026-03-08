@@ -2,78 +2,160 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Portfolio | Northbridge Venture Group",
+  title: "Ventures | Northbridge Venture Group",
   description:
-    "Our portfolio companies and capabilities: Aviator Network, AirTax Financial, Royal Flight School, and Northbridge Digital.",
+    "Our ventures: Aviator Network, AirTax Financial, and Northbridge Digital.",
 };
 
-const portfolioCompanies = [
+const ventures = [
   {
     id: "aviator-network",
     name: "Aviator Network",
-    tagline: "Aviation connectivity and services platform",
+    category: "Aviation Technology",
     description:
-      "Aviator Network provides connectivity solutions and services for the aviation industry, enabling smoother operations and better communication across the ecosystem.",
+      "Aviation technology platform connecting student pilots, flight instructors, and training opportunities.",
+    domain: "aviatornetwork.com",
+    href: "https://aviatornetwork.com",
+    external: true,
   },
   {
     id: "airtax-financial",
     name: "AirTax Financial",
-    tagline: "Financial solutions for aviation professionals",
+    category: "Financial Services",
     description:
-      "AirTax Financial delivers specialized financial products and services tailored to the unique needs of aviation professionals and businesses.",
+      "Financial and tax services built for aviation professionals and specialized operators.",
+    domain: "airtaxfinancial.com",
+    href: "https://airtaxfinancial.com",
+    external: true,
   },
   {
-    id: "royal-flight-school",
-    name: "Royal Flight School",
-    tagline: "Premium flight training and certification",
+    id: "northbridge-digital",
+    name: "Northbridge Digital",
+    category: "Digital Infrastructure",
     description:
-      "Royal Flight School offers comprehensive flight training programs, certification, and education for aspiring and experienced aviators.",
+      "Professional digital systems, lead generation infrastructure, and brand development services designed to help businesses grow.",
+    href: "/digital",
+    external: false,
+  },
+];
+
+const clients = [
+  {
+    id: "international-flight-school",
+    name: "International Flight School",
+    description:
+      "Website and digital presence support for an aviation training organization.",
+    domain: "internationalflightschool.com",
   },
 ];
 
 export default function PortfolioPage() {
   return (
-    <main className="pt-32 pb-24 px-6">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-charcoal mb-4">
-          Portfolio
+    <main className="pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 bg-black min-h-screen">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white mb-4">
+          Ventures
         </h1>
-        <p className="text-xl text-stone max-w-2xl mb-20">
-          Our portfolio of companies across aviation and financial technology,
-          and our business capabilities.
+        <p className="text-base sm:text-lg text-silver mb-10 sm:mb-14 max-w-2xl leading-relaxed">
+          Our portfolio of companies and digital capabilities across aviation,
+          financial services, and digital infrastructure.
         </p>
-        <div className="space-y-16">
-          {portfolioCompanies.map((company) => (
-            <article
-              key={company.id}
-              id={company.id}
-              className="border-b border-charcoal/10 pb-16"
-            >
-              <h2 className="text-2xl font-semibold text-charcoal mb-2">
-                {company.name}
-              </h2>
-              <p className="text-silver text-sm mb-4">{company.tagline}</p>
-              <p className="text-stone max-w-2xl">{company.description}</p>
-            </article>
-          ))}
-        </div>
-        <Link
-          href="/digital"
-          className="block pt-16 border-t border-charcoal/10 group"
-        >
-          <article id="northbridge-digital">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-silver mb-2">
-              Business Capability
-            </h3>
-            <h2 className="text-2xl font-semibold text-charcoal mb-4 group-hover:text-stone transition-colors">
-              Northbridge Digital
-            </h2>
-            <p className="text-stone max-w-2xl">
-              Digital infrastructure and website development for businesses and
-              specialized service brands.
-            </p>
-          </article>
-        </Link>
+
+        <section className="mb-14 sm:mb-20">
+          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-6 sm:mb-8">
+            Our Companies
+          </h2>
+          <div className="space-y-6 sm:space-y-8">
+            {ventures.map((venture) => (
+              <article
+                key={venture.id}
+                id={venture.id}
+                className="pb-8 sm:pb-10 border-b border-white/10 last:border-0 last:pb-0"
+              >
+                <span className="text-xs font-medium uppercase tracking-wider text-red">
+                  {venture.category}
+                </span>
+                <div className="mt-2">
+                  {venture.external ? (
+                    <a
+                      href={venture.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xl sm:text-2xl font-semibold text-white hover:text-red transition-colors"
+                    >
+                      {venture.name}
+                    </a>
+                  ) : (
+                    <Link
+                      href={venture.href}
+                      className="text-xl sm:text-2xl font-semibold text-white hover:text-red transition-colors"
+                    >
+                      {venture.name}
+                    </Link>
+                  )}
+                </div>
+                {venture.domain && (
+                  <p className="text-silver text-sm mt-1">{venture.domain}</p>
+                )}
+                <p className="mt-4 text-silver max-w-2xl leading-relaxed">
+                  {venture.description}
+                </p>
+                {venture.external ? (
+                  <a
+                    href={venture.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block mt-5 text-sm font-medium text-red hover:text-red-hover transition-colors"
+                  >
+                    Visit site →
+                  </a>
+                ) : (
+                  <Link
+                    href={venture.href}
+                    className="inline-block mt-5 text-sm font-medium text-red hover:text-red-hover transition-colors"
+                  >
+                    Learn more →
+                  </Link>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="pt-2">
+          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4">
+            Clients
+          </h2>
+          <p className="text-silver text-sm sm:text-base mb-6 max-w-2xl leading-relaxed">
+            Organizations we support with digital infrastructure, brand
+            development, and strategic systems.
+          </p>
+          <div className="flex flex-col gap-6 max-w-2xl">
+            {clients.map((client) => (
+              <a
+                key={client.id}
+                href={`https://${client.domain}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block p-6 sm:p-8 border border-white/5 bg-slate/50 hover:border-white/10 transition-colors"
+              >
+                <span className="text-[10px] sm:text-xs font-medium uppercase tracking-wider text-silver/70">
+                  Selected Client
+                </span>
+                <h3 className="mt-2 text-xl font-semibold text-white">
+                  {client.name}
+                </h3>
+                <p className="text-silver text-sm mt-1">{client.domain}</p>
+                <p className="mt-4 text-silver text-sm leading-relaxed">
+                  {client.description}
+                </p>
+                <span className="mt-5 inline-block text-sm font-medium text-red hover:text-red-hover transition-colors">
+                  Visit site →
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
       </div>
     </main>
   );

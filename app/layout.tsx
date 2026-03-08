@@ -12,11 +12,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Northbridge Venture Group",
   description:
-    "A holding company developing and investing in aviation and financial technology ventures.",
+    "Northbridge develops ventures, digital infrastructure, and strategic systems that generate demand, deliver insights, and support industry growth.",
   openGraph: {
     title: "Northbridge Venture Group",
     description:
-      "A holding company developing and investing in aviation and financial technology ventures.",
+      "Northbridge develops ventures, digital infrastructure, and strategic systems that generate demand, deliver insights, and support industry growth.",
     images: ["/og-image.png"],
   },
 };
@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.className}>
-      <body className="antialiased bg-cream text-charcoal">
+      <body className="antialiased bg-black text-white">
         <Header />
         {children}
         <Footer />

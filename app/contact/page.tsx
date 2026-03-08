@@ -8,38 +8,38 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <main className="pt-32 pb-24 px-6">
+    <main className="pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 bg-black min-h-screen">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-charcoal mb-4">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white mb-4">
           Contact
         </h1>
-        <p className="text-xl text-stone mb-16">
+        <p className="text-base sm:text-lg text-silver mb-10 sm:mb-14 leading-relaxed">
           We welcome inquiries regarding partnerships, strategic business
-          conversations, and website and digital infrastructure projects.
-          Please reach out to the appropriate address below.
+          conversations, and website and digital infrastructure projects. Please
+          reach out to the appropriate address below.
         </p>
         <div className="space-y-8">
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-silver mb-2">
+            <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-2">
               Partnerships
             </h3>
-            <p className="text-charcoal">
+            <p className="text-white">
               <a
                 href="mailto:partnerships@northbridgeventuregroup.com"
-                className="hover:text-stone transition-colors"
+                className="hover:text-red transition-colors text-sm sm:text-base"
               >
                 partnerships@northbridgeventuregroup.com
               </a>
             </p>
           </div>
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-silver mb-2">
+            <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-2">
               General Inquiries
             </h3>
-            <p className="text-charcoal">
+            <p className="text-white">
               <a
                 href="mailto:info@northbridgeventuregroup.com"
-                className="hover:text-stone transition-colors"
+                className="hover:text-red transition-colors text-sm sm:text-base"
               >
                 info@northbridgeventuregroup.com
               </a>

@@ -1,29 +1,37 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
-  { href: "/portfolio", label: "Portfolio" },
-  { href: "/digital", label: "Digital" },
+  { href: "/portfolio", label: "Ventures" },
+  { href: "/clients", label: "Clients" },
   { href: "/contact", label: "Contact" },
 ];
 
 export default function Header() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-charcoal/5">
-      <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-black/98 backdrop-blur-sm border-b border-white/5">
+      <nav className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between min-h-[52px] sm:min-h-[56px]">
         <Link
           href="/"
-          className="text-lg font-semibold tracking-tight text-charcoal hover:text-stone transition-colors"
+          className="flex items-center shrink-0 transition-opacity hover:opacity-90"
         >
-          Northbridge Venture Group
+          <Image
+            src="/northbridge-logo.png"
+            alt="Northbridge Venture Group"
+            width={120}
+            height={36}
+            className="h-6 sm:h-7 w-auto"
+            priority
+          />
         </Link>
-        <ul className="flex items-center gap-8">
+        <ul className="flex items-center gap-4 sm:gap-6 md:gap-8 shrink-0">
           {navLinks.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
-                className="text-sm font-medium text-stone hover:text-charcoal transition-colors"
+                className="text-xs sm:text-sm font-medium text-silver hover:text-white transition-colors"
               >
                 {link.label}
               </Link>

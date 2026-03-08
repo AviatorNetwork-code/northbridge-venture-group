@@ -3,36 +3,76 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "About | Northbridge Venture Group",
   description:
-    "Learn about Northbridge Venture Group, our approach to building and investing in aviation and financial technology ventures.",
+    "Northbridge builds and supports businesses that create practical value across modern industries through venture development, analytics, and strategic advisory.",
 };
+
+const pillars = [
+  {
+    title: "Customer Acquisition Systems",
+    description:
+      "Systems that help businesses generate leads, capture demand, and connect with the right customers.",
+  },
+  {
+    title: "Market Intelligence & Analytics",
+    description:
+      "Data-driven insight for better decisions, market visibility, and strategic growth.",
+  },
+  {
+    title: "Digital Infrastructure",
+    description:
+      "Digital platforms and operational systems that modernize industries and scale.",
+  },
+  {
+    title: "Financial Strategy & Advisory",
+    description:
+      "Financial planning, tax strategy, structuring, and operational clarity.",
+  },
+  {
+    title: "Venture Development & Investments",
+    description:
+      "Launch, support, and grow ventures with strong positioning and long-term upside.",
+  },
+];
 
 export default function AboutPage() {
   return (
-    <main className="pt-32 pb-24 px-6">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-charcoal mb-8">
-          About Us
+    <main className="pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 bg-black min-h-screen">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white mb-6 sm:mb-8">
+          About Northbridge
         </h1>
-        <div className="prose prose-lg text-stone space-y-6">
+        <div className="space-y-5 sm:space-y-6 text-silver leading-relaxed mb-12 sm:mb-16 text-sm sm:text-base">
           <p>
-            Northbridge Venture Group is a holding company focused on developing
-            and investing in ventures across aviation and financial technology.
-            We take a long-term view, combining strategic capital with
-            operational expertise to build companies that serve their markets
-            with excellence.
+            Northbridge Venture Group builds and supports businesses that create
+            practical value across modern industries. We focus on intelligent
+            systems that improve how organizations generate leads, understand
+            markets, operate financially, and scale through digital
+            infrastructure.
           </p>
           <p>
-            Our portfolio spans aviation connectivity, financial services for
-            aviation professionals, and flight training. Each company operates
-            with the support of shared resources and a unified commitment to
-            quality and integrity.
+            Our model combines venture development, analytics, customer
+            acquisition systems, and strategic advisory to build companies
+            positioned for long-term growth.
           </p>
-          <p>
-            We believe in building enduring businesses through discipline,
-            transparency, and a focus on sustainable growth. Our approach is
-            collaborative and hands-on, supporting our companies through every
-            stage of development.
-          </p>
+        </div>
+
+        <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-6">
+          What We Build
+        </h2>
+        <div className="space-y-6 sm:space-y-8">
+          {pillars.map((pillar) => (
+            <div
+              key={pillar.title}
+              className="pb-6 sm:pb-8 border-b border-white/10 last:border-0 last:pb-0"
+            >
+              <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">
+                {pillar.title}
+              </h3>
+              <p className="text-silver text-sm sm:text-base leading-relaxed">
+                {pillar.description}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </main>
