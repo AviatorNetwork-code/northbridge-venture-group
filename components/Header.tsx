@@ -20,8 +20,8 @@ export default function Header() {
           <Image
             src="/northbridge-logo.png"
             alt="Northbridge Venture Group"
-            width={120}
-            height={36}
+            width={200}
+            height={60}
             className="h-10 sm:h-12 w-auto"
             priority
           />

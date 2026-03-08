@@ -12,9 +12,9 @@ export default function Footer() {
                 <Image
                   src="/northbridge-logo.png"
                   alt="Northbridge Venture Group"
-                  width={130}
-                  height={39}
-                  className="h-7 sm:h-8 w-auto"
+                  width={200}
+                  height={60}
+                  className="h-8 sm:h-9 w-auto"
                 />
               </Link>
               <p className="text-silver text-sm max-w-[240px] leading-relaxed">
