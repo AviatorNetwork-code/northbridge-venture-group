@@ -19,6 +19,9 @@ export default function DigitalPage() {
   return (
     <main className="pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 bg-black min-h-screen">
       <div className="max-w-3xl mx-auto">
+        <p className="text-xs uppercase tracking-widest text-red mb-2">
+          Venture
+        </p>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white mb-4">
           Northbridge Digital
         </h1>
