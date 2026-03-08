@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import NorthbridgeLogo from "@/components/NorthbridgeLogo";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -17,14 +17,7 @@ export default function Header() {
           href="/"
           className="flex items-center shrink-0 transition-opacity hover:opacity-90"
         >
-          <Image
-            src="/northbridge-logo.png"
-            alt="Northbridge Venture Group"
-            width={200}
-            height={60}
-            className="h-10 sm:h-12 w-auto"
-            priority
-          />
+          <NorthbridgeLogo className="h-10 sm:h-12" />
         </Link>
         <ul className="flex items-center gap-4 sm:gap-6 md:gap-8 shrink-0">
           {navLinks.map((link) => (

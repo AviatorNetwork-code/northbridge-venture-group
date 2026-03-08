@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import NorthbridgeLogo from "@/components/NorthbridgeLogo";
 
 export default function Footer() {
   return (
@@ -9,13 +9,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10 md:gap-20">
             <div className="flex flex-col gap-3">
               <Link href="/" className="inline-block w-fit">
-                <Image
-                  src="/northbridge-logo.png"
-                  alt="Northbridge Venture Group"
-                  width={200}
-                  height={60}
-                  className="h-8 sm:h-9 w-auto"
-                />
+                <NorthbridgeLogo className="h-8 sm:h-9" />
               </Link>
               <p className="text-silver text-sm max-w-[240px] leading-relaxed">
                 Intelligent Systems for Growing Industries
