@@ -30,6 +30,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ├── app/
 │   ├── about/        # About page
 │   ├── contact/      # Contact page
+│   ├── digital/      # Northbridge Digital page
 │   ├── portfolio/    # Portfolio page
 │   ├── globals.css
 │   ├── layout.tsx
