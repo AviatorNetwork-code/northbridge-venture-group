@@ -64,10 +64,11 @@ const ventures = [
 
 const clients = [
   {
-    name: "International Flight School",
+    name: "Royal International Flight School",
     description:
       "Website and digital presence support for an aviation training organization.",
-    domain: "internationalflightschool.com",
+    domain: "royalinternationalflightschool.com",
+    href: "https://www.royalinternationalflightschool.com/",
   },
 ];
 
@@ -237,7 +238,7 @@ export default function HomePage() {
             {clients.map((client) => (
               <a
                 key={client.name}
-                href={`https://${client.domain}`}
+                href={client.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group relative block p-5 sm:p-6 border border-white/5 bg-black/40 hover:border-white/10 transition-colors"

@@ -8,11 +8,12 @@ export const metadata: Metadata = {
 
 const clients = [
   {
-    id: "international-flight-school",
-    name: "International Flight School",
+    id: "royal-international-flight-school",
+    name: "Royal International Flight School",
     description:
       "Website and digital presence support for an aviation training organization.",
-    domain: "internationalflightschool.com",
+    domain: "royalinternationalflightschool.com",
+    href: "https://www.royalinternationalflightschool.com/",
   },
 ];
 
@@ -36,7 +37,7 @@ export default function ClientsPage() {
             {clients.map((client) => (
               <a
                 key={client.id}
-                href={`https://${client.domain}`}
+                href={client.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block p-6 sm:p-8 border border-white/5 bg-slate/50 hover:border-white/10 transition-colors"

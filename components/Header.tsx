@@ -22,7 +22,7 @@ export default function Header() {
             alt="Northbridge Venture Group"
             width={120}
             height={36}
-            className="h-6 sm:h-7 w-auto"
+            className="h-9 sm:h-11 w-auto"
             priority
           />
         </Link>
