@@ -14,6 +14,16 @@ export default function Footer() {
               <p className="text-silver text-sm max-w-[240px] leading-relaxed">
                 Intelligent Systems for Growing Industries
               </p>
+              <p className="text-silver text-xs sm:text-sm max-w-sm leading-relaxed">
+                For partnership and business inquiries, contact{" "}
+                <a
+                  href="mailto:contact@northbridgeventuregroup.com"
+                  className="underline underline-offset-4 hover:text-white transition-colors"
+                >
+                  contact@northbridgeventuregroup.com
+                </a>
+                .
+              </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-10 sm:gap-16">
               <div>
@@ -43,6 +53,22 @@ export default function Footer() {
                       className="text-sm text-white/75 hover:text-white transition-colors"
                     >
                       Ventures
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/services"
+                      className="text-sm text-white/75 hover:text-white transition-colors"
+                    >
+                      Services
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/partner"
+                      className="text-sm text-white/75 hover:text-white transition-colors"
+                    >
+                      Partner With Us
                     </Link>
                   </li>
                   <li>

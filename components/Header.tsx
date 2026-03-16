@@ -5,6 +5,8 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/portfolio", label: "Ventures" },
+  { href: "/services", label: "Services" },
+  { href: "/partner", label: "Partner With Us" },
   { href: "/clients", label: "Clients" },
   { href: "/contact", label: "Contact" },
 ];
@@ -12,7 +14,7 @@ const navLinks = [
 export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/98 backdrop-blur-sm border-b border-white/5">
-        <nav className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between min-h-[52px] sm:min-h-[56px]">
+      <nav className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between min-h-[52px] sm:min-h-[56px]">
         <Link
           href="/"
           className="flex items-center shrink-0 transition-opacity hover:opacity-90"

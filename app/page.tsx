@@ -1,65 +1,53 @@
 import Link from "next/link";
 
-const industries = [
-  "Aviation",
-  "Financial Services",
-  "Digital Infrastructure",
-];
-
-const whatWeBuild = [
-  {
-    title: "Customer Acquisition Systems",
-    description: "Lead generation, demand capture, and customer connection systems.",
-  },
-  {
-    title: "Market Intelligence & Analytics",
-    description: "Data-driven insight for decisions, visibility, and strategic growth.",
-  },
-  {
-    title: "Digital Infrastructure",
-    description: "Platforms and operational systems that modernize industries.",
-  },
-  {
-    title: "Financial Strategy & Advisory",
-    description: "Financial planning, tax strategy, structuring, and operational clarity.",
-  },
-  {
-    title: "Venture Development & Investments",
-    description: "Launch, support, and scale ventures with strong positioning.",
-  },
-];
-
 const ventures = [
   {
     name: "Aviator Network",
-    category: "Aviation Technology",
+    role: "Northbridge Venture",
     description:
-      "Connecting student pilots, flight instructors, and training opportunities.",
-    domain: "aviatornetwork.com",
+      "Marketplace platform connecting pilots and flight instructors through a structured digital ecosystem.",
+    bullets: [
+      "instructor and student profiles",
+      "marketplace search and filtering",
+      "messaging system",
+      "digital logbook",
+      "wallet and credit system",
+      "admin dashboards",
+    ],
     href: "https://aviatornetwork.com",
-    cta: "Visit site",
-    external: true,
   },
   {
     name: "AirTax Financial",
-    category: "Financial Services",
+    role: "Northbridge Venture",
     description:
-      "Financial and tax services for aviation professionals and specialized operators.",
-    domain: "airtaxfinancial.com",
+      "Financial and tax services designed for aviation professionals and specialized service businesses.",
     href: "https://airtaxfinancial.com",
-    cta: "Visit site",
-    external: true,
   },
   {
     name: "Northbridge Digital",
-    category: "Digital Infrastructure",
+    role: "Service Line",
     description:
-      "Professional digital systems, lead generation infrastructure, and brand development for business growth.",
-    domain: null,
-    href: "/digital",
-    cta: "Learn more",
-    external: false,
+      "Digital infrastructure and platform development services for businesses, founders, and organizations.",
+    href: "/services",
   },
+];
+
+const systemsWeBuild = [
+  "marketplace platforms",
+  "SaaS tools",
+  "business websites",
+  "automation systems",
+  "analytics tools",
+  "mobile applications",
+  "client acquisition systems",
+  "internal dashboards",
+];
+
+const industryFocus = [
+  "Aviation",
+  "Financial Services",
+  "Transportation",
+  "Professional Services",
 ];
 
 const clients = [
@@ -82,13 +70,13 @@ export default function HomePage() {
           aria-hidden
         />
         <div className="relative max-w-6xl mx-auto w-full">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-white max-w-3xl leading-[1.12]">
-            Building Intelligent Systems for Modern Industries
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-white max-w-4xl leading-[1.12]">
+            Building Digital Platforms and Infrastructure for Modern Industries
           </h1>
-          <p className="mt-4 sm:mt-5 text-base sm:text-lg md:text-xl text-silver max-w-xl leading-relaxed">
-            Northbridge develops ventures, digital infrastructure, and strategic
-            systems that generate demand, deliver insights, and support industry
-            growth.
+          <p className="mt-4 sm:mt-5 text-base sm:text-lg md:text-xl text-silver max-w-2xl leading-relaxed">
+            Northbridge Venture Group develops digital platforms, infrastructure
+            systems, and new ventures designed to help industries operate more
+            efficiently and unlock new opportunities.
           </p>
           <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 w-full sm:w-auto sm:max-w-none">
             <Link
@@ -98,84 +86,17 @@ export default function HomePage() {
               Explore Ventures
             </Link>
             <Link
-              href="/contact"
+              href="/services"
               className="w-full sm:w-auto flex items-center justify-center px-6 sm:px-8 py-3.5 sm:py-4 text-sm font-medium border border-white/25 text-white hover:border-white/50 hover:bg-white/5 transition-colors"
             >
-              Partner With Northbridge
+              View Services
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Industries strip */}
-      <section className="px-4 sm:px-6 py-6 sm:py-8 border-y border-white/10 bg-slate">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-10 md:gap-x-14 gap-y-2">
-            {industries.map((industry) => (
-              <span
-                key={industry}
-                className="text-xs sm:text-sm font-medium uppercase tracking-wider text-silver"
-              >
-                {industry}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* About */}
-      <section className="px-4 sm:px-6 py-14 sm:py-20 md:py-24 bg-black">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4 sm:mb-5">
-            About
-          </h2>
-          <p className="text-lg sm:text-xl text-white leading-relaxed mb-4">
-            Northbridge Venture Group builds and supports businesses that create
-            practical value across modern industries.
-          </p>
-          <p className="text-silver leading-relaxed text-sm sm:text-base">
-            We focus on intelligent systems that improve how organizations
-            generate leads, understand markets, operate financially, and scale
-            through digital infrastructure. Our model combines venture
-            development, analytics, customer acquisition systems, and strategic
-            advisory to build companies positioned for long-term growth.
-          </p>
-        </div>
-      </section>
-
-      {/* What We Build */}
-      <section className="px-4 sm:px-6 py-14 sm:py-20 md:py-24 bg-slate border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-1.5">
-            What We Build
-          </h2>
-          <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-white mb-8 sm:mb-12">
-            Core Activity Pillars
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-            {whatWeBuild.map((item) => (
-              <div
-                key={item.title}
-                className="relative pt-5 sm:pt-6 pb-5 sm:pb-6 px-5 sm:px-6 bg-black/50 border border-white/10 hover:border-white/15 transition-colors"
-              >
-                <div
-                  className="absolute top-0 left-0 right-0 h-px bg-red/80"
-                  aria-hidden
-                />
-                <h4 className="text-base sm:text-lg font-semibold text-white mb-1.5 sm:mb-2">
-                  {item.title}
-                </h4>
-                <p className="text-silver text-sm leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Ventures */}
-      <section className="px-4 sm:px-6 py-14 sm:py-20 md:py-24 bg-black">
+      <section className="px-4 sm:px-6 py-14 sm:py-20 md:py-24 bg-black border-t border-white/5">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 sm:mb-12">
             <div>
@@ -183,7 +104,7 @@ export default function HomePage() {
                 Ventures
               </h2>
               <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-white">
-                Our Companies
+                Platforms in the Northbridge Ecosystem
               </h3>
             </div>
             <Link
@@ -195,45 +116,153 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {ventures.map((venture) => (
-              <Link
+              <div
                 key={venture.name}
-                href={venture.href}
-                {...(venture.external && {
-                  target: "_blank",
-                  rel: "noopener noreferrer",
-                })}
-                className="group flex flex-col p-5 sm:p-6 border border-white/10 hover:border-white/20 transition-colors min-h-[180px] sm:min-h-[200px]"
+                className="flex flex-col p-5 sm:p-6 border border-white/10 hover:border-white/20 transition-colors min-h-[190px] sm:min-h-[210px] bg-black"
               >
                 <span className="text-xs font-medium uppercase tracking-wider text-red">
-                  {venture.category}
+                  {venture.role}
                 </span>
-                <h4 className="mt-2 text-lg sm:text-xl font-semibold text-white group-hover:text-red transition-colors">
+                <h4 className="mt-2 text-lg sm:text-xl font-semibold text-white">
                   {venture.name}
                 </h4>
                 <p className="mt-2 text-sm text-silver leading-relaxed flex-grow">
                   {venture.description}
                 </p>
-                {venture.domain && (
-                  <p className="mt-2 text-xs text-silver/70">{venture.domain}</p>
-                )}
-                <span className="mt-4 text-xs font-medium text-red group-hover:text-red-hover transition-colors">
-                  {venture.cta} →
-                </span>
-              </Link>
+                <div className="mt-4">
+                  <Link
+                    href={venture.href}
+                    className="text-xs font-medium text-red hover:text-red-hover transition-colors underline underline-offset-4"
+                    target={venture.href.startsWith("http") ? "_blank" : undefined}
+                    rel={
+                      venture.href.startsWith("http")
+                        ? "noopener noreferrer"
+                        : undefined
+                    }
+                  >
+                    {venture.name === "Northbridge Digital"
+                      ? "Explore services →"
+                      : "Visit platform →"}
+                  </Link>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Clients */}
+      {/* Systems We Build */}
       <section className="px-4 sm:px-6 py-14 sm:py-20 md:py-24 bg-slate border-t border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-2">
+            Systems We Build
+          </h2>
+          <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-white mb-6 sm:mb-8 max-w-3xl">
+            Northbridge develops digital systems designed to help organizations
+            launch, operate, and grow.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            {systemsWeBuild.map((item) => (
+              <div
+                key={item}
+                className="px-4 py-3 sm:py-3.5 border border-white/10 bg-black/40 text-sm text-silver"
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Industry Focus */}
+      <section className="px-4 sm:px-6 py-14 sm:py-20 md:py-24 bg-black border-t border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-2">
+            Industry Focus
+          </h2>
+          <p className="text-lg sm:text-xl text-white mb-6 sm:mb-8 max-w-3xl leading-relaxed">
+            Northbridge has strong experience supporting organizations in
+            industries where digital infrastructure plays a critical role.
+          </p>
+          <div className="flex flex-wrap gap-3 sm:gap-4 mb-6 sm:mb-8">
+            {industryFocus.map((industry) => (
+              <span
+                key={industry}
+                className="px-4 py-2 border border-white/15 text-sm text-silver"
+              >
+                {industry}
+              </span>
+            ))}
+          </div>
+          <p className="text-silver text-sm sm:text-base max-w-3xl leading-relaxed">
+            While Northbridge has strong familiarity in these sectors, systems
+            can also be adapted for other industries with clearly defined
+            operational models and requirements.
+          </p>
+        </div>
+      </section>
+
+      {/* Example Platform – Aviator Network */}
+      <section className="px-4 sm:px-6 py-14 sm:py-20 md:py-24 bg-slate border-t border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-2">
+            Example Platform
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 items-start">
+            <div>
+              <h3 className="text-2xl sm:text-3xl font-semibold text-white mb-2">
+                Aviator Network
+              </h3>
+              <p className="text-silver text-sm sm:text-base mb-4">
+                Aviator Network is a digital marketplace platform developed
+                within the Northbridge ecosystem to connect pilots and flight
+                instructors.
+              </p>
+              <p className="text-silver text-sm sm:text-base mb-4">
+                The platform demonstrates Northbridge&apos;s ability to design,
+                build, and operate software that goes beyond brochure
+                websites—supporting real users, transactions, and operational
+                workflows.
+              </p>
+              <Link
+                href="https://aviatornetwork.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-sm font-medium text-red hover:text-red-hover transition-colors underline underline-offset-4"
+              >
+                Visit Aviator Network →
+              </Link>
+            </div>
+            <div className="border border-white/10 bg-black/40 p-5 sm:p-6">
+              <h4 className="text-sm font-semibold text-white mb-3">
+                Selected Capabilities
+              </h4>
+              <ul className="space-y-2 text-sm text-silver">
+                <li>• user profiles</li>
+                <li>• marketplace search and filtering</li>
+                <li>• messaging system</li>
+                <li>• digital logbook</li>
+                <li>• wallet and credit system</li>
+                <li>• admin dashboards</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Clients */}
+      <section className="px-4 sm:px-6 py-14 sm:py-20 md:py-24 bg-black border-t border-white/5">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-1.5">
             Clients
           </h2>
-          <h3 className="text-2xl sm:text-3xl font-semibold text-white mb-6 sm:mb-8">
+          <h3 className="text-2xl sm:text-3xl font-semibold text-white mb-3">
             Organizations We Support
           </h3>
+          <p className="text-silver text-sm sm:text-base mb-6 max-w-2xl leading-relaxed">
+            Organizations that have worked with Northbridge on digital
+            infrastructure, online presence, and operational systems.
+          </p>
           <div className="flex flex-col gap-4 sm:gap-5 max-w-2xl">
             {clients.map((client) => (
               <a
@@ -262,40 +291,46 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Vision */}
-      <section className="px-4 sm:px-6 py-14 sm:py-20 md:py-24 bg-black">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4">
-            Vision
+      {/* Services CTA */}
+      <section className="px-4 sm:px-6 py-14 sm:py-20 md:py-24 bg-slate border-t border-white/5">
+        <div className="max-w-3xl mx-auto text-left">
+          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-2">
+            Services
           </h2>
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white mb-4 sm:mb-5">
-            Built for Growth Across Industries
+          <h3 className="text-2xl sm:text-3xl font-semibold text-white mb-3">
+            Digital Infrastructure Services
           </h3>
-          <p className="text-silver leading-relaxed text-sm sm:text-base">
-            We believe strong industries are built on better systems. Northbridge
-            exists to develop ventures and infrastructure that improve demand
-            generation, decision-making, and operational efficiency. By combining
-            digital platforms, analytics, financial strategy, and execution, we
-            help create businesses positioned for durable growth.
+          <p className="text-silver text-sm sm:text-base mb-6 leading-relaxed">
+            Northbridge supports businesses and organizations through professional
+            digital infrastructure services, including website development,
+            automation systems, online presence setup, and mobile application
+            support.
           </p>
+          <Link
+            href="/services"
+            className="inline-flex items-center px-8 py-3.5 text-sm font-medium bg-red text-white hover:bg-red-hover transition-colors"
+          >
+            Explore Services
+          </Link>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="px-4 sm:px-6 py-14 sm:py-20 md:py-24 bg-red">
+      {/* Consultation CTA */}
+      <section className="px-4 sm:px-6 py-14 sm:py-20 md:py-24 bg-black border-t border-white/5">
         <div className="max-w-2xl mx-auto text-center">
           <h3 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white mb-3 sm:mb-4">
-            Work With Northbridge
+            Discuss Your Project
           </h3>
-          <p className="text-white/90 text-sm sm:text-base mb-6 sm:mb-8 leading-relaxed">
-            Northbridge partners with founders, operators, and organizations
-            building stronger businesses through systems, data, and execution.
+          <p className="text-silver text-sm sm:text-base mb-6 sm:mb-8 leading-relaxed">
+            Organizations, operators, and founders interested in working with
+            Northbridge can request an initial consultation to discuss their
+            project requirements.
           </p>
           <Link
             href="/contact"
-            className="inline-flex w-full sm:w-auto items-center justify-center px-8 py-3.5 sm:py-4 text-sm font-medium bg-white text-black hover:bg-white/90 transition-colors"
+            className="inline-flex w-full sm:w-auto items-center justify-center px-8 py-3.5 sm:py-4 text-sm font-medium bg-red text-white hover:bg-red-hover transition-colors"
           >
-            Get in Touch
+            Request Consultation
           </Link>
         </div>
       </section>

@@ -15,8 +15,15 @@ export default function ContactPage() {
         </h1>
         <p className="text-base sm:text-lg text-silver mb-10 sm:mb-14 leading-relaxed">
           We welcome inquiries regarding partnerships, strategic business
-          conversations, and website and digital infrastructure projects. Please
-          reach out to the appropriate address below.
+          conversations, and website and digital infrastructure projects. For
+          general contact, you can reach{" "}
+          <a
+            href="mailto:contact@northbridgeventuregroup.com"
+            className="underline underline-offset-4 hover:text-red transition-colors"
+          >
+            contact@northbridgeventuregroup.com
+          </a>
+          , or use the addresses below.
         </p>
         <div className="space-y-8">
           <div>
