@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { ClientCard } from "@/components/ClientCard";
+import { clients } from "@/lib/clients";
 
 export const metadata: Metadata = {
   title: "Home | Northbridge Venture Group",
@@ -63,6 +65,28 @@ export default function Home() {
             airtaxfinancial.com →
           </span>
         </Link>
+      </section>
+
+      <section className="mt-24 max-w-4xl mx-auto">
+        <p className="text-sm font-semibold uppercase tracking-wider text-northbridge-red">Clients</p>
+        <h2 className="mt-3 text-3xl font-bold text-northbridge-black">Organizations We Support</h2>
+        <p className="mt-4 text-lg text-black/80">
+          Organizations that have worked with Northbridge on digital infrastructure, online presence,
+          and operational systems.
+        </p>
+        <div className="mt-10 space-y-8">
+          {clients.map((client) => (
+            <ClientCard key={client.name} client={client} />
+          ))}
+        </div>
+        <div className="mt-8">
+          <Link
+            href="/clients"
+            className="text-sm font-semibold text-northbridge-red hover:underline"
+          >
+            View all clients →
+          </Link>
+        </div>
       </section>
     </div>
   );
