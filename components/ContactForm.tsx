@@ -109,14 +109,18 @@ export function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="rounded-xl border border-black/10 bg-white p-8 sm:p-10" role="status">
+      <div
+        className="rounded-xl border border-black/10 bg-white p-8 sm:p-10"
+        role="status"
+        aria-live="polite"
+      >
         <p className="text-sm font-semibold uppercase tracking-wider text-northbridge-red">
-          Inquiry received
+          Inquiry captured
         </p>
-        <h2 className="mt-3 text-2xl font-bold text-northbridge-black">Thank you for reaching out.</h2>
+        <h2 className="mt-3 text-2xl font-bold text-northbridge-black">Your project inquiry is in.</h2>
         <p className="mt-4 text-black/80 leading-relaxed max-w-lg">
-          Your project inquiry has been submitted. We will review your details and respond as soon as
-          we can—typically within one to two business days.
+          Your details have been submitted through our lead capture system. We will review scope,
+          project type, and context—then respond within one to two business days.
         </p>
         <button
           type="button"
@@ -134,7 +138,17 @@ export function ContactForm() {
       onSubmit={handleSubmit}
       noValidate
       className="rounded-xl border border-black/10 bg-white p-6 sm:p-8 lg:p-10 space-y-6"
+      aria-labelledby="inquiry-form-heading"
     >
+      <div className="border-b border-black/10 pb-6">
+        <h2 id="inquiry-form-heading" className="text-xl font-bold text-northbridge-black">
+          Project inquiry
+        </h2>
+        <p className="mt-2 text-sm text-black/70 leading-relaxed max-w-xl">
+          Structured lead capture—qualify your project so we can respond with the right next step.
+        </p>
+      </div>
+
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="sm:col-span-2 sm:grid sm:grid-cols-2 sm:gap-6">
           <div>
