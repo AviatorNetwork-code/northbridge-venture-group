@@ -74,7 +74,7 @@ export default function Home() {
           Organizations that have worked with Northbridge on digital infrastructure, online presence,
           and operational systems.
         </p>
-        <div className="mt-10 space-y-8">
+        <div className="mt-10 grid gap-6 md:grid-cols-2">
           {clients.map((client) => (
             <ClientCard key={client.name} client={client} />
           ))}
