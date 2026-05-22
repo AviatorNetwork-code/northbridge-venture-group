@@ -1,15 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
-const PROJECT_TYPES = [
-  "Website / Digital Infrastructure",
-  "SEO / Local Growth",
-  "Automation Systems",
-  "Client Portal / Web App",
-  "Business Consulting",
-  "Other",
-] as const;
+import { FIELD_LIMITS, PROJECT_TYPES } from "@/lib/contact";
 
 const BUDGET_RANGES = [
   "Under $2,500",
@@ -19,34 +11,53 @@ const BUDGET_RANGES = [
   "$25,000+",
 ] as const;
 
-const inputClass =
-  "mt-1 block w-full rounded-lg border border-black/20 bg-white px-4 py-2.5 text-northbridge-black placeholder:text-black/40 focus:border-northbridge-red focus:outline-none focus:ring-1 focus:ring-northbridge-red";
-const inputErrorClass =
-  "mt-1 block w-full rounded-lg border border-northbridge-red bg-white px-4 py-2.5 text-northbridge-black placeholder:text-black/40 focus:border-northbridge-red focus:outline-none focus:ring-1 focus:ring-northbridge-red";
-const labelClass = "block text-sm font-medium text-northbridge-black";
+const inputClass = "nb-input";
+const inputErrorClass = "nb-input-error";
+const labelClass = "nb-label";
 
 type FieldErrors = {
   name?: string;
   email?: string;
   projectType?: string;
   message?: string;
+  company?: string;
+  phone?: string;
+  budgetRange?: string;
 };
 
 function validateForm(data: FormData): FieldErrors {
   const errors: FieldErrors = {};
   const name = String(data.get("name") ?? "").trim();
+  const company = String(data.get("company") ?? "").trim();
   const email = String(data.get("email") ?? "").trim();
+  const phone = String(data.get("phone") ?? "").trim();
   const projectType = String(data.get("projectType") ?? "").trim();
+  const budgetRange = String(data.get("budgetRange") ?? "").trim();
   const message = String(data.get("message") ?? "").trim();
 
   if (!name) errors.name = "Full name is required.";
-  if (!email) {
-    errors.email = "Email is required.";
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  else if (name.length > FIELD_LIMITS.name) errors.name = "Full name is too long.";
+
+  if (!email) errors.email = "Email is required.";
+  else if (email.length > FIELD_LIMITS.email) errors.email = "Email is too long.";
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     errors.email = "Enter a valid email address.";
   }
+
+  if (company.length > FIELD_LIMITS.company) errors.company = "Company name is too long.";
+  if (phone.length > FIELD_LIMITS.phone) errors.phone = "Phone number is too long.";
+
   if (!projectType) errors.projectType = "Select a project type.";
+  else if (projectType.length > FIELD_LIMITS.projectType) {
+    errors.projectType = "Project type is too long.";
+  }
+
+  if (budgetRange.length > FIELD_LIMITS.budgetRange) {
+    errors.budgetRange = "Budget range is too long.";
+  }
+
   if (!message) errors.message = "Message is required.";
+  else if (message.length > FIELD_LIMITS.message) errors.message = "Message is too long.";
 
   return errors;
 }
@@ -109,16 +120,10 @@ export function ContactForm() {
 
   if (status === "success") {
     return (
-      <div
-        className="rounded-xl border border-black/10 bg-white p-8 sm:p-10"
-        role="status"
-        aria-live="polite"
-      >
-        <p className="text-sm font-semibold uppercase tracking-wider text-northbridge-red">
-          Inquiry captured
-        </p>
-        <h2 className="mt-3 text-2xl font-bold text-northbridge-black">Your project inquiry is in.</h2>
-        <p className="mt-4 text-black/80 leading-relaxed max-w-lg">
+      <div className="nb-card p-8 sm:p-10" role="status" aria-live="polite">
+        <p className="nb-eyebrow">Inquiry captured</p>
+        <h2 className="mt-3 text-2xl font-bold text-white">Your project inquiry is in.</h2>
+        <p className="mt-4 text-white/70 leading-relaxed max-w-lg">
           Your details have been submitted through our lead capture system. We will review scope,
           project type, and context—then respond within one to two business days.
         </p>
@@ -137,14 +142,14 @@ export function ContactForm() {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="rounded-xl border border-black/10 bg-white p-6 sm:p-8 lg:p-10 space-y-6"
+      className="nb-card p-6 sm:p-8 lg:p-10 space-y-6"
       aria-labelledby="inquiry-form-heading"
     >
-      <div className="border-b border-black/10 pb-6">
-        <h2 id="inquiry-form-heading" className="text-xl font-bold text-northbridge-black">
+      <div className="border-b border-white/10 pb-6">
+        <h2 id="inquiry-form-heading" className="text-xl font-bold text-white">
           Project inquiry
         </h2>
-        <p className="mt-2 text-sm text-black/70 leading-relaxed max-w-xl">
+        <p className="mt-2 text-sm text-white/60 leading-relaxed max-w-xl">
           Structured lead capture—qualify your project so we can respond with the right next step.
         </p>
       </div>
@@ -160,6 +165,7 @@ export function ContactForm() {
               name="name"
               type="text"
               autoComplete="name"
+              maxLength={FIELD_LIMITS.name}
               className={errors.name ? inputErrorClass : inputClass}
               aria-invalid={Boolean(errors.name)}
               aria-describedby={errors.name ? "name-error" : undefined}
@@ -179,8 +185,16 @@ export function ContactForm() {
               name="company"
               type="text"
               autoComplete="organization"
-              className={inputClass}
+              maxLength={FIELD_LIMITS.company}
+              className={errors.company ? inputErrorClass : inputClass}
+              aria-invalid={Boolean(errors.company)}
+              aria-describedby={errors.company ? "company-error" : undefined}
             />
+            {errors.company && (
+              <p id="company-error" className="mt-1.5 text-sm text-northbridge-red">
+                {errors.company}
+              </p>
+            )}
           </div>
         </div>
 
@@ -193,6 +207,7 @@ export function ContactForm() {
             name="email"
             type="email"
             autoComplete="email"
+            maxLength={FIELD_LIMITS.email}
             className={errors.email ? inputErrorClass : inputClass}
             aria-invalid={Boolean(errors.email)}
             aria-describedby={errors.email ? "email-error" : undefined}
@@ -212,8 +227,16 @@ export function ContactForm() {
             name="phone"
             type="tel"
             autoComplete="tel"
-            className={inputClass}
+            maxLength={FIELD_LIMITS.phone}
+            className={errors.phone ? inputErrorClass : inputClass}
+            aria-invalid={Boolean(errors.phone)}
+            aria-describedby={errors.phone ? "phone-error" : undefined}
           />
+          {errors.phone && (
+            <p id="phone-error" className="mt-1.5 text-sm text-northbridge-red">
+              {errors.phone}
+            </p>
+          )}
         </div>
 
         <div>
@@ -247,7 +270,14 @@ export function ContactForm() {
           <label htmlFor="budgetRange" className={labelClass}>
             Budget range
           </label>
-          <select id="budgetRange" name="budgetRange" defaultValue="" className={inputClass}>
+          <select
+            id="budgetRange"
+            name="budgetRange"
+            defaultValue=""
+            className={errors.budgetRange ? inputErrorClass : inputClass}
+            aria-invalid={Boolean(errors.budgetRange)}
+            aria-describedby={errors.budgetRange ? "budgetRange-error" : undefined}
+          >
             <option value="">Select budget range (optional)</option>
             {BUDGET_RANGES.map((range) => (
               <option key={range} value={range}>
@@ -255,6 +285,11 @@ export function ContactForm() {
               </option>
             ))}
           </select>
+          {errors.budgetRange && (
+            <p id="budgetRange-error" className="mt-1.5 text-sm text-northbridge-red">
+              {errors.budgetRange}
+            </p>
+          )}
         </div>
 
         <div className="sm:col-span-2">
@@ -265,6 +300,7 @@ export function ContactForm() {
             id="message"
             name="message"
             rows={6}
+            maxLength={FIELD_LIMITS.message}
             placeholder="What are you building? Where is the business today? What should the digital system do next?"
             className={errors.message ? inputErrorClass : inputClass}
             aria-invalid={Boolean(errors.message)}
@@ -287,7 +323,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={status === "sending"}
-        className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 rounded-lg font-semibold text-white bg-northbridge-red hover:opacity-90 transition-opacity disabled:opacity-60"
+        className="w-full sm:w-auto btn-primary px-8"
       >
         {status === "sending" ? "Submitting…" : "Submit Project Inquiry"}
       </button>
