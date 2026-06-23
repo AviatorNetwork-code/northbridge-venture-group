@@ -6,7 +6,7 @@ import { DIAGNOSTIC_PATH } from "@/lib/digital/metadata";
 export function Footer() {
   return (
     <footer className="border-t border-white/[0.06] bg-northbridge-charcoal">
-      <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
+      <div className="mx-auto max-w-6xl min-w-0 px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr]">
           <div>
             <p className="text-lg font-semibold tracking-tight text-white">

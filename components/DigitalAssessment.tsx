@@ -99,7 +99,7 @@ function SelectionCard({
     <button
       type="button"
       onClick={onClick}
-      className={`w-full rounded-xl border p-4 text-left transition-all ${
+      className={`nb-selection-card transition-all ${
         selected
           ? "border-northbridge-red bg-northbridge-red/10 shadow-card"
           : "border-white/10 bg-northbridge-charcoal hover:border-northbridge-red/40"
@@ -125,7 +125,7 @@ function MultiSelectionCard({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-xl border px-4 py-3 text-left text-sm font-medium transition-all ${
+      className={`rounded-xl border px-4 py-3 min-h-[2.75rem] text-left text-sm font-medium transition-colors ${
         selected
           ? "border-northbridge-red bg-northbridge-red/10 text-white"
           : "border-white/10 bg-northbridge-charcoal text-white/80 hover:border-northbridge-red/40"
@@ -389,13 +389,13 @@ export function DigitalAssessment() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto min-w-0 w-full">
       <div className="mb-8">
-        <div className="flex items-center justify-between text-sm text-white/60 mb-2">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between text-sm text-white/60 mb-2">
           <span>
             Step {stepIndex + 1} of {STEPS.length}
           </span>
-          <span>{currentStep.title}</span>
+          <span className="text-white/50 sm:text-right">{currentStep.title}</span>
         </div>
         <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
           <div
@@ -410,7 +410,7 @@ export function DigitalAssessment() {
         </div>
       </div>
 
-      <div className="nb-card p-6 sm:p-8">
+      <div className="nb-card p-5 sm:p-6 lg:p-8">
         {currentStep.id === "contact" && (
           <div className="space-y-5">
             <div>
@@ -676,18 +676,18 @@ export function DigitalAssessment() {
           </p>
         )}
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+        <div className="nb-form-actions">
           <button
             type="button"
             onClick={goBack}
             disabled={stepIndex === 0 || status === "submitting"}
-            className="text-sm font-semibold text-white/70 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed"
+            className="min-h-[2.75rem] px-2 text-sm font-semibold text-white/70 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed sm:px-0"
           >
             ← Back
           </button>
 
           {stepIndex < STEPS.length - 1 ? (
-            <button type="button" onClick={goNext} className="btn-primary">
+            <button type="button" onClick={goNext} className="btn-primary nb-form-actions-primary">
               Continue
             </button>
           ) : (
@@ -695,7 +695,7 @@ export function DigitalAssessment() {
               type="button"
               onClick={handleSubmit}
               disabled={status === "submitting"}
-              className="btn-primary"
+              className="btn-primary nb-form-actions-primary"
             >
               {status === "submitting" ? "Submitting…" : "Submit Business Diagnostic"}
             </button>

@@ -24,6 +24,12 @@
 body {
   color: var(--foreground);
   background: var(--background);
+  overflow-x: clip;
+  min-width: 0;
+}
+
+html {
+  overflow-x: clip;
 }
 
 @layer base {
@@ -39,23 +45,23 @@ body {
 @layer components {
   /* Layout */
   .nb-page {
-    @apply pb-16 sm:pb-24;
+    @apply w-full min-w-0 pb-16 sm:pb-24;
   }
 
   .nb-main {
-    @apply flex-1;
+    @apply flex-1 min-w-0;
   }
 
   .nb-section {
-    @apply py-16 sm:py-24;
+    @apply py-12 sm:py-16 lg:py-24;
   }
 
   .nb-section-tight {
-    @apply py-10 sm:py-14;
+    @apply py-8 sm:py-12 lg:py-14;
   }
 
   .nb-section-hero {
-    @apply pt-12 pb-16 sm:pt-16 sm:pb-24 border-b border-white/[0.06];
+    @apply pt-10 pb-12 sm:pt-16 sm:pb-20 lg:pb-24 border-b border-white/[0.06];
     background: linear-gradient(
       180deg,
       rgba(20, 20, 20, 0.6) 0%,
@@ -64,24 +70,23 @@ body {
   }
 
   .nb-section-band {
-    @apply py-16 sm:py-20 border-y border-white/[0.06] bg-northbridge-charcoal/40;
+    @apply py-12 sm:py-16 lg:py-20 border-y border-white/[0.06] bg-northbridge-charcoal/40;
   }
 
-  /* Typography */
+  .nb-h1 {
+    @apply text-[1.75rem] leading-[1.12] min-[375px]:text-[2rem] sm:text-5xl lg:text-[3.25rem] font-semibold text-white tracking-tight text-pretty;
+  }
+
   .nb-eyebrow {
     @apply text-xs font-semibold uppercase tracking-[0.14em] text-northbridge-red;
   }
 
-  .nb-h1 {
-    @apply text-[2rem] leading-[1.1] sm:text-5xl lg:text-[3.25rem] font-semibold text-white tracking-tight;
-  }
-
   .nb-h2 {
-    @apply text-2xl sm:text-3xl font-semibold text-white tracking-tight;
+    @apply text-xl sm:text-2xl lg:text-3xl font-semibold text-white tracking-tight text-pretty;
   }
 
   .nb-h3 {
-    @apply text-xl sm:text-2xl font-semibold text-white tracking-tight;
+    @apply text-lg sm:text-xl lg:text-2xl font-semibold text-white tracking-tight text-pretty;
   }
 
   .nb-lead {
@@ -98,7 +103,7 @@ body {
 
   /* Cards */
   .nb-card {
-    @apply rounded-lg border border-white/[0.08] bg-northbridge-charcoal p-6 sm:p-8;
+    @apply rounded-lg border border-white/[0.08] bg-northbridge-charcoal p-5 sm:p-6 lg:p-8;
   }
 
   .nb-card-interactive {
@@ -137,13 +142,13 @@ body {
 
   /* Buttons */
   .btn-primary {
-    @apply inline-flex items-center justify-center min-h-[2.75rem] px-6 py-2.5 rounded-md text-sm font-semibold text-white;
+    @apply inline-flex items-center justify-center min-h-[2.75rem] min-w-[2.75rem] px-5 sm:px-6 py-2.5 rounded-md text-sm font-semibold text-white;
     @apply bg-northbridge-red hover:bg-northbridge-red-dark transition-colors duration-200;
     @apply disabled:opacity-50 disabled:pointer-events-none;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center min-h-[2.75rem] px-6 py-2.5 rounded-md text-sm font-semibold;
+    @apply inline-flex items-center justify-center min-h-[2.75rem] min-w-[2.75rem] px-5 sm:px-6 py-2.5 rounded-md text-sm font-semibold;
     @apply border border-white/20 text-white hover:border-white/40 hover:bg-white/[0.04] transition-colors duration-200;
   }
 
@@ -172,7 +177,7 @@ body {
 
   /* Trust strip */
   .nb-trust-item {
-    @apply flex flex-col gap-1 border-l border-white/10 pl-5 sm:pl-6;
+    @apply flex flex-col gap-1 border-l border-white/10 pl-4 sm:pl-6 min-w-0;
   }
 
   .nb-trust-label {
@@ -186,6 +191,16 @@ body {
   /* Digital sub-nav */
   .nb-digital-nav {
     @apply border-b border-white/[0.06] bg-northbridge-black/60 backdrop-blur-sm sticky top-0 z-40;
+  }
+
+  .nb-digital-nav-scroll {
+    @apply flex min-w-0 flex-1 gap-x-5 sm:gap-x-6 overflow-x-auto overscroll-x-contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .nb-digital-nav-scroll::-webkit-scrollbar {
+    display: none;
   }
 
   .nb-digital-nav-link {
@@ -225,7 +240,7 @@ body {
 
   /* Form */
   .nb-input {
-    @apply mt-1 block w-full rounded-md border border-white/15 bg-northbridge-black/60 px-4 py-2.5 text-white placeholder:text-white/35 focus:border-northbridge-red focus:outline-none focus:ring-1 focus:ring-northbridge-red;
+    @apply mt-1 block w-full min-h-[2.75rem] rounded-md border border-white/15 bg-northbridge-black/60 px-4 py-2.5 text-base text-white placeholder:text-white/35 focus:border-northbridge-red focus:outline-none focus:ring-1 focus:ring-northbridge-red;
   }
 
   .nb-input option {
@@ -252,11 +267,40 @@ body {
   .nb-list-bullet-dot {
     @apply mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-northbridge-red;
   }
+
+  .nb-cta-group {
+    @apply flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4;
+  }
+
+  .nb-cta-group .btn-primary,
+  .nb-cta-group .btn-secondary {
+    @apply w-full sm:w-auto;
+  }
+
+  .nb-form-actions {
+    @apply mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4;
+  }
+
+  .nb-form-actions-primary {
+    @apply w-full sm:w-auto sm:ml-auto;
+  }
+
+  .nb-selection-card {
+    @apply w-full min-h-[3rem] rounded-xl border p-4 text-left transition-colors;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  .max-w-prose {
+    max-width: 65ch;
   }
 
   .nb-animate-in {

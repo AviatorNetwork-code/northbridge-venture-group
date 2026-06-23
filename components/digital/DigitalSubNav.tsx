@@ -9,11 +9,11 @@ export function DigitalSubNav() {
 
   return (
     <nav aria-label="Northbridge Digital" className="nb-digital-nav">
-      <div className="mx-auto flex max-w-6xl items-center gap-x-8 gap-y-0 overflow-x-auto px-5 sm:px-8">
+      <div className="mx-auto flex max-w-6xl min-w-0 items-center gap-x-4 gap-y-0 px-4 sm:px-6 lg:px-8">
         <p className="hidden shrink-0 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-white/35 sm:block">
           Digital
         </p>
-        <div className="flex min-w-0 flex-1 gap-x-6">
+        <div className="nb-digital-nav-scroll">
           {digitalNavItems.map((item) => {
             const isActive =
               pathname === item.href ||

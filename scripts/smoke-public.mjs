@@ -11,14 +11,18 @@ const BASE_URL = (process.env.SMOKE_BASE_URL || "http://localhost:3000").replace
 
 const ROUTES = [
   "/",
+  "/about",
   "/ventures",
   "/services",
   "/services/industries",
   "/services/expertise",
+  "/services/industries/aviation",
   "/services/industries/hvac",
   "/services/expertise/customer-acquisition",
   "/digital",
   "/digital/assessment",
+  "/contact",
+  "/case-studies",
 ];
 
 const VENTURE_CARD_NAMES = [

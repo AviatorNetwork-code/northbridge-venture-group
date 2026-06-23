@@ -77,7 +77,7 @@ export default function Home() {
             businesses understand how they work, find what blocks progress, and design better ways to
             operate.
           </p>
-          <div className="mt-10 flex flex-wrap gap-3 sm:gap-4">
+          <div className="mt-10 nb-cta-group">
             <ButtonLink href="/services">Northbridge Digital</ButtonLink>
             <ButtonLink href="/ventures" variant="secondary">
               Our ventures
@@ -129,9 +129,11 @@ export default function Home() {
             />
           ))}
         </div>
-        <div className="mt-10 flex flex-wrap items-center gap-6">
+        <div className="mt-10 nb-cta-group sm:items-center">
           <ButtonLink href="/digital/assessment">{DIAGNOSTIC_CTA}</ButtonLink>
-          <ArrowLink href="/services">Full knowledge hub</ArrowLink>
+          <ArrowLink href="/services" className="sm:min-h-[2.75rem] sm:inline-flex sm:items-center">
+            Full knowledge hub
+          </ArrowLink>
         </div>
       </Section>
 
@@ -159,7 +161,7 @@ export default function Home() {
             Start with the Business Diagnostic or contact us to discuss venture partnerships and
             advisory engagements.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3 sm:gap-4">
+          <div className="mt-8 nb-cta-group">
             <ButtonLink href="/digital/assessment">{DIAGNOSTIC_CTA}</ButtonLink>
             <ButtonLink href="/contact" variant="secondary">
               Contact us

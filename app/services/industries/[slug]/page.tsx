@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Container } from "@/components/ui/Container";
 import { Breadcrumbs } from "@/components/digital/Breadcrumbs";
 import { ChallengesSection } from "@/components/digital/ChallengesSection";
 import { DiagnosticCTA } from "@/components/digital/DiagnosticCTA";
@@ -50,26 +51,28 @@ function IndustryDetailPage({ industry }: { industry: IndustryContent }) {
 
   return (
     <div className="nb-page">
-      <Breadcrumbs
-        items={[
-          { label: "Knowledge", href: "/services" },
-          { label: "Industries", href: "/services/industries" },
-          { label: industry.name },
-        ]}
-      />
+      <Container>
+        <Breadcrumbs
+          items={[
+            { label: "Knowledge", href: "/services" },
+            { label: "Industries", href: "/services/industries" },
+            { label: industry.name },
+          ]}
+        />
 
-      <IndustryHero industry={industry} />
-      <IndustryOverview paragraphs={industry.overview} />
-      <ChallengesSection challenges={industry.challenges} bottlenecks={industry.bottlenecks} />
-      <EvaluationSection items={industry.evaluations} />
-      <SolutionsSection improvements={industry.improvements} solutions={industry.solutions} />
+        <IndustryHero industry={industry} />
+        <IndustryOverview paragraphs={industry.overview} />
+        <ChallengesSection challenges={industry.challenges} bottlenecks={industry.bottlenecks} />
+        <EvaluationSection items={industry.evaluations} />
+        <SolutionsSection improvements={industry.improvements} solutions={industry.solutions} />
 
-      <RelatedLinksSection title="Related expertise" links={relatedExpertiseLinks} />
+        <RelatedLinksSection title="Related expertise" links={relatedExpertiseLinks} />
 
-      <DiagnosticCTA
-        title={`Start with a Business Diagnostic for ${industry.name}`}
-        description="Answer a short set of questions about how your business operates. Northbridge reviews your responses and recommends where to focus first."
-      />
+        <DiagnosticCTA
+          title={`Start with a Business Diagnostic for ${industry.name}`}
+          description="Answer a short set of questions about how your business operates. Northbridge reviews your responses and recommends where to focus first."
+        />
+      </Container>
     </div>
   );
 }

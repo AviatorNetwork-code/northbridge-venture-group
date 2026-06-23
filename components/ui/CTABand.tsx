@@ -24,7 +24,7 @@ export function CTABand({
       {eyebrow && <p className="nb-eyebrow">{eyebrow}</p>}
       <h2 className={`nb-h3 ${eyebrow ? "mt-4" : ""}`}>{title}</h2>
       <p className="mt-4 nb-body max-w-2xl">{description}</p>
-      <div className="mt-8 flex flex-wrap gap-3 sm:gap-4">
+      <div className="mt-8 nb-cta-group">
         <ButtonLink href={primaryHref}>{primaryLabel}</ButtonLink>
         {secondaryHref && secondaryLabel && (
           <ButtonLink href={secondaryHref} variant="secondary">

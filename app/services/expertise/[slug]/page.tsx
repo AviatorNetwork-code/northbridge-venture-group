@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ApproachSection } from "@/components/digital/ApproachSection";
 import { Breadcrumbs } from "@/components/digital/Breadcrumbs";
+import { Container } from "@/components/ui/Container";
 import { DiagnosticCTA } from "@/components/digital/DiagnosticCTA";
 import { ExpertiseHero } from "@/components/digital/ExpertiseHero";
 import { MetricsSection } from "@/components/digital/MetricsSection";
@@ -47,29 +48,31 @@ function ExpertiseDetailPage({ expertise }: { expertise: ExpertiseContent }) {
 
   return (
     <div className="nb-page">
-      <Breadcrumbs
-        items={[
-          { label: "Knowledge", href: "/services" },
-          { label: "Expertise", href: "/services/expertise" },
-          { label: expertise.name },
-        ]}
-      />
+      <Container>
+        <Breadcrumbs
+          items={[
+            { label: "Knowledge", href: "/services" },
+            { label: "Expertise", href: "/services/expertise" },
+            { label: expertise.name },
+          ]}
+        />
 
-      <ExpertiseHero expertise={expertise} />
-      <ProblemSection
-        problemStatement={expertise.problemStatement}
-        whyStruggle={expertise.whyStruggle}
-      />
-      <ApproachSection items={expertise.approach} />
-      <MetricsSection items={expertise.successMetrics} />
+        <ExpertiseHero expertise={expertise} />
+        <ProblemSection
+          problemStatement={expertise.problemStatement}
+          whyStruggle={expertise.whyStruggle}
+        />
+        <ApproachSection items={expertise.approach} />
+        <MetricsSection items={expertise.successMetrics} />
 
-      <RelatedLinksSection title="Related industries" links={relatedIndustryLinks} />
-      <RelatedLinksSection title="Related solutions" links={expertise.relatedSolutions} />
+        <RelatedLinksSection title="Related industries" links={relatedIndustryLinks} />
+        <RelatedLinksSection title="Related solutions" links={expertise.relatedSolutions} />
 
-      <DiagnosticCTA
-        title={`See how ${expertise.name.toLowerCase()} applies to your business`}
-        description="The Business Diagnostic captures your context and helps Northbridge recommend a practical path—not a generic proposal."
-      />
+        <DiagnosticCTA
+          title={`See how ${expertise.name.toLowerCase()} applies to your business`}
+          description="The Business Diagnostic captures your context and helps Northbridge recommend a practical path—not a generic proposal."
+        />
+      </Container>
     </div>
   );
 }
