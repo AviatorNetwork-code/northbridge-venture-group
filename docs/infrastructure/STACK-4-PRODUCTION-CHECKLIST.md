@@ -19,6 +19,7 @@ Use this checklist before and after each production deployment.
 | `RESEND_FROM_EMAIL` | Yes (contact) | Verified sender for Resend |
 | `CONTACT_TO_EMAIL` | No | Contact form recipient override |
 | `NEXT_PUBLIC_SITE_URL` | Recommended | Canonical site URL for metadata |
+| `NEXT_PUBLIC_GTM_ID` | Recommended (analytics) | Google Tag Manager container ID — see `docs/infrastructure/analytics.md` |
 | `SMOKE_BASE_URL` | No | Override for smoke script (defaults to `http://localhost:3000`) |
 
 Never commit secret values. Set all production secrets in Vercel only.

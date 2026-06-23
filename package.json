@@ -10,6 +10,7 @@
     "smoke:public": "node scripts/smoke-public.mjs"
   },
   "dependencies": {
+    "@next/third-parties": "^14.2.35",
     "@supabase/supabase-js": "^2.108.2",
     "next": "14.2.35",
     "react": "^18",
