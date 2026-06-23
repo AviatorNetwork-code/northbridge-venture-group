@@ -3,8 +3,10 @@ import { GoogleTagManager } from "@next/third-parties/google";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { GtmNoScript } from "@/components/analytics/GtmNoScript";
+import { MicrosoftClarity } from "@/components/analytics/MicrosoftClarity";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { getPublicClarityId } from "@/lib/clarity";
 import { getPublicGtmId } from "@/lib/gtm";
 
 const inter = Inter({
@@ -40,10 +42,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const gtmId = getPublicGtmId();
+  const clarityId = getPublicClarityId();
 
   return (
     <html lang="en">
       {gtmId ? <GoogleTagManager gtmId={gtmId} /> : null}
+      {clarityId ? <MicrosoftClarity projectId={clarityId} /> : null}
       <body
         className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col bg-background text-foreground`}
       >
