@@ -343,8 +343,8 @@ export function DigitalAssessment() {
 
     return (
       <div className="nb-card p-8 sm:p-10 max-w-2xl mx-auto" role="status" aria-live="polite">
-        <p className="nb-eyebrow">Assessment complete</p>
-        <h2 className="mt-3 text-2xl font-bold text-white">Assessment submitted.</h2>
+        <p className="nb-eyebrow">Business Diagnostic complete</p>
+        <h2 className="mt-3 text-2xl font-bold text-white">Business Diagnostic submitted.</h2>
         <p className="mt-4 text-white/70 leading-relaxed">
           Northbridge will review your responses and recommend the best next step.
         </p>
@@ -697,7 +697,7 @@ export function DigitalAssessment() {
               disabled={status === "submitting"}
               className="btn-primary"
             >
-              {status === "submitting" ? "Submitting…" : "Submit Assessment"}
+              {status === "submitting" ? "Submitting…" : "Submit Business Diagnostic"}
             </button>
           )}
         </div>

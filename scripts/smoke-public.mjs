@@ -9,7 +9,17 @@
 
 const BASE_URL = (process.env.SMOKE_BASE_URL || "http://localhost:3000").replace(/\/$/, "");
 
-const ROUTES = ["/", "/ventures", "/services", "/digital", "/digital/assessment"];
+const ROUTES = [
+  "/",
+  "/ventures",
+  "/services",
+  "/services/industries",
+  "/services/expertise",
+  "/services/industries/hvac",
+  "/services/expertise/customer-acquisition",
+  "/digital",
+  "/digital/assessment",
+];
 
 const VENTURE_CARD_NAMES = [
   "Aviator Network",
@@ -68,8 +78,11 @@ function assertServicesTaxonomy(html) {
 }
 
 function assertAssessmentLoads(html) {
-  if (!html.includes("Business Assessment") && !html.includes("Map your business")) {
-    fail("/digital/assessment missing assessment funnel content");
+  if (
+    !html.includes("Business Diagnostic") &&
+    !html.includes("Map your business")
+  ) {
+    fail("/digital/assessment missing Business Diagnostic funnel content");
     return;
   }
 

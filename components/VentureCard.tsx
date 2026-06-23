@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Venture } from "@/lib/ventures";
+import { Tag } from "@/components/ui/Tag";
 
 function externalCta(href: string): string {
   try {
@@ -19,41 +20,47 @@ export function VentureCard({ venture, compact = false }: VentureCardProps) {
   const isExternal = !isComingSoon && (venture.external ?? venture.href.startsWith("http"));
   const cta =
     venture.ctaLabel ??
-    (isComingSoon ? "Coming Soon" : isExternal ? externalCta(venture.href) : "Learn More →");
-  const className = `block ${isComingSoon ? "nb-card opacity-90" : "nb-card-interactive"} ${compact ? "p-6" : "p-8"}`;
+    (isComingSoon ? "Coming soon" : isExternal ? externalCta(venture.href) : "Learn more");
+  const className = `block h-full ${
+    isComingSoon ? "nb-card opacity-80" : "nb-card-interactive group"
+  } ${compact ? "p-6" : "p-8"}`;
 
   const body = (
     <>
-      {venture.category && (
-        <p className="text-sm font-semibold text-northbridge-red">{venture.category}</p>
-      )}
+      {venture.category && <p className="nb-eyebrow text-[0.65rem]">{venture.category}</p>}
       <h2
-        className={`font-bold text-white ${venture.category ? "mt-2" : ""} ${
-          compact ? "text-xl" : "text-2xl"
-        }`}
+        className={`font-semibold text-white transition-colors group-hover:text-northbridge-red ${
+          venture.category ? "mt-3" : ""
+        } ${compact ? "text-lg" : "text-xl"}`}
       >
         {venture.name}
       </h2>
       {venture.positioning && !compact && (
-        <p className="mt-2 text-sm text-white/60 italic">{venture.positioning}</p>
+        <p className="mt-2 text-sm text-white/45">{venture.positioning}</p>
       )}
-      <p className={`text-white/70 ${compact ? "mt-2 text-sm" : "mt-3"}`}>
+      <p className={`text-white/60 leading-relaxed ${compact ? "mt-2 text-sm" : "mt-3"}`}>
         {venture.description}
       </p>
       {venture.capabilities && venture.capabilities.length > 0 && !compact && (
         <ul className="mt-5 flex flex-wrap gap-2 list-none">
           {venture.capabilities.map((cap) => (
-            <li
-              key={cap}
-              className="rounded-md border border-white/10 bg-northbridge-black/40 px-2.5 py-1 text-xs font-medium text-white/80"
-            >
-              {cap}
+            <li key={cap}>
+              <Tag>{cap}</Tag>
             </li>
           ))}
         </ul>
       )}
-      <span className={`inline-block text-northbridge-red font-semibold ${compact ? "mt-3 text-sm" : "mt-4"}`}>
+      <span
+        className={`inline-flex items-center gap-1 text-northbridge-red font-semibold ${
+          compact ? "mt-4 text-sm" : "mt-5 text-sm"
+        }`}
+      >
         {cta}
+        {!isComingSoon && (
+          <span className="transition-transform group-hover:translate-x-0.5" aria-hidden="true">
+            →
+          </span>
+        )}
       </span>
     </>
   );

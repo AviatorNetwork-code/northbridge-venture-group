@@ -1,5 +1,6 @@
-import Link from "next/link";
 import type { Client } from "@/lib/clients";
+import { Tag } from "@/components/ui/Tag";
+import { ArrowLink } from "@/components/ui/ArrowLink";
 
 function websiteLabel(url: string): string {
   try {
@@ -11,45 +12,43 @@ function websiteLabel(url: string): string {
 
 export function ClientCard({ client }: { client: Client }) {
   return (
-    <article className="nb-card p-8">
-      <h2 className="text-2xl font-bold text-white">{client.name}</h2>
+    <article className="nb-card h-full flex flex-col">
+      {client.category && <p className="nb-eyebrow text-[0.65rem]">{client.category}</p>}
+      <h2 className={`text-xl font-semibold text-white ${client.category ? "mt-3" : ""}`}>
+        {client.name}
+      </h2>
       {client.location && (
-        <p className="mt-2 text-sm font-medium text-white/60">{client.location}</p>
+        <p className="mt-1.5 text-sm text-white/45">{client.location}</p>
       )}
-      {client.category && (
-        <p className="mt-1 text-sm font-semibold text-northbridge-red">{client.category}</p>
-      )}
-      <p className="mt-3 text-white/70 leading-relaxed">{client.description}</p>
+      <p className="mt-3 flex-1 text-white/60 leading-relaxed text-sm sm:text-base">
+        {client.description}
+      </p>
       {client.capabilities && client.capabilities.length > 0 && (
         <ul className="mt-5 flex flex-wrap gap-2 list-none">
           {client.capabilities.map((cap) => (
-            <li
-              key={cap}
-              className="rounded-md border border-white/10 bg-northbridge-black/40 px-2.5 py-1 text-xs font-medium text-white/80"
-            >
-              {cap}
+            <li key={cap}>
+              <Tag>{cap}</Tag>
             </li>
           ))}
         </ul>
       )}
-      {client.website && (
-        <a
-          href={client.website}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 inline-block text-sm font-semibold text-northbridge-red hover:underline"
-        >
-          {websiteLabel(client.website)} →
-        </a>
-      )}
-      {client.caseStudyHref && (
-        <Link
-          href={client.caseStudyHref}
-          className="mt-4 block text-sm font-semibold text-northbridge-red hover:underline"
-        >
-          View Case Study →
-        </Link>
-      )}
+      <div className="mt-5 flex flex-col gap-2">
+        {client.website && (
+          <a
+            href={client.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-semibold text-northbridge-red hover:text-white transition-colors"
+          >
+            {websiteLabel(client.website)} →
+          </a>
+        )}
+        {client.caseStudyHref && (
+          <ArrowLink href={client.caseStudyHref} className="text-sm">
+            View case study
+          </ArrowLink>
+        )}
+      </div>
     </article>
   );
 }

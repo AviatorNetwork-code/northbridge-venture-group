@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { Section } from "@/components/ui/Section";
 import { VentureCard } from "@/components/VentureCard";
 import { ventures } from "@/lib/ventures";
 
@@ -12,20 +14,30 @@ export const metadata: Metadata = {
 export default function Ventures() {
   return (
     <div className="nb-page">
-      <h1 className="nb-h1">Ventures</h1>
-      <p className="mt-4 nb-lead max-w-2xl">
-        Ventures are Northbridge-owned products and platforms we build and operate. Client services
-        are delivered through{" "}
-        <Link href="/services" className="text-northbridge-red font-semibold hover:underline">
-          Northbridge Digital
-        </Link>
-        .
-      </p>
-      <div className="mt-12 space-y-6">
-        {ventures.map((v) => (
-          <VentureCard key={v.name} venture={v} />
-        ))}
-      </div>
+      <Section variant="hero">
+        <PageHeader
+          eyebrow="Portfolio"
+          title="Ventures we build and operate"
+          description={
+            <>
+              Ventures are Northbridge-owned products and platforms. Client advisory is delivered
+              through{" "}
+              <Link href="/services" className="text-northbridge-red font-medium hover:text-white transition-colors">
+                Northbridge Digital
+              </Link>
+              .
+            </>
+          }
+        />
+      </Section>
+
+      <Section variant="tight">
+        <div className="space-y-5">
+          {ventures.map((venture) => (
+            <VentureCard key={venture.name} venture={venture} />
+          ))}
+        </div>
+      </Section>
     </div>
   );
 }

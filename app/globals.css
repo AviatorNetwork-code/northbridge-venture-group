@@ -10,6 +10,15 @@
   --border: rgba(255, 255, 255, 0.1);
   --border-accent: rgba(177, 18, 38, 0.35);
   --northbridge-red: #b11226;
+  --section-gap: 5rem;
+  --section-gap-lg: 7rem;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --section-gap: 6rem;
+    --section-gap-lg: 8rem;
+  }
 }
 
 body {
@@ -17,57 +26,206 @@ body {
   background: var(--background);
 }
 
-@layer components {
-  .nb-page {
-    @apply mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-24;
+@layer base {
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-northbridge-red;
   }
 
+  ::selection {
+    @apply bg-northbridge-red/30 text-white;
+  }
+}
+
+@layer components {
+  /* Layout */
+  .nb-page {
+    @apply pb-16 sm:pb-24;
+  }
+
+  .nb-main {
+    @apply flex-1;
+  }
+
+  .nb-section {
+    @apply py-16 sm:py-24;
+  }
+
+  .nb-section-tight {
+    @apply py-10 sm:py-14;
+  }
+
+  .nb-section-hero {
+    @apply pt-12 pb-16 sm:pt-16 sm:pb-24 border-b border-white/[0.06];
+    background: linear-gradient(
+      180deg,
+      rgba(20, 20, 20, 0.6) 0%,
+      rgba(10, 10, 10, 0) 100%
+    );
+  }
+
+  .nb-section-band {
+    @apply py-16 sm:py-20 border-y border-white/[0.06] bg-northbridge-charcoal/40;
+  }
+
+  /* Typography */
   .nb-eyebrow {
-    @apply text-sm font-semibold uppercase tracking-wider text-northbridge-red;
+    @apply text-xs font-semibold uppercase tracking-[0.14em] text-northbridge-red;
   }
 
   .nb-h1 {
-    @apply text-4xl sm:text-5xl font-bold text-white tracking-tight;
+    @apply text-[2rem] leading-[1.1] sm:text-5xl lg:text-[3.25rem] font-semibold text-white tracking-tight;
   }
 
   .nb-h2 {
-    @apply text-3xl font-bold text-white;
+    @apply text-2xl sm:text-3xl font-semibold text-white tracking-tight;
   }
 
   .nb-h3 {
-    @apply text-xl sm:text-2xl font-bold text-white;
+    @apply text-xl sm:text-2xl font-semibold text-white tracking-tight;
   }
 
   .nb-lead {
-    @apply text-lg text-white/70 leading-relaxed;
+    @apply text-base sm:text-lg text-white/65 leading-relaxed;
   }
 
   .nb-body {
-    @apply text-white/70 leading-relaxed;
+    @apply text-[0.9375rem] sm:text-base text-white/65 leading-relaxed;
   }
 
+  .nb-caption {
+    @apply text-sm text-white/45 leading-relaxed;
+  }
+
+  /* Cards */
   .nb-card {
-    @apply rounded-xl border border-white/10 bg-northbridge-charcoal p-6 sm:p-8;
+    @apply rounded-lg border border-white/[0.08] bg-northbridge-charcoal p-6 sm:p-8;
   }
 
   .nb-card-interactive {
-    @apply nb-card transition-all hover:border-northbridge-red/40 hover:shadow-card-hover;
+    @apply nb-card transition-[border-color,box-shadow,transform] duration-300 ease-out;
+    @apply hover:border-white/15 hover:shadow-card hover:-translate-y-0.5;
+    @apply focus-within:border-northbridge-red/30 focus-within:shadow-card-hover;
   }
 
   .nb-card-contrast {
-    @apply rounded-xl border border-white/15 bg-white p-6 sm:p-8 text-northbridge-black;
+    @apply rounded-lg border border-white/10 bg-white p-6 sm:p-8 text-northbridge-black;
   }
 
+  .nb-hub-card {
+    @apply nb-card-interactive flex h-full flex-col relative overflow-hidden;
+  }
+
+  .nb-hub-card-index {
+    @apply text-xs font-semibold tracking-widest text-white/25 mb-6;
+  }
+
+  .nb-hub-card-title {
+    @apply text-lg font-semibold text-white transition-colors group-hover:text-northbridge-red;
+  }
+
+  .nb-hub-card-desc {
+    @apply mt-3 flex-1 text-sm text-white/55 leading-relaxed;
+  }
+
+  .nb-hub-card-cta {
+    @apply mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-northbridge-red;
+  }
+
+  .nb-cta-band {
+    @apply nb-card border-northbridge-red/20 bg-gradient-to-br from-northbridge-charcoal to-northbridge-black/80 p-8 sm:p-10;
+  }
+
+  /* Buttons */
   .btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold text-white bg-northbridge-red hover:bg-northbridge-red-dark transition-colors disabled:opacity-60;
+    @apply inline-flex items-center justify-center min-h-[2.75rem] px-6 py-2.5 rounded-md text-sm font-semibold text-white;
+    @apply bg-northbridge-red hover:bg-northbridge-red-dark transition-colors duration-200;
+    @apply disabled:opacity-50 disabled:pointer-events-none;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold border-2 border-white/80 text-white hover:bg-white hover:text-northbridge-black transition-colors;
+    @apply inline-flex items-center justify-center min-h-[2.75rem] px-6 py-2.5 rounded-md text-sm font-semibold;
+    @apply border border-white/20 text-white hover:border-white/40 hover:bg-white/[0.04] transition-colors duration-200;
   }
 
+  .btn-ghost {
+    @apply inline-flex items-center justify-center min-h-[2.75rem] px-4 py-2.5 rounded-md text-sm font-semibold;
+    @apply text-white/70 hover:text-white hover:bg-white/[0.04] transition-colors duration-200;
+  }
+
+  /* Links */
+  .nb-arrow-link {
+    @apply inline-flex items-center gap-1.5 text-sm font-semibold text-northbridge-red transition-colors hover:text-white;
+  }
+
+  .nb-arrow-link-icon {
+    @apply transition-transform duration-200;
+  }
+
+  .nb-arrow-link:hover .nb-arrow-link-icon {
+    @apply translate-x-0.5;
+  }
+
+  /* Tags */
+  .nb-tag {
+    @apply inline-flex rounded border border-white/10 bg-northbridge-black/50 px-2.5 py-1 text-xs font-medium text-white/70;
+  }
+
+  /* Trust strip */
+  .nb-trust-item {
+    @apply flex flex-col gap-1 border-l border-white/10 pl-5 sm:pl-6;
+  }
+
+  .nb-trust-label {
+    @apply text-xs font-semibold uppercase tracking-[0.12em] text-white/40;
+  }
+
+  .nb-trust-value {
+    @apply text-sm font-medium text-white/80;
+  }
+
+  /* Digital sub-nav */
+  .nb-digital-nav {
+    @apply border-b border-white/[0.06] bg-northbridge-black/60 backdrop-blur-sm sticky top-0 z-40;
+  }
+
+  .nb-digital-nav-link {
+    @apply relative py-3 text-sm font-medium text-white/50 transition-colors hover:text-white;
+  }
+
+  .nb-digital-nav-link-active {
+    @apply text-white;
+  }
+
+  .nb-digital-nav-link-active::after {
+    content: "";
+    @apply absolute bottom-0 left-0 right-0 h-0.5 bg-northbridge-red;
+  }
+
+  /* Header */
+  .nb-header {
+    @apply sticky top-0 z-50 border-b border-white/[0.06] bg-northbridge-black/90 backdrop-blur-md;
+  }
+
+  .nb-nav-link {
+    @apply text-sm font-medium text-white/60 transition-colors hover:text-white;
+  }
+
+  .nb-nav-link-active {
+    @apply text-white;
+  }
+
+  .nb-nav-link-consulting {
+    @apply text-white/80;
+  }
+
+  /* Skip link */
+  .nb-skip-link {
+    @apply sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-northbridge-red focus:px-4 focus:py-2 focus:text-white focus:font-semibold;
+  }
+
+  /* Form */
   .nb-input {
-    @apply mt-1 block w-full rounded-lg border border-white/15 bg-northbridge-black/60 px-4 py-2.5 text-white placeholder:text-white/35 focus:border-northbridge-red focus:outline-none focus:ring-1 focus:ring-northbridge-red;
+    @apply mt-1 block w-full rounded-md border border-white/15 bg-northbridge-black/60 px-4 py-2.5 text-white placeholder:text-white/35 focus:border-northbridge-red focus:outline-none focus:ring-1 focus:ring-northbridge-red;
   }
 
   .nb-input option {
@@ -75,16 +233,73 @@ body {
   }
 
   .nb-input-error {
-    @apply mt-1 block w-full rounded-lg border border-northbridge-red bg-northbridge-black/60 px-4 py-2.5 text-white placeholder:text-white/35 focus:border-northbridge-red focus:outline-none focus:ring-1 focus:ring-northbridge-red;
+    @apply mt-1 block w-full rounded-md border border-northbridge-red bg-northbridge-black/60 px-4 py-2.5 text-white placeholder:text-white/35 focus:border-northbridge-red focus:outline-none focus:ring-1 focus:ring-northbridge-red;
   }
 
   .nb-label {
     @apply block text-sm font-medium text-white/90;
+  }
+
+  /* Lists used in content sections */
+  .nb-list-item {
+    @apply nb-card text-sm text-white/65 leading-relaxed;
+  }
+
+  .nb-list-bullet {
+    @apply flex gap-3 text-white/65 leading-relaxed;
+  }
+
+  .nb-list-bullet-dot {
+    @apply mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-northbridge-red;
   }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .nb-animate-in {
+    animation: nb-fade-in 0.5s ease-out both;
+  }
+
+  .nb-stagger-1 {
+    animation-delay: 0.05s;
+  }
+
+  .nb-stagger-2 {
+    animation-delay: 0.1s;
+  }
+
+  .nb-stagger-3 {
+    animation-delay: 0.15s;
+  }
+}
+
+@keyframes nb-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nb-animate-in,
+  .nb-card-interactive,
+  .nb-hub-card,
+  .btn-primary,
+  .btn-secondary,
+  .nb-arrow-link-icon {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .nb-card-interactive:hover {
+    transform: none;
   }
 }

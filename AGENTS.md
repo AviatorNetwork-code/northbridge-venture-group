@@ -4,9 +4,11 @@ This repository is the Northbridge Venture Group marketing site and Northbridge 
 
 **Stack 1 scope:** repo operating system, information architecture, and assessment protection.  
 **Stack 3 scope:** assessment lead persistence and internal admin review (Supabase + protected `/admin` routes).  
-**Stack 4 scope:** admin usability (filters, workflow status, call prep), production checklist, public smoke tests.
+**Stack 4 scope:** admin usability (filters, workflow status, call prep), production checklist, public smoke tests.  
+**Stack 5 scope:** Northbridge Knowledge System (NKS) documentation infrastructure — no runtime consumption.  
+**Stack 6 scope:** access control and IP protection documentation — no runtime auth implementation.
 
-Do not add MCP, SurveyJS, Refine, OpenAI Agents unless explicitly requested in a later stack.
+Do not add MCP, SurveyJS, Refine, OpenAI Agents, RAG, or vector DB unless explicitly requested in a later stack.
 
 ---
 
@@ -49,8 +51,13 @@ Do not add MCP, SurveyJS, Refine, OpenAI Agents unless explicitly requested in a
 | `docs/business/CALL-OPENING-PLAYBOOK.md` | Internal call scripts by lead category and recommended solution |
 | `docs/infrastructure/STACK-3-SUPABASE-SETUP.md` | Supabase migration and env setup for lead persistence |
 | `docs/infrastructure/STACK-4-PRODUCTION-CHECKLIST.md` | Pre-deploy env, migrations, smoke tests |
+| `docs/knowledge/NKS-001-NORTHBRIDGE-KNOWLEDGE-SYSTEM.md` | Knowledge system standard (NKS) |
+| `docs/knowledge/README.md` | NKS index and folder guide |
+| `docs/security/README.md` | Security and access control index |
+| `docs/security/ACCESS-CONTROL-STANDARD.md` | Least privilege, GitHub, secrets |
+| `docs/security/IP-PROTECTION-STANDARD.md` | Proprietary NBS/NKS/CAT and client data |
 
-When assessment scoring, recommendation logic, or customer-facing copy changes, update the corresponding business doc in the same PR.
+When assessment scoring, recommendation logic, or customer-facing copy changes, update the corresponding **NBS** business doc in the same PR. Update **NKS** when verified knowledge changes.
 
 ---
 
@@ -110,6 +117,58 @@ The assessment is a **deterministic, server-side** lead-intelligence system. Tre
 
 ---
 
+## Stack 5 — Northbridge Knowledge System (NKS)
+
+- **NBS** = how Northbridge works (`docs/business/`, `AGENTS.md`, runtime standards)
+- **NKS** = what Northbridge knows (`docs/knowledge/`, templates in `docs/templates/`)
+- **CAT** (future) = how Northbridge reasons with NBS + NKS — not implemented in Stack 5
+
+### AI agent rules (NKS)
+
+1. **Read NBS before NKS** — operating standards and code beat knowledge docs when they conflict.
+2. **Do not invent industry facts** — no fabricated benchmarks, regulations, market sizes, or vendor claims.
+3. **Tag unverified knowledge** — use `TODO — Research Required` or `TODO — Client engagement required` in entries.
+4. **Preserve source-of-truth hierarchy** — runtime code → NBS → NKS (verified) → TODO scaffolds.
+5. **Lessons learned after client work** — add to NKS using `docs/templates/LESSON-LEARNED-TEMPLATE.md`; update industry, constraint, pattern, or case study entries.
+6. **Runtime consumption requires approval** — wiring the app, admin UI, or assessment to read NKS requires a separate stack and NBS update.
+7. **No RAG/ingestion in Stack 5** — do not add vector DB, embeddings, MCP, or document ingestion without explicit approval.
+
+### Templates
+
+- `docs/templates/KNOWLEDGE-ENTRY-TEMPLATE.md`
+- `docs/templates/INDUSTRY-PLAYBOOK-TEMPLATE.md`
+- `docs/templates/CONSTRAINT-TEMPLATE.md`
+- `docs/templates/SOLUTION-TEMPLATE.md`
+- `docs/templates/KPI-TEMPLATE.md`
+- `docs/templates/CASE-STUDY-TEMPLATE.md`
+- `docs/templates/LESSON-LEARNED-TEMPLATE.md`
+
+---
+
+## Stack 6 — Access Control and IP Protection
+
+- Standards live in `docs/security/` — documentation only in Stack 6
+- Key topics: company-owned accounts, least privilege, GitHub branch protection, no direct push to `main`, PR review, secrets hygiene, proprietary docs, contractor IP terms, offboarding
+
+### AI agent rules (security)
+
+1. **Do not expose proprietary docs externally** — NBS, NKS, security standards, admin playbooks, and unreleased internal content must not be pasted into public forums, client deliverables, or unapproved third-party tools.
+2. **Do not recommend sharing secrets** — never suggest committing, emailing, or chatting `ADMIN_ACCESS_TOKEN`, `SUPABASE_SERVICE_ROLE_KEY`, API keys, or webhook URLs.
+3. **Do not bypass access standards** — do not advise direct push to `main`, disabling branch protection, or sharing admin credentials for convenience.
+4. **Runtime auth/security changes require a separate stack** — documenting standards does not authorize implementing SSO, RLS, new middleware, or production auth without explicit approval and NBS/security doc update.
+5. **Client and lead data** — treat assessment payloads, Supabase lead rows, and contact submissions as confidential; never include PII in examples or logs meant for users.
+
+### Security document index
+
+- [ACCESS-CONTROL-STANDARD.md](./docs/security/ACCESS-CONTROL-STANDARD.md)
+- [IP-PROTECTION-STANDARD.md](./docs/security/IP-PROTECTION-STANDARD.md)
+- [EMPLOYEE-CONTRIBUTION-STANDARD.md](./docs/security/EMPLOYEE-CONTRIBUTION-STANDARD.md)
+- [CONTRACTOR-ACCESS-STANDARD.md](./docs/security/CONTRACTOR-ACCESS-STANDARD.md)
+- [OFFBOARDING-CHECKLIST.md](./docs/security/OFFBOARDING-CHECKLIST.md)
+- [ROLE-MATRIX.md](./docs/security/ROLE-MATRIX.md)
+
+---
+
 ## Brand And Design
 
 - Palette: Black `#000000`, White `#ffffff`, Deep red `#B11226`
@@ -162,5 +221,8 @@ The assessment is a **deterministic, server-side** lead-intelligence system. Tre
 
 - Do not commit secrets or generated credentials
 - Do not print secret values while debugging
+- Do not expose proprietary NBS/NKS/security documentation outside authorized internal use
+- Do not recommend sharing admin tokens or service role keys in chat, docs, or client-facing material
 - Keep changes limited to requested scope
 - Do not change deployment settings, environment variables, or external integrations unless explicitly asked
+- Runtime authentication and security hardening require a separate approved implementation stack
