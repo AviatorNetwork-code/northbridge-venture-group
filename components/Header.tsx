@@ -15,11 +15,11 @@ const nav = [
 
 export function Header() {
   return (
-    <header className="border-b border-black/10 bg-northbridge-white">
+    <header className="border-b border-white/10 bg-northbridge-black/95 backdrop-blur-sm">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <Link
           href="/"
-          className="text-xl font-bold text-northbridge-black hover:text-northbridge-red transition-colors"
+          className="text-xl font-bold text-white hover:text-northbridge-red transition-colors"
         >
           Northbridge Venture Group
         </Link>
@@ -28,7 +28,7 @@ export function Header() {
             <Link
               key={item.href}
               href={item.href}
-              className="text-northbridge-black hover:text-northbridge-red transition-colors"
+              className="text-white/80 hover:text-northbridge-red transition-colors"
             >
               {item.label}
             </Link>

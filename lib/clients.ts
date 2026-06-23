@@ -4,13 +4,26 @@ export type Client = {
   website?: string;
   location?: string;
   category?: string;
+  capabilities?: string[];
   caseStudyHref?: string;
 };
 
 export const clients: Client[] = [
   {
     name: "Royal International Flight School",
-    description: "Flight training and aviation education.",
+    website: "https://www.royalinternationalflightschool.com",
+    description:
+      "Professional aviation training website built for a Kissimmee-based flight school, focused on student pilot acquisition, orientation booking, program clarity, safety-first messaging, social media connection, and student portal access.",
+    location: "Kissimmee, Florida",
+    category: "Flight School / Aviation Training",
+    capabilities: [
+      "Student Pilot Acquisition",
+      "Orientation Booking",
+      "Aviation Website",
+      "Training Program Structure",
+      "Student Portal Access",
+      "Social Media Integration",
+    ],
   },
   {
     name: "Florida Air & Mechanical Contractors LLC",

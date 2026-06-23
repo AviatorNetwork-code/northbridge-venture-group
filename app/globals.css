@@ -3,14 +3,84 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #000000;
-  --northbridge-red: #B11226;
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --muted: #a3a3a3;
+  --card: #141414;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-accent: rgba(177, 18, 38, 0.35);
+  --northbridge-red: #b11226;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
+}
+
+@layer components {
+  .nb-page {
+    @apply mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-24;
+  }
+
+  .nb-eyebrow {
+    @apply text-sm font-semibold uppercase tracking-wider text-northbridge-red;
+  }
+
+  .nb-h1 {
+    @apply text-4xl sm:text-5xl font-bold text-white tracking-tight;
+  }
+
+  .nb-h2 {
+    @apply text-3xl font-bold text-white;
+  }
+
+  .nb-h3 {
+    @apply text-xl sm:text-2xl font-bold text-white;
+  }
+
+  .nb-lead {
+    @apply text-lg text-white/70 leading-relaxed;
+  }
+
+  .nb-body {
+    @apply text-white/70 leading-relaxed;
+  }
+
+  .nb-card {
+    @apply rounded-xl border border-white/10 bg-northbridge-charcoal p-6 sm:p-8;
+  }
+
+  .nb-card-interactive {
+    @apply nb-card transition-all hover:border-northbridge-red/40 hover:shadow-card-hover;
+  }
+
+  .nb-card-contrast {
+    @apply rounded-xl border border-white/15 bg-white p-6 sm:p-8 text-northbridge-black;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold text-white bg-northbridge-red hover:bg-northbridge-red-dark transition-colors disabled:opacity-60;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold border-2 border-white/80 text-white hover:bg-white hover:text-northbridge-black transition-colors;
+  }
+
+  .nb-input {
+    @apply mt-1 block w-full rounded-lg border border-white/15 bg-northbridge-black/60 px-4 py-2.5 text-white placeholder:text-white/35 focus:border-northbridge-red focus:outline-none focus:ring-1 focus:ring-northbridge-red;
+  }
+
+  .nb-input option {
+    @apply bg-northbridge-charcoal text-white;
+  }
+
+  .nb-input-error {
+    @apply mt-1 block w-full rounded-lg border border-northbridge-red bg-northbridge-black/60 px-4 py-2.5 text-white placeholder:text-white/35 focus:border-northbridge-red focus:outline-none focus:ring-1 focus:ring-northbridge-red;
+  }
+
+  .nb-label {
+    @apply block text-sm font-medium text-white/90;
+  }
 }
 
 @layer utilities {

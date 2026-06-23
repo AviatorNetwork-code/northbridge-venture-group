@@ -38,7 +38,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col`}>
+      <body
+        className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col bg-background text-foreground`}
+      >
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

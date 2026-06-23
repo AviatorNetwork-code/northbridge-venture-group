@@ -10,14 +10,14 @@ export const metadata: Metadata = {
 
 export default function Clients() {
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-24">
-      <h1 className="text-4xl font-bold text-northbridge-black">Clients</h1>
-      <p className="mt-4 text-lg text-black/80 max-w-2xl">
+    <div className="nb-page">
+      <h1 className="nb-h1">Clients</h1>
+      <p className="mt-4 nb-lead max-w-2xl">
         We are proud to work with organizations that share our commitment to quality and
         compliance. Our clients are listed below. This section is distinct from our
         ventures—ventures are brands we operate; clients are organizations we serve.
       </p>
-      <div className="mt-12 space-y-8">
+      <div className="mt-12 grid gap-6 md:grid-cols-2">
         {clients.map((client) => (
           <ClientCard key={client.name} client={client} />
         ))}

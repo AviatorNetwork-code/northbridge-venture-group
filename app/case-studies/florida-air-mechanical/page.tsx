@@ -163,28 +163,25 @@ const sections: StudySection[] = [
 
 export default function FloridaAirMechanicalCaseStudy() {
   return (
-    <div className="bg-northbridge-white">
-      <article className="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-24">
+    <article className="nb-page">
         <header className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-wider text-northbridge-red">
-            Northbridge client case study
-          </p>
-          <h1 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-northbridge-black text-balance tracking-tight">
+          <p className="nb-eyebrow">Northbridge client case study</p>
+          <h1 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-white text-balance tracking-tight">
             Florida Air & Mechanical Contractors LLC — Digital Infrastructure Build
           </h1>
-          <p className="mt-6 text-lg sm:text-xl text-black/80 leading-relaxed">
+          <p className="mt-6 text-lg sm:text-xl text-white/70 leading-relaxed">
             Full HVAC contractor digital infrastructure: brand foundation, web and service architecture, SEO
             systems, lead capture, and conversion-focused UX—built for Orlando, Florida and built to scale with the
             business.
           </p>
           <dl className="mt-8 grid gap-4 sm:grid-cols-2 text-sm sm:text-base">
-            <div className="rounded-xl border border-black/10 bg-white p-5">
-              <dt className="font-semibold text-northbridge-black">Client</dt>
-              <dd className="mt-1 text-black/80">Florida Air & Mechanical Contractors LLC</dd>
+            <div className="nb-card p-5">
+              <dt className="font-semibold text-white">Client</dt>
+              <dd className="mt-1 text-white/70">Florida Air & Mechanical Contractors LLC</dd>
             </div>
-            <div className="rounded-xl border border-black/10 bg-white p-5">
-              <dt className="font-semibold text-northbridge-black">Location</dt>
-              <dd className="mt-1 text-black/80">Orlando, Florida</dd>
+            <div className="nb-card p-5">
+              <dt className="font-semibold text-white">Location</dt>
+              <dd className="mt-1 text-white/70">Orlando, Florida</dd>
             </div>
           </dl>
         </header>
@@ -193,11 +190,11 @@ export default function FloridaAirMechanicalCaseStudy() {
           {sections.map((section) => (
             <section
               key={section.title}
-              className="rounded-xl border border-black/10 bg-white p-6 sm:p-8 shadow-sm hover:border-northbridge-red/25 transition-colors"
+              className="nb-card-interactive"
             >
-              <h2 className="text-xl sm:text-2xl font-bold text-northbridge-black">{section.title}</h2>
-              <p className="mt-4 text-black/80 leading-relaxed">{section.lead}</p>
-              <ul className="mt-5 space-y-3 text-black/80 leading-relaxed list-none">
+              <h2 className="text-xl sm:text-2xl font-bold text-white">{section.title}</h2>
+              <p className="mt-4 text-white/70 leading-relaxed">{section.lead}</p>
+              <ul className="mt-5 space-y-3 text-white/70 leading-relaxed list-none">
                 {section.points.map((point) => (
                   <li key={point} className="flex gap-3">
                     <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-northbridge-red" aria-hidden />
@@ -209,7 +206,7 @@ export default function FloridaAirMechanicalCaseStudy() {
           ))}
         </div>
 
-        <aside className="mt-16 sm:mt-20 rounded-2xl border-2 border-northbridge-black bg-northbridge-black text-northbridge-white p-8 sm:p-10 lg:p-12">
+        <aside className="mt-16 sm:mt-20 rounded-2xl border border-northbridge-red/40 bg-northbridge-charcoal p-8 sm:p-10 lg:p-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-balance">
             Build the same caliber of digital infrastructure for your operation.
           </h2>
@@ -220,19 +217,18 @@ export default function FloridaAirMechanicalCaseStudy() {
           <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-4">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold text-northbridge-black bg-northbridge-white hover:bg-white/90 transition-colors"
+              className="btn-primary"
             >
               Contact Northbridge
             </Link>
             <Link
               href="/partner-with-us"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold border-2 border-white text-white hover:bg-white hover:text-northbridge-black transition-colors"
+              className="btn-secondary"
             >
               Partner With Us
             </Link>
           </div>
         </aside>
-      </article>
-    </div>
+    </article>
   );
 }

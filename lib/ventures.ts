@@ -1,0 +1,47 @@
+export type Venture = {
+  name: string;
+  href: string;
+  description: string;
+  category?: string;
+  positioning?: string;
+  capabilities?: string[];
+  ctaLabel?: string;
+  /** Internal routes use Next.js Link; external opens in a new tab. */
+  external?: boolean;
+  /** Non-link card for ventures not yet launched. */
+  comingSoon?: boolean;
+};
+
+export const ventures: Venture[] = [
+  {
+    name: "Aviator Network",
+    href: "https://aviatornetwork.com",
+    description:
+      "Connecting student pilots with flight instructors through private profiles, training requests, and verified connections.",
+    external: true,
+  },
+  {
+    name: "Quadrix",
+    href: "",
+    category: "Coming Soon",
+    description:
+      "A Northbridge-owned venture in development—built to extend the group’s platform footprint in aviation and adjacent markets.",
+    comingSoon: true,
+  },
+  {
+    name: "AirTax Financial",
+    href: "https://airtaxfinancial.com",
+    description:
+      "Premium tax and financial services for pilots and aviation professionals—filing support, notices, and guidance.",
+    external: true,
+  },
+  {
+    name: "Future Ventures",
+    href: "",
+    category: "Coming Soon",
+    description:
+      "Additional Northbridge-owned platforms in development across aviation, financial services, and related industries.",
+    comingSoon: true,
+  },
+];
+

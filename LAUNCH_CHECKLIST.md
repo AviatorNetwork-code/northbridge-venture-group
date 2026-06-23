@@ -65,13 +65,23 @@ Global metadata is in **`app/layout.tsx`**. Per-page metadata is exported from e
 
 | Item | Check |
 |------|-------|
-| Email visible: **contact@northbridgeventuregroup.com** | ☐ |
+| Email visible: **hello@northbridgeventuregroup.com** | ☐ |
 | Email link opens mail client | ☐ |
 | Additional contact emails verified (if any) | ☐ |
 | Contact form submits successfully | ☐ |
-| Form submission arrives in inbox | ☐ |
+| Form delivery tested and confirmed in configured inbox | ☐ |
 
-**Form delivery:** The contact form POSTs to **`/api/contact`**. To have submissions arrive in your inbox, wire that route to an email provider (e.g. Resend, SendGrid). See `app/api/contact/route.ts` for the TODO.
+**Form delivery:** The contact form uses **`app/api/contact/route.ts`** and sends email through Resend.
+
+**Required environment variables:**
+
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `RESEND_API_KEY` | Yes | Resend API authentication |
+| `RESEND_FROM_EMAIL` | Yes | Verified sender address |
+| `CONTACT_TO_EMAIL` | Optional | Recipient inbox; falls back if unset |
+
+**Confirm:** Submit a test inquiry and verify it reaches the configured inbox.
 
 ---
 
