@@ -15,9 +15,9 @@ Use this checklist before and after each production deployment.
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes (persistence) | Server-side lead storage and admin reads — **secret** |
 | `ADMIN_ACCESS_TOKEN` | Yes (admin) | Shared token for `/admin/login` — **secret** |
 | `SLACK_WEBHOOK_URL` | No | Internal Slack notifications for new assessments |
-| `RESEND_API_KEY` | Yes (contact) | Contact form email delivery |
-| `RESEND_FROM_EMAIL` | Yes (contact) | Verified sender for Resend |
-| `CONTACT_TO_EMAIL` | No | Contact form recipient override |
+| `RESEND_API_KEY` | Yes (contact + assessment) | Contact form and Business Diagnostic email delivery |
+| `RESEND_FROM_EMAIL` | Yes (contact + assessment) | Verified sender for Resend |
+| `CONTACT_TO_EMAIL` | No | Internal recipient for contact form and assessment team notifications |
 | `NEXT_PUBLIC_SITE_URL` | Recommended | Canonical site URL for metadata |
 | `NEXT_PUBLIC_GTM_ID` | Recommended (analytics) | Google Tag Manager container ID — see `docs/infrastructure/analytics.md` |
 | `SMOKE_BASE_URL` | No | Override for smoke script (defaults to `http://localhost:3000`) |
@@ -101,10 +101,12 @@ SMOKE_BASE_URL=https://northbridgeventuregroup.com npm run smoke:public
 
 1. Submit a test assessment on `/digital/assessment`.
 2. Confirm row in `digital_assessment_leads` (Supabase).
-3. Confirm Slack notification (if configured) includes Lead ID.
-4. Sign in at `/admin/login` and review lead in Call Prep section.
-5. Update workflow status and internal notes.
-6. Confirm public success screen does **not** show score or evidence.
+3. Confirm internal team email (Resend → `CONTACT_TO_EMAIL` or fallback) includes score, evidence, and all answers.
+4. Confirm client confirmation email arrives at the submitter address with summary score and recommended focus.
+5. Confirm Slack notification (if configured) includes score and Lead ID when stored.
+6. Sign in at `/admin/login` and review lead in Call Prep section.
+7. Update workflow status and internal notes.
+8. Confirm public success screen does **not** show score or evidence.
 
 ---
 
