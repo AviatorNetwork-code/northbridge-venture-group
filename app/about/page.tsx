@@ -1,18 +1,14 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Section } from "@/components/ui/Section";
+import { siteMetadata } from "@/lib/site-metadata";
 
-export const metadata: Metadata = {
-  title: "About | Northbridge Venture Group",
+export const metadata: Metadata = siteMetadata({
+  title: "About",
   description:
     "Northbridge Venture Group is a Florida-based company building ventures in aviation and financial services, with operational advisory through Northbridge Digital.",
-  openGraph: {
-    title: "About | Northbridge Venture Group",
-    description:
-      "Venture building in aviation and financial services. Operational advisory through Northbridge Digital.",
-    type: "website",
-  },
-};
+  path: "/about",
+});
 
 export default function About() {
   return (
@@ -25,9 +21,10 @@ export default function About() {
             <>
               <p>
                 Northbridge Venture Group LLC is a Florida limited liability company that builds and
-                operates ventures in aviation and financial services. Our portfolio includes Aviator
-                Network—connecting student pilots with flight instructors—and AirTax Financial—tax and
-                financial support for aviation professionals.
+                operates platforms in aviation and financial services. Our portfolio includes Aviator
+                Network—the operating system for modern aviation, bringing pilot training, instructor
+                connections, flight school tools, and aviation AI assistance into one connected
+                platform—and AirTax Financial, tax and financial support for aviation professionals.
               </p>
               <p className="mt-4">
                 We focus on clarity, compliance, and long-term value in every venture we launch.

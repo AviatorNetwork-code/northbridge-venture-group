@@ -6,9 +6,9 @@ import { VentureCard } from "@/components/VentureCard";
 import { ventures } from "@/lib/ventures";
 
 export const metadata: Metadata = {
-  title: "Ventures | Northbridge Venture Group",
+  title: "Northbridge-Owned Platforms | Northbridge Venture Group",
   description:
-    "Northbridge-owned ventures include Aviator Network, Quadrix, AirTax Financial, and future platforms in development.",
+    "Northbridge-owned platforms include Aviator Network—an aviation platform for pilot training, instructor connections, flight school tools, and aviation AI assistance—plus AirTax Financial and ventures in development.",
 };
 
 export default function Ventures() {
@@ -16,12 +16,13 @@ export default function Ventures() {
     <div className="nb-page">
       <Section variant="hero">
         <PageHeader
-          eyebrow="Portfolio"
-          title="Ventures we build and operate"
+          eyebrow="Northbridge-owned platforms"
+          title="Products we build and operate"
           description={
             <>
-              Ventures are Northbridge-owned products and platforms. Client advisory is delivered
-              through{" "}
+              These are Northbridge-owned platforms—not client engagements. Aviator Network is our
+              flagship aviation ecosystem for pilot training, instructor connections, and flight
+              school tools. Client advisory is delivered through{" "}
               <Link href="/services" className="text-northbridge-red font-medium hover:text-white transition-colors">
                 Northbridge Digital
               </Link>

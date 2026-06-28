@@ -8,32 +8,28 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { getPublicClarityId } from "@/lib/clarity";
 import { getPublicGtmId } from "@/lib/gtm";
+import { siteMetadata } from "@/lib/site-metadata";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
+  preload: true,
 });
 
 export const metadata: Metadata = {
+  ...siteMetadata({
+    title: {
+      default: "Northbridge Venture Group",
+      template: "%s | Northbridge Venture Group",
+    },
+    description:
+      "Northbridge Venture Group builds and operates platforms in aviation and financial services—including Aviator Network, an aviation platform for pilot training, instructor connections, and flight school tools—and AirTax Financial.",
+    path: "/",
+  }),
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://northbridgeventuregroup.com"
   ),
-  title: "Northbridge Venture Group",
-  description:
-    "Northbridge Venture Group builds and operates ventures in aviation and financial services, including Aviator Network and AirTax Financial.",
-  openGraph: {
-    title: "Northbridge Venture Group",
-    description:
-      "Northbridge Venture Group builds and operates ventures in aviation and financial services.",
-    type: "website",
-    // Dynamic OG image from app/opengraph-image.tsx. Replace with /og-image.png when you have a final asset.
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Northbridge Venture Group",
-    description: "Northbridge Venture Group builds and operates ventures in aviation and financial services.",
-  },
 };
 
 export default function RootLayout({

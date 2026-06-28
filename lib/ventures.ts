@@ -4,6 +4,8 @@ export type Venture = {
   description: string;
   category?: string;
   positioning?: string;
+  /** Who the platform is designed for (shown on full venture cards). */
+  audience?: string[];
   capabilities?: string[];
   ctaLabel?: string;
   /** Internal routes use Next.js Link; external opens in a new tab. */
@@ -16,8 +18,26 @@ export const ventures: Venture[] = [
   {
     name: "Aviator Network",
     href: "https://aviatornetwork.com",
+    category: "Flagship platform · Aviation",
+    positioning: "The Operating System for Modern Aviation",
     description:
-      "Connecting student pilots with flight instructors through private profiles, training requests, and verified connections.",
+      "Aviator Network brings aviation tools, instructor connections, AI assistance, training management, and future aviation services into one connected platform.",
+    audience: [
+      "Student pilots",
+      "Instructors",
+      "Flight schools",
+      "Aviation professionals",
+    ],
+    capabilities: [
+      "CAT AI Assistant",
+      "Instructor Marketplace",
+      "Training Progress",
+      "Logbook Intelligence",
+      "Flight School Tools",
+      "Aviation Community",
+      "Career Development",
+    ],
+    ctaLabel: "Explore the platform",
     external: true,
   },
   {

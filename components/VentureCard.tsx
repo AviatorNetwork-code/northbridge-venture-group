@@ -35,24 +35,47 @@ export function VentureCard({ venture, compact = false }: VentureCardProps) {
       >
         {venture.name}
       </h2>
-      {venture.positioning && !compact && (
-        <p className="mt-2 text-sm text-white/45">{venture.positioning}</p>
+      {venture.positioning && (
+        <p
+          className={`font-medium text-white/85 leading-snug ${
+            compact ? "mt-2 text-sm" : "mt-3 text-base"
+          }`}
+        >
+          {venture.positioning}
+        </p>
       )}
       <p className={`text-white/60 leading-relaxed ${compact ? "mt-2 text-sm" : "mt-3"}`}>
         {venture.description}
       </p>
+      {venture.audience && venture.audience.length > 0 && !compact && (
+        <div className="mt-5">
+          <p className="text-xs font-semibold uppercase tracking-wider text-white/45">Built for</p>
+          <p className="mt-2 text-sm text-white/65 leading-relaxed">
+            {venture.audience.join(" · ")}
+          </p>
+        </div>
+      )}
       {venture.capabilities && venture.capabilities.length > 0 && !compact && (
-        <ul className="mt-5 flex flex-wrap gap-2 list-none">
-          {venture.capabilities.map((cap) => (
-            <li key={cap}>
-              <Tag>{cap}</Tag>
-            </li>
-          ))}
-        </ul>
+        <div className="mt-5">
+          <p className="text-xs font-semibold uppercase tracking-wider text-white/45">
+            Ecosystem includes
+          </p>
+          <ul className="mt-3 flex flex-wrap gap-2 list-none">
+            {venture.capabilities.map((cap) => (
+              <li key={cap}>
+                <Tag>{cap}</Tag>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-xs text-white/40 leading-relaxed">
+            Capabilities are rolling out over time—designed to support a connected aviation
+            ecosystem.
+          </p>
+        </div>
       )}
       <span
-        className={`inline-flex items-center gap-1 text-northbridge-red font-semibold ${
-          compact ? "mt-4 text-sm" : "mt-5 text-sm"
+        className={`inline-flex items-center gap-1 text-northbridge-red-text font-semibold ${
+          compact ? "mt-4 text-sm" : "mt-6 text-sm"
         }`}
       >
         {cta}

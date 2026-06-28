@@ -8,23 +8,20 @@ import { ClientCard } from "@/components/ClientCard";
 import { VentureCard } from "@/components/VentureCard";
 import { clients } from "@/lib/clients";
 import { DIAGNOSTIC_CTA } from "@/lib/digital/metadata";
+import { siteMetadata } from "@/lib/site-metadata";
 import { ventures } from "@/lib/ventures";
 
-export const metadata: Metadata = {
-  title: "Home | Northbridge Venture Group",
+export const metadata: Metadata = siteMetadata({
+  title: "Home",
   description:
-    "Northbridge Venture Group builds ventures in aviation and financial services. Northbridge Digital advises operators on growth, operations, and business systems.",
-  openGraph: {
-    title: "Northbridge Venture Group",
-    description:
-      "Venture building and operational advisory for aviation, financial services, and growth-stage businesses.",
-    type: "website",
-  },
-};
+    "Northbridge Venture Group builds aviation and financial services platforms. Aviator Network connects pilot training, instructor connections, and flight school tools. Northbridge Digital advises operators on growth and operations.",
+  path: "/",
+  openGraphTitle: "Northbridge Venture Group",
+});
 
 const trustPillars = [
   { label: "Focus", value: "Clarity, compliance, and long-term value" },
-  { label: "Ventures", value: "Aviation and financial services platforms" },
+  { label: "Platforms", value: "Aviation ecosystem and financial services" },
   { label: "Advisory", value: "Northbridge Digital consulting arm" },
 ];
 
@@ -80,7 +77,7 @@ export default function Home() {
           <div className="mt-10 nb-cta-group">
             <ButtonLink href="/services">Northbridge Digital</ButtonLink>
             <ButtonLink href="/ventures" variant="secondary">
-              Our ventures
+              Our platforms
             </ButtonLink>
           </div>
         </div>
@@ -97,9 +94,9 @@ export default function Home() {
 
       <Section>
         <SectionHeader
-          eyebrow="Ventures"
+          eyebrow="Platforms"
           title="Northbridge-owned platforms"
-          description="Products and platforms we build, operate, and scale—not client engagements."
+          description="Aviator Network is our flagship aviation platform—training, tools, and connected services in one ecosystem. We also operate financial services ventures."
         />
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {ventures.map((venture) => (
@@ -107,7 +104,7 @@ export default function Home() {
           ))}
         </div>
         <div className="mt-10">
-          <ArrowLink href="/ventures">View all ventures</ArrowLink>
+          <ArrowLink href="/ventures">View all platforms</ArrowLink>
         </div>
       </Section>
 
