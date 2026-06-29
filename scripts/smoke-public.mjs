@@ -12,7 +12,10 @@ const BASE_URL = (process.env.SMOKE_BASE_URL || "http://localhost:3000").replace
 const ROUTES = [
   "/",
   "/about",
-  "/ventures",
+  "/solutions",
+  "/solutions/customer-acquisition",
+  "/northbridge-digital",
+  "/insights",
   "/services",
   "/services/industries",
   "/services/expertise",
@@ -25,11 +28,11 @@ const ROUTES = [
   "/case-studies",
 ];
 
-const VENTURE_CARD_NAMES = [
+const PLATFORM_CARD_NAMES = [
   "Aviator Network",
+  "Workforce Operations Platform",
+  "Trucker Network",
   "Quadrix",
-  "AirTax Financial",
-  "Future Ventures",
 ];
 
 function fail(message) {
@@ -55,21 +58,21 @@ async function fetchText(path) {
   return { path, html: await response.text() };
 }
 
-function assertVenturesTaxonomy(html) {
-  for (const name of VENTURE_CARD_NAMES) {
+function assertPlatformsTaxonomy(html) {
+  for (const name of PLATFORM_CARD_NAMES) {
     if (!html.includes(name)) {
-      fail(`/ventures missing venture card: ${name}`);
+      fail(`/about missing platform card: ${name}`);
       return;
     }
   }
 
-  const ventureCardPattern = /<h2[^>]*>\s*Northbridge Digital\s*<\/h2>/i;
-  if (ventureCardPattern.test(html)) {
-    fail("/ventures lists Northbridge Digital as a venture card");
+  const platformCardPattern = /<h2[^>]*>\s*Northbridge Digital\s*<\/h2>/i;
+  if (platformCardPattern.test(html)) {
+    fail("/about lists Northbridge Digital as a platform card");
     return;
   }
 
-  pass("/ventures shows owned ventures only (no Northbridge Digital venture card)");
+  pass("/about shows owned platforms (no Northbridge Digital platform card)");
 }
 
 function assertServicesTaxonomy(html) {
@@ -79,6 +82,15 @@ function assertServicesTaxonomy(html) {
   }
 
   pass("/services contains Northbridge Digital");
+}
+
+function assertSolutionsHub(html) {
+  if (!html.includes("Business Solutions") || !html.includes("Workforce Operations")) {
+    fail("/solutions missing business solution content");
+    return;
+  }
+
+  pass("/solutions hub loads with solution categories");
 }
 
 function assertAssessmentLoads(html) {
@@ -105,8 +117,9 @@ async function main() {
     for (const path of ROUTES) {
       const { html } = await fetchText(path);
       pass(`${path} returned HTTP 200`);
-      if (path === "/ventures") assertVenturesTaxonomy(html);
+      if (path === "/about") assertPlatformsTaxonomy(html);
       if (path === "/services") assertServicesTaxonomy(html);
+      if (path === "/solutions") assertSolutionsHub(html);
       if (path === "/digital/assessment") assertAssessmentLoads(html);
     }
   } catch (error) {

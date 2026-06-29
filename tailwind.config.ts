@@ -19,6 +19,8 @@ const config: Config = {
           white: "#ffffff",
           red: "#B11226",
           "red-dark": "#8e0e1e",
+          /** Brighter red for small text on dark surfaces (WCAG AA on charcoal cards). */
+          "red-text": "#FF6B7F",
           muted: "#a3a3a3",
         },
       },

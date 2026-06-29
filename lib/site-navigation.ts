@@ -1,28 +1,39 @@
 export type SiteNavItem = {
   href: string;
   label: string;
-  /** Shown in footer or meta; Services = Northbridge Digital consulting arm */
   description?: string;
-  /** Routes that mark this nav item active (prefix match) */
   activePrefixes?: string[];
 };
 
 export const primaryNav: SiteNavItem[] = [
   { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/ventures", label: "Ventures" },
   {
-    href: "/services",
-    label: "Services",
-    description: "Northbridge Digital",
-    activePrefixes: ["/services", "/digital"],
+    href: "/solutions",
+    label: "Business Solutions",
+    activePrefixes: ["/solutions"],
   },
-  { href: "/clients", label: "Clients" },
-  { href: "/case-studies", label: "Case Studies" },
+  {
+    href: "/northbridge-digital",
+    label: "Northbridge Digital",
+    activePrefixes: ["/northbridge-digital", "/services", "/digital"],
+  },
+  {
+    href: "/insights",
+    label: "Insights",
+    activePrefixes: ["/insights", "/services/insights", "/services/expertise"],
+  },
+  {
+    href: "/about",
+    label: "About Us",
+    activePrefixes: ["/about", "/research"],
+  },
   { href: "/contact", label: "Contact" },
 ];
 
 export const secondaryNav: SiteNavItem[] = [
+  { href: "/research", label: "Research" },
+  { href: "/clients", label: "Clients" },
+  { href: "/case-studies", label: "Case Studies" },
   { href: "/partner-with-us", label: "Partner With Us" },
 ];
 

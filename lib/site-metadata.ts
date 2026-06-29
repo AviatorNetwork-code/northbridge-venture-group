@@ -6,7 +6,7 @@ export const SITE_URL =
 export const SITE_NAME = "Northbridge Venture Group";
 
 export const DEFAULT_DESCRIPTION =
-  "Northbridge Venture Group builds and operates platforms in aviation and financial services—including Aviator Network, an aviation platform for pilot training, instructor connections, and flight school tools—and AirTax Financial.";
+  "Northbridge Venture Group delivers intelligent solutions for complex business problems—platforms, adaptable business solutions, and custom systems through Northbridge Digital.";
 
 const OG_IMAGE = {
   url: "/brand/og-image.png",

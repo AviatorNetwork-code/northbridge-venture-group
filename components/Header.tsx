@@ -44,28 +44,20 @@ export function Header() {
           className="min-w-0 text-base font-semibold tracking-tight text-white transition-colors hover:text-northbridge-red sm:text-lg"
         >
           Northbridge
-          <span className="hidden text-white/50 font-normal sm:inline"> Venture Group</span>
+          <span className="hidden text-white/60 font-normal sm:inline"> Venture Group</span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-6 xl:gap-7" aria-label="Primary">
           {primaryNav.map((item) => {
             const active = isNavActive(pathname, item);
-            const isConsulting = item.href === "/services";
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`nb-nav-link ${active ? "nb-nav-link-active" : ""} ${
-                  isConsulting ? "nb-nav-link-consulting" : ""
-                }`}
+                className={`nb-nav-link ${active ? "nb-nav-link-active" : ""}`}
                 aria-current={active ? "page" : undefined}
               >
                 {item.label}
-                {isConsulting && (
-                  <span className="ml-1.5 hidden xl:inline text-[0.65rem] font-semibold uppercase tracking-wider text-northbridge-red/80">
-                    Digital
-                  </span>
-                )}
               </Link>
             );
           })}

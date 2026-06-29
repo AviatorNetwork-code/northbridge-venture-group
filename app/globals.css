@@ -78,7 +78,7 @@ html {
   }
 
   .nb-eyebrow {
-    @apply text-xs font-semibold uppercase tracking-[0.14em] text-northbridge-red;
+    @apply text-xs font-semibold uppercase tracking-[0.14em] text-northbridge-red-text;
   }
 
   .nb-h2 {
@@ -90,15 +90,15 @@ html {
   }
 
   .nb-lead {
-    @apply text-base sm:text-lg text-white/65 leading-relaxed;
+    @apply text-base sm:text-lg text-northbridge-muted leading-relaxed;
   }
 
   .nb-body {
-    @apply text-[0.9375rem] sm:text-base text-white/65 leading-relaxed;
+    @apply text-[0.9375rem] sm:text-base text-northbridge-muted leading-relaxed;
   }
 
   .nb-caption {
-    @apply text-sm text-white/45 leading-relaxed;
+    @apply text-sm text-northbridge-muted leading-relaxed;
   }
 
   /* Cards */
@@ -121,7 +121,7 @@ html {
   }
 
   .nb-hub-card-index {
-    @apply text-xs font-semibold tracking-widest text-white/25 mb-6;
+    @apply text-xs font-semibold tracking-widest text-northbridge-muted mb-6;
   }
 
   .nb-hub-card-title {
@@ -129,11 +129,11 @@ html {
   }
 
   .nb-hub-card-desc {
-    @apply mt-3 flex-1 text-sm text-white/55 leading-relaxed;
+    @apply mt-3 flex-1 text-sm text-northbridge-muted leading-relaxed;
   }
 
   .nb-hub-card-cta {
-    @apply mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-northbridge-red;
+    @apply mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-northbridge-red-text underline-offset-2 group-hover:underline;
   }
 
   .nb-cta-band {
@@ -159,7 +159,7 @@ html {
 
   /* Links */
   .nb-arrow-link {
-    @apply inline-flex items-center gap-1.5 text-sm font-semibold text-northbridge-red transition-colors hover:text-white;
+    @apply inline-flex items-center gap-1.5 text-sm font-semibold text-northbridge-red-text underline-offset-2 transition-colors hover:text-white hover:underline;
   }
 
   .nb-arrow-link-icon {
@@ -181,7 +181,7 @@ html {
   }
 
   .nb-trust-label {
-    @apply text-xs font-semibold uppercase tracking-[0.12em] text-white/40;
+    @apply text-xs font-semibold uppercase tracking-[0.12em] text-northbridge-muted;
   }
 
   .nb-trust-value {
@@ -322,11 +322,9 @@ html {
 
 @keyframes nb-fade-in {
   from {
-    opacity: 0;
     transform: translateY(10px);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }

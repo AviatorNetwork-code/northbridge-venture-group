@@ -38,7 +38,7 @@ export function ClientCard({ client }: { client: Client }) {
             href={client.website}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-semibold text-northbridge-red hover:text-white transition-colors"
+            className="text-sm font-semibold text-northbridge-red-text underline-offset-2 hover:text-white hover:underline transition-colors"
           >
             {websiteLabel(client.website)} →
           </a>

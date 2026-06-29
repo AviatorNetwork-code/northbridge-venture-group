@@ -24,7 +24,7 @@ export const metadata: Metadata = {
       template: "%s | Northbridge Venture Group",
     },
     description:
-      "Northbridge Venture Group builds and operates platforms in aviation and financial services—including Aviator Network, an aviation platform for pilot training, instructor connections, and flight school tools—and AirTax Financial.",
+      "Northbridge Venture Group delivers intelligent solutions for complex business problems—platforms, business solutions, and custom systems through Northbridge Digital.",
     path: "/",
   }),
   metadataBase: new URL(

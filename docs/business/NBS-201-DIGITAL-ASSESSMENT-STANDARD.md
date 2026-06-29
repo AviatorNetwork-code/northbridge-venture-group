@@ -103,8 +103,10 @@ JSON body matching `DigitalAssessmentPayload`.
 2. `validateAssessmentPayload(payload)` — reject invalid enums and missing required fields
 3. `evaluateAssessment(payload)` — deterministic score, category, recommendation, opening, evidence
 4. `storeAssessmentLead(...)` — persist to Supabase when configured; **do not fail** submission if storage errors
-5. Send Slack notification if `SLACK_WEBHOOK_URL` is set; include **Lead ID** when stored; **do not fail** if missing or if Slack errors
-6. Return JSON success (unchanged public shape)
+5. Send internal team email and client confirmation via Resend when configured; **do not fail** submission if email errors
+6. Send Slack notification if `SLACK_WEBHOOK_URL` is set; include **Lead ID** when stored; **do not fail** if missing or if Slack errors
+7. Log channel outcomes (`persisted`, `internalEmail`, `clientEmail`, `slack`) for Vercel function logs
+8. Return JSON success (unchanged public shape)
 
 ---
 

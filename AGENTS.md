@@ -188,9 +188,9 @@ The assessment is a **deterministic, server-side** lead-intelligence system. Tre
 
 ## Digital Assessment API
 
-- `POST /api/digital-assessment` — validates payload, evaluates server-side, persists when Supabase configured, notifies Slack when configured
-- Env: `SLACK_WEBHOOK_URL` (optional), `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (optional persistence)
-- Implementation: `app/api/digital-assessment/route.ts`
+- `POST /api/digital-assessment` — validates payload, evaluates server-side, persists to Supabase, then dispatches internal email, client confirmation email, and Slack (best-effort; scoring unchanged)
+- Env: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (persistence), `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `CONTACT_TO_EMAIL` (notifications), `SLACK_WEBHOOK_URL` (optional), `ADMIN_ACCESS_TOKEN` (admin review)
+- Implementation: `app/api/digital-assessment/route.ts`, `lib/digital-assessment-notifications.ts`
 
 ---
 

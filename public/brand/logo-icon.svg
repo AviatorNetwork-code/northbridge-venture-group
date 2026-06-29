@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" role="img" aria-label="Northbridge mark">
+  <title>Northbridge</title>
+  <path d="M10 36V16" stroke="#000000" stroke-width="4" stroke-linecap="square"/>
+  <path d="M38 36V16" stroke="#000000" stroke-width="4" stroke-linecap="square"/>
+  <path d="M10 16C10 16 24 4 38 16" stroke="#000000" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <rect x="6" y="40" width="36" height="4" fill="#B11226"/>
+</svg>

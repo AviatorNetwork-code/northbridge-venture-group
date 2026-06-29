@@ -2,12 +2,14 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Section } from "@/components/ui/Section";
+import { siteMetadata } from "@/lib/site-metadata";
 
-export const metadata: Metadata = {
-  title: "Case Studies | Northbridge Venture Group",
+export const metadata: Metadata = siteMetadata({
+  title: "Case Studies",
   description:
     "Selected Northbridge client engagements—digital infrastructure, operational systems, and growth infrastructure.",
-};
+  path: "/case-studies",
+});
 
 const studies = [
   {

@@ -3,12 +3,14 @@ import { ContactForm } from "@/components/ContactForm";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Section } from "@/components/ui/Section";
 import { CONTACT_CHANNELS, PRIMARY_CONTACT_EMAIL } from "@/lib/contact";
+import { siteMetadata } from "@/lib/site-metadata";
 
-export const metadata: Metadata = {
-  title: "Contact | Northbridge Venture Group",
+export const metadata: Metadata = siteMetadata({
+  title: "Contact",
   description:
     "Contact Northbridge Venture Group about ventures, advisory work, or operational improvement through Northbridge Digital.",
-};
+  path: "/contact",
+});
 
 const inquiryProcessPoints = [
   "Project qualification review",
