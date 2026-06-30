@@ -3,7 +3,7 @@
 **Purpose:** Verified engagement stories for internal learning and approved public reuse.
 
 **Template:** [CASE-STUDY-TEMPLATE.md](../../templates/CASE-STUDY-TEMPLATE.md)  
-**Public site:** `app/case-studies/` (separate from NKS — sync lessons manually)
+**Public site:** `app/case-studies/` lists **client projects** (completed engagements). Reserve the term *case study* for projects with documented measurable outcomes.
 
 ---
 

@@ -33,7 +33,7 @@ export const primaryNav: SiteNavItem[] = [
 export const secondaryNav: SiteNavItem[] = [
   { href: "/research", label: "Research" },
   { href: "/clients", label: "Clients" },
-  { href: "/case-studies", label: "Case Studies" },
+  { href: "/case-studies", label: "Client Projects" },
   { href: "/partner-with-us", label: "Partner With Us" },
 ];
 

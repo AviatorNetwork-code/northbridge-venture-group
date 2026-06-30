@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title:
-    "Florida Air & Mechanical Contractors LLC — Digital Infrastructure Build | Northbridge Venture Group",
+    "Florida Air & Mechanical Contractors LLC — Website & Digital Infrastructure | Northbridge Venture Group",
   description:
-    "Northbridge client case study: full digital infrastructure for Florida Air & Mechanical Contractors LLC—HVAC contractor brand, web architecture, SEO, lead systems, and conversion-focused UX.",
+    "Northbridge client project: digital foundation for Florida Air & Mechanical Contractors LLC—branding, website architecture, search optimization, lead capture, and customer trust systems.",
 };
 
 type StudySection = {
@@ -165,9 +165,9 @@ export default function FloridaAirMechanicalCaseStudy() {
   return (
     <article className="nb-page">
         <header className="max-w-3xl">
-          <p className="nb-eyebrow">Northbridge client case study</p>
+          <p className="nb-eyebrow">Northbridge client project</p>
           <h1 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-white text-balance tracking-tight">
-            Florida Air & Mechanical Contractors LLC — Digital Infrastructure Build
+            Florida Air & Mechanical Contractors LLC — Website & Digital Infrastructure
           </h1>
           <p className="mt-6 text-lg sm:text-xl text-white/70 leading-relaxed">
             Full HVAC contractor digital infrastructure: brand foundation, web and service architecture, SEO

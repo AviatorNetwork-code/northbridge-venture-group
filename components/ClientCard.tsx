@@ -45,7 +45,7 @@ export function ClientCard({ client }: { client: Client }) {
         )}
         {client.caseStudyHref && (
           <ArrowLink href={client.caseStudyHref} className="text-sm">
-            View case study
+            View client project
           </ArrowLink>
         )}
       </div>

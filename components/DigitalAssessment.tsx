@@ -368,8 +368,8 @@ export function DigitalAssessment() {
           <div className="mt-8 rounded-xl border border-white/10 bg-northbridge-black/40 p-6">
             <p className="font-semibold text-white">We&apos;ll follow up after review.</p>
             <p className="mt-2 text-sm text-white/65 leading-relaxed">
-              Your responses help us prioritize the right recommendation. Explore our ventures and
-              case studies while Northbridge reviews your assessment.
+              Your responses help us prioritize the right recommendation. Explore our client
+              projects while Northbridge reviews your assessment.
             </p>
             <div className="mt-5 flex flex-wrap gap-4">
               <Link href="/digital" className="btn-secondary">
@@ -379,7 +379,7 @@ export function DigitalAssessment() {
                 href="/case-studies"
                 className="text-sm font-semibold text-northbridge-red hover:underline self-center"
               >
-                View case studies →
+                View client projects →
               </Link>
             </div>
           </div>
