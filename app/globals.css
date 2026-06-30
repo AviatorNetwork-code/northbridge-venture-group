@@ -5,13 +5,15 @@
 :root {
   --background: #0a0a0a;
   --foreground: #fafafa;
-  --muted: #a3a3a3;
+  --muted: #b3b3b3;
   --card: #141414;
   --border: rgba(255, 255, 255, 0.1);
   --border-accent: rgba(177, 18, 38, 0.35);
   --northbridge-red: #b11226;
   --section-gap: 5rem;
   --section-gap-lg: 7rem;
+  --content-max: 42rem;
+  --prose-max: 65ch;
 }
 
 @media (min-width: 640px) {
@@ -26,10 +28,19 @@ body {
   background: var(--background);
   overflow-x: clip;
   min-width: 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 html {
   overflow-x: clip;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 @layer base {
@@ -40,12 +51,19 @@ html {
   ::selection {
     @apply bg-northbridge-red/30 text-white;
   }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-pretty;
+  }
 }
 
 @layer components {
   /* Layout */
   .nb-page {
-    @apply w-full min-w-0 pb-16 sm:pb-24;
+    @apply w-full min-w-0 pb-16 sm:pb-20 lg:pb-24;
   }
 
   .nb-main {
@@ -57,15 +75,15 @@ html {
   }
 
   .nb-section-tight {
-    @apply py-8 sm:py-12 lg:py-14;
+    @apply py-10 sm:py-12 lg:py-16;
   }
 
   .nb-section-hero {
-    @apply pt-10 pb-12 sm:pt-16 sm:pb-20 lg:pb-24 border-b border-white/[0.06];
+    @apply pt-10 pb-12 sm:pt-14 sm:pb-16 lg:pt-16 lg:pb-20 border-b border-white/[0.06];
     background: linear-gradient(
       180deg,
-      rgba(20, 20, 20, 0.6) 0%,
-      rgba(10, 10, 10, 0) 100%
+      rgba(20, 20, 20, 0.55) 0%,
+      rgba(10, 10, 10, 0) 72%
     );
   }
 
@@ -73,47 +91,66 @@ html {
     @apply py-12 sm:py-16 lg:py-20 border-y border-white/[0.06] bg-northbridge-charcoal/40;
   }
 
+  /** Standard spacing between a section header and its content. */
+  .nb-section-body {
+    @apply mt-10 sm:mt-12 lg:mt-14;
+  }
+
   .nb-h1 {
-    @apply text-[1.75rem] leading-[1.12] min-[375px]:text-[2rem] sm:text-5xl lg:text-[3.25rem] font-semibold text-white tracking-tight text-pretty;
+    @apply text-[1.75rem] leading-[1.14] min-[375px]:text-[2rem] sm:text-[2.5rem] lg:text-[3.25rem] font-semibold text-white tracking-tight;
   }
 
   .nb-eyebrow {
-    @apply text-xs font-semibold uppercase tracking-[0.14em] text-northbridge-red-text;
+    @apply text-[0.6875rem] sm:text-xs font-semibold uppercase tracking-[0.14em] text-northbridge-red-text;
   }
 
   .nb-h2 {
-    @apply text-xl sm:text-2xl lg:text-3xl font-semibold text-white tracking-tight text-pretty;
+    @apply text-xl sm:text-2xl lg:text-[1.75rem] font-semibold text-white tracking-tight leading-snug;
   }
 
   .nb-h3 {
-    @apply text-lg sm:text-xl lg:text-2xl font-semibold text-white tracking-tight text-pretty;
+    @apply text-lg sm:text-xl font-semibold text-white tracking-tight leading-snug;
   }
 
   .nb-lead {
-    @apply text-base sm:text-lg text-northbridge-muted leading-relaxed;
+    @apply text-base sm:text-lg text-white/70 leading-[1.65] max-w-[var(--content-max)];
   }
 
   .nb-body {
-    @apply text-[0.9375rem] sm:text-base text-northbridge-muted leading-relaxed;
+    @apply text-[0.9375rem] sm:text-base text-white/70 leading-[1.65];
   }
 
   .nb-caption {
-    @apply text-sm text-northbridge-muted leading-relaxed;
+    @apply text-sm text-white/60 leading-relaxed;
+  }
+
+  /* Grids */
+  .nb-card-grid {
+    @apply grid gap-4 sm:gap-5;
+  }
+
+  .nb-card-grid-2 {
+    @apply nb-card-grid sm:grid-cols-2;
+  }
+
+  .nb-card-grid-3 {
+    @apply nb-card-grid sm:grid-cols-2 lg:grid-cols-3;
   }
 
   /* Cards */
   .nb-card {
-    @apply rounded-lg border border-white/[0.08] bg-northbridge-charcoal p-5 sm:p-6 lg:p-8;
+    @apply rounded-xl border border-white/[0.08] bg-northbridge-charcoal p-5 sm:p-6 lg:p-7;
   }
 
   .nb-card-interactive {
     @apply nb-card transition-[border-color,box-shadow,transform] duration-300 ease-out;
-    @apply hover:border-white/15 hover:shadow-card hover:-translate-y-0.5;
-    @apply focus-within:border-northbridge-red/30 focus-within:shadow-card-hover;
+    @apply hover:border-white/[0.14] hover:shadow-card hover:-translate-y-px;
+    @apply focus-within:border-northbridge-red/35 focus-within:shadow-card-hover;
+    @apply active:translate-y-0;
   }
 
   .nb-card-contrast {
-    @apply rounded-lg border border-white/10 bg-white p-6 sm:p-8 text-northbridge-black;
+    @apply rounded-xl border border-white/10 bg-white p-6 sm:p-8 text-northbridge-black;
   }
 
   .nb-hub-card {
@@ -121,45 +158,62 @@ html {
   }
 
   .nb-hub-card-index {
-    @apply text-xs font-semibold tracking-widest text-northbridge-muted mb-6;
+    @apply text-[0.6875rem] font-semibold tracking-[0.2em] text-white/50 mb-5 tabular-nums;
   }
 
   .nb-hub-card-title {
-    @apply text-lg font-semibold text-white transition-colors group-hover:text-northbridge-red;
+    @apply text-lg font-semibold text-white leading-snug transition-colors group-hover:text-northbridge-red-text;
   }
 
   .nb-hub-card-desc {
-    @apply mt-3 flex-1 text-sm text-northbridge-muted leading-relaxed;
+    @apply mt-3 flex-1 text-sm text-white/70 leading-[1.6];
   }
 
   .nb-hub-card-cta {
-    @apply mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-northbridge-red-text underline-offset-2 group-hover:underline;
+    @apply mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-northbridge-red-text underline-offset-4 group-hover:underline;
   }
 
   .nb-cta-band {
-    @apply nb-card border-northbridge-red/20 bg-gradient-to-br from-northbridge-charcoal to-northbridge-black/80 p-8 sm:p-10;
+    @apply nb-card border-northbridge-red/25 bg-northbridge-charcoal p-8 sm:p-10 lg:p-12;
+  }
+
+  .nb-callout {
+    @apply rounded-xl border border-northbridge-red/25 bg-northbridge-red/[0.06] px-4 py-4 sm:px-5;
   }
 
   /* Buttons */
   .btn-primary {
-    @apply inline-flex items-center justify-center min-h-[2.75rem] min-w-[2.75rem] px-5 sm:px-6 py-2.5 rounded-md text-sm font-semibold text-white;
-    @apply bg-northbridge-red hover:bg-northbridge-red-dark transition-colors duration-200;
+    @apply inline-flex items-center justify-center min-h-[2.75rem] min-w-[2.75rem] px-5 sm:px-6 py-2.5 rounded-lg text-sm font-semibold text-white;
+    @apply bg-northbridge-red hover:bg-northbridge-red-dark active:bg-northbridge-red-dark active:scale-[0.99];
+    @apply transition-[color,background-color,transform,box-shadow] duration-200;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-northbridge-red focus-visible:ring-offset-2 focus-visible:ring-offset-northbridge-black;
     @apply disabled:opacity-50 disabled:pointer-events-none;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center min-h-[2.75rem] min-w-[2.75rem] px-5 sm:px-6 py-2.5 rounded-md text-sm font-semibold;
-    @apply border border-white/20 text-white hover:border-white/40 hover:bg-white/[0.04] transition-colors duration-200;
+    @apply inline-flex items-center justify-center min-h-[2.75rem] min-w-[2.75rem] px-5 sm:px-6 py-2.5 rounded-lg text-sm font-semibold;
+    @apply border border-white/20 text-white hover:border-white/35 hover:bg-white/[0.05] active:bg-white/[0.08] active:scale-[0.99];
+    @apply transition-[color,background-color,border-color,transform] duration-200;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-northbridge-black;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center min-h-[2.75rem] px-4 py-2.5 rounded-md text-sm font-semibold;
-    @apply text-white/70 hover:text-white hover:bg-white/[0.04] transition-colors duration-200;
+    @apply inline-flex items-center justify-center min-h-[2.75rem] px-4 py-2.5 rounded-lg text-sm font-semibold;
+    @apply text-white/70 hover:text-white hover:bg-white/[0.05] active:bg-white/[0.08];
+    @apply transition-colors duration-200;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-2 focus-visible:ring-offset-northbridge-black;
+  }
+
+  .nb-icon-button {
+    @apply inline-flex min-h-[2.75rem] min-w-[2.75rem] shrink-0 items-center justify-center rounded-lg border border-white/15 p-2.5 text-white;
+    @apply transition-colors hover:border-white/25 hover:bg-white/[0.04];
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-northbridge-red focus-visible:ring-offset-2 focus-visible:ring-offset-northbridge-black;
   }
 
   /* Links */
   .nb-arrow-link {
-    @apply inline-flex items-center gap-1.5 text-sm font-semibold text-northbridge-red-text underline-offset-2 transition-colors hover:text-white hover:underline;
+    @apply inline-flex items-center gap-1.5 min-h-[2.75rem] text-sm font-semibold text-northbridge-red-text underline-offset-4 transition-colors hover:text-white hover:underline;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-northbridge-red focus-visible:ring-offset-2 focus-visible:ring-offset-northbridge-black rounded-sm;
   }
 
   .nb-arrow-link-icon {
@@ -170,22 +224,40 @@ html {
     @apply translate-x-0.5;
   }
 
+  .nb-text-link {
+    @apply font-medium text-northbridge-red-text underline-offset-4 transition-colors hover:text-white hover:underline;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-northbridge-red focus-visible:ring-offset-2 focus-visible:ring-offset-northbridge-black rounded-sm;
+  }
+
   /* Tags */
   .nb-tag {
-    @apply inline-flex rounded border border-white/10 bg-northbridge-black/50 px-2.5 py-1 text-xs font-medium text-white/70;
+    @apply inline-flex rounded-md border border-white/10 bg-northbridge-black/40 px-2.5 py-1 text-xs font-medium text-white/70;
   }
 
   /* Trust strip */
+  .nb-trust-grid {
+    @apply grid gap-6 sm:grid-cols-3 sm:gap-8;
+  }
+
   .nb-trust-item {
-    @apply flex flex-col gap-1 border-l border-white/10 pl-4 sm:pl-6 min-w-0;
+    @apply flex flex-col gap-1.5 min-w-0 border-l border-white/10 pl-4 sm:pl-5;
   }
 
   .nb-trust-label {
-    @apply text-xs font-semibold uppercase tracking-[0.12em] text-northbridge-muted;
+    @apply text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-white/50;
   }
 
   .nb-trust-value {
-    @apply text-sm font-medium text-white/80;
+    @apply text-sm font-medium text-white/80 leading-snug;
+  }
+
+  /* Lists */
+  .nb-list-bullet {
+    @apply flex gap-3 text-sm sm:text-[0.9375rem] text-white/70 leading-[1.65];
+  }
+
+  .nb-list-bullet-dot {
+    @apply mt-[0.55rem] h-1.5 w-1.5 shrink-0 rounded-full bg-northbridge-red;
   }
 
   /* Digital sub-nav */
@@ -204,7 +276,7 @@ html {
   }
 
   .nb-digital-nav-link {
-    @apply relative py-3 text-sm font-medium text-white/50 transition-colors hover:text-white;
+    @apply relative shrink-0 py-3 text-sm font-medium text-white/60 transition-colors hover:text-white;
   }
 
   .nb-digital-nav-link-active {
@@ -221,26 +293,28 @@ html {
     @apply sticky top-0 z-50 border-b border-white/[0.06] bg-northbridge-black/90 backdrop-blur-md;
   }
 
+  .nb-logo-link {
+    @apply flex items-center gap-2.5 min-w-0 max-w-[min(100%,14rem)] sm:max-w-none rounded-lg -ml-0.5 py-1 pr-1;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-northbridge-red focus-visible:ring-offset-2 focus-visible:ring-offset-northbridge-black;
+  }
+
   .nb-nav-link {
-    @apply text-sm font-medium text-white/60 transition-colors hover:text-white;
+    @apply relative text-sm font-medium text-white/60 transition-colors hover:text-white py-1;
   }
 
   .nb-nav-link-active {
     @apply text-white;
   }
 
-  .nb-nav-link-consulting {
-    @apply text-white/80;
-  }
-
   /* Skip link */
   .nb-skip-link {
-    @apply sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-northbridge-red focus:px-4 focus:py-2 focus:text-white focus:font-semibold;
+    @apply sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-northbridge-red focus:px-4 focus:py-2.5 focus:text-white focus:font-semibold;
   }
 
   /* Form */
   .nb-input {
-    @apply mt-1 block w-full min-h-[2.75rem] rounded-md border border-white/15 bg-northbridge-black/60 px-4 py-2.5 text-base text-white placeholder:text-white/35 focus:border-northbridge-red focus:outline-none focus:ring-1 focus:ring-northbridge-red;
+    @apply mt-1.5 block w-full min-h-[2.75rem] rounded-lg border border-white/15 bg-northbridge-black/60 px-4 py-2.5 text-base text-white placeholder:text-white/40;
+    @apply focus:border-northbridge-red focus:outline-none focus:ring-1 focus:ring-northbridge-red;
   }
 
   .nb-input option {
@@ -248,24 +322,16 @@ html {
   }
 
   .nb-input-error {
-    @apply mt-1 block w-full rounded-md border border-northbridge-red bg-northbridge-black/60 px-4 py-2.5 text-white placeholder:text-white/35 focus:border-northbridge-red focus:outline-none focus:ring-1 focus:ring-northbridge-red;
+    @apply mt-1.5 block w-full min-h-[2.75rem] rounded-lg border border-northbridge-red bg-northbridge-black/60 px-4 py-2.5 text-white placeholder:text-white/40;
+    @apply focus:border-northbridge-red focus:outline-none focus:ring-1 focus:ring-northbridge-red;
   }
 
   .nb-label {
     @apply block text-sm font-medium text-white/90;
   }
 
-  /* Lists used in content sections */
   .nb-list-item {
-    @apply nb-card text-sm text-white/65 leading-relaxed;
-  }
-
-  .nb-list-bullet {
-    @apply flex gap-3 text-white/65 leading-relaxed;
-  }
-
-  .nb-list-bullet-dot {
-    @apply mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-northbridge-red;
+    @apply nb-card text-sm text-white/70 leading-relaxed;
   }
 
   .nb-cta-group {
@@ -300,31 +366,33 @@ html {
   }
 
   .max-w-prose {
-    max-width: 65ch;
+    max-width: var(--prose-max);
   }
 
   .nb-animate-in {
-    animation: nb-fade-in 0.5s ease-out both;
+    animation: nb-fade-in 0.55s ease-out both;
   }
 
   .nb-stagger-1 {
-    animation-delay: 0.05s;
+    animation-delay: 0.04s;
   }
 
   .nb-stagger-2 {
-    animation-delay: 0.1s;
+    animation-delay: 0.08s;
   }
 
   .nb-stagger-3 {
-    animation-delay: 0.15s;
+    animation-delay: 0.12s;
   }
 }
 
 @keyframes nb-fade-in {
   from {
-    transform: translateY(10px);
+    opacity: 0;
+    transform: translateY(8px);
   }
   to {
+    opacity: 1;
     transform: translateY(0);
   }
 }
@@ -335,13 +403,15 @@ html {
   .nb-hub-card,
   .btn-primary,
   .btn-secondary,
+  .btn-ghost,
   .nb-arrow-link-icon {
     animation: none !important;
     transition: none !important;
     transform: none !important;
   }
 
-  .nb-card-interactive:hover {
+  .nb-card-interactive:hover,
+  .nb-card-interactive:active {
     transform: none;
   }
 }

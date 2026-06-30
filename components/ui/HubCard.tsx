@@ -10,7 +10,11 @@ type HubCardProps = {
 
 export function HubCard({ href, title, description, cta = "Explore", index }: HubCardProps) {
   return (
-    <Link href={href} className="nb-hub-card group">
+    <Link
+      href={href}
+      className="nb-hub-card group"
+      aria-label={`${title}: ${cta}`}
+    >
       {index && (
         <span className="nb-hub-card-index" aria-hidden="true">
           {index}
@@ -18,11 +22,9 @@ export function HubCard({ href, title, description, cta = "Explore", index }: Hu
       )}
       <h3 className="nb-hub-card-title">{title}</h3>
       <p className="nb-hub-card-desc">{description}</p>
-      <span className="nb-hub-card-cta">
+      <span className="nb-hub-card-cta" aria-hidden="true">
         {cta}
-        <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">
-          →
-        </span>
+        <span className="transition-transform duration-200 group-hover:translate-x-0.5">→</span>
       </span>
     </Link>
   );

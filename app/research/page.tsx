@@ -9,7 +9,7 @@ import { siteMetadata } from "@/lib/site-metadata";
 export const metadata: Metadata = siteMetadata({
   title: "Research",
   description:
-    "Northbridge Research leads applied intelligence systems, adaptive AI infrastructure, and data-informed platform development—with aviation as the first research initiative through Aviator Network.",
+    "Northbridge Research applies intelligence and systems research to real operational environments—with aviation as the first research initiative through Aviator Network.",
   path: "/research",
   openGraphTitle: "Northbridge Research",
 });
@@ -89,34 +89,43 @@ export default function ResearchPage() {
       <Section variant="hero">
         <PageHeader
           eyebrow="Northbridge Research"
-          title="Research and technology infrastructure for applied intelligence"
+          title="Research that improves how operations actually work"
           description={
             <>
               <p>
-                Northbridge Venture Group leads the research and technology infrastructure. Aviator
-                Network operates the aviation platform and supports real-world deployment with
-                pilots, instructors, and flight schools.
+                Operators in aviation and workforce-driven industries face decisions that software
+                alone cannot solve—training coordination, safety-adjacent workflows, and systems that
+                must work under real operational pressure.
               </p>
               <p className="mt-4">
-                Northbridge Research is the group’s applied R&amp;D function—covering AI systems,
-                platform architecture, data infrastructure, and adaptive intelligence designed for
-                real operational environments.
+                Northbridge Research studies those environments and builds the intelligence,
+                infrastructure, and evidence base that make better systems possible—not in theory,
+                but in deployment.
               </p>
             </>
           }
-        >
-          <div className="nb-cta-group">
-            <ButtonLink href={`mailto:${RESEARCH_PARTNERSHIP_EMAIL}?subject=Northbridge%20Research%20partnership%20inquiry`}>
-              Research partnership inquiry
-            </ButtonLink>
-            <ButtonLink
-              href={`mailto:${PRIMARY_CONTACT_EMAIL}?subject=Northbridge%20Research%20-%20government%20or%20university%20collaboration`}
-              variant="secondary"
-            >
-              Government / university collaboration
-            </ButtonLink>
-          </div>
-        </PageHeader>
+        />
+      </Section>
+
+      <Section>
+        <SectionHeader
+          eyebrow="For operators and partners"
+          title="Why research matters beyond the lab"
+          description="Northbridge does not research technology for its own sake. Research connects to how businesses and training organizations run day to day—and what they need to make better decisions, coordinate people, and improve outcomes over time."
+        />
+        <div className="nb-section-body max-w-3xl space-y-4 nb-body">
+          <p>
+            For business leaders, this means Northbridge invests in understanding operational
+            complexity before prescribing systems. For research and public-sector partners, it means
+            a credible path from applied study to real-world deployment through Northbridge-owned
+            platforms.
+          </p>
+          <p>
+            Aviator Network provides the aviation deployment context. Northbridge Venture Group
+            leads the research and technology infrastructure behind it. The technical program
+            detail below describes how that work is structured.
+          </p>
+        </div>
       </Section>
 
       <Section variant="band">
@@ -206,18 +215,16 @@ export default function ResearchPage() {
             <ButtonLink href={`mailto:${RESEARCH_PARTNERSHIP_EMAIL}?subject=Northbridge%20Research%20partnership%20inquiry`}>
               Research partnership inquiry
             </ButtonLink>
-            <ButtonLink
-              href={`mailto:${PRIMARY_CONTACT_EMAIL}?subject=Northbridge%20Research%20-%20government%20or%20university%20collaboration`}
-              variant="secondary"
-            >
-              Government / university collaboration
-            </ButtonLink>
-            <ButtonLink href="/contact" variant="secondary">
-              Contact Northbridge Research
-            </ButtonLink>
           </div>
           <p className="mt-6 text-xs text-white/40 max-w-2xl leading-relaxed">
-            Northbridge Venture Group is a private company. References to federal agencies describe
+            For government or university collaboration, email{" "}
+            <a
+              href={`mailto:${PRIMARY_CONTACT_EMAIL}?subject=Northbridge%20Research%20-%20government%20or%20university%20collaboration`}
+              className="text-white/55 hover:text-northbridge-red transition-colors"
+            >
+              {PRIMARY_CONTACT_EMAIL}
+            </a>
+            . Northbridge Venture Group is a private company. References to federal agencies describe
             research alignment only and do not imply government endorsement, certification, or
             contract status.
           </p>

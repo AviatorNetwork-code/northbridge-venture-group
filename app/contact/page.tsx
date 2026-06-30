@@ -34,14 +34,11 @@ export default function Contact() {
         <div className="grid gap-8 lg:grid-cols-[minmax(0,280px)_1fr] lg:gap-12 xl:gap-16 items-start">
           <aside className="space-y-5 min-w-0">
             <div className="nb-card">
-              <h2 className="text-lg font-semibold text-white">What happens next</h2>
+              <h2 className="nb-h3">What happens next</h2>
               <ul className="mt-4 space-y-3 text-sm text-white/70 leading-relaxed">
                 {inquiryProcessPoints.map((point) => (
-                  <li key={point} className="flex gap-3">
-                    <span
-                      className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-northbridge-red"
-                      aria-hidden="true"
-                    />
+                  <li key={point} className="nb-list-bullet">
+                    <span className="nb-list-bullet-dot" aria-hidden="true" />
                     <span>{point}</span>
                   </li>
                 ))}
@@ -49,7 +46,7 @@ export default function Contact() {
             </div>
 
             <div className="nb-card">
-              <h2 className="text-lg font-semibold text-white">Direct email</h2>
+              <h2 className="nb-h3">Direct email</h2>
               <p className="mt-3 text-sm text-white/70 leading-relaxed">
                 Prefer email? Reach us at the address below.
               </p>
@@ -62,7 +59,7 @@ export default function Contact() {
             </div>
 
             <div className="nb-card">
-              <h2 className="text-lg font-semibold text-white">Contact channels</h2>
+              <h2 className="nb-h3">Contact channels</h2>
               <ul className="mt-4 space-y-3 text-sm text-white/70">
                 {CONTACT_CHANNELS.map(({ label, email }) => (
                   <li key={email} className="min-w-0">
@@ -80,8 +77,8 @@ export default function Contact() {
           </aside>
 
           <div className="min-w-0 space-y-4">
-            <div className="rounded-lg border border-northbridge-red/25 bg-northbridge-red/5 px-4 py-4 sm:px-5">
-              <p className="text-sm text-white/70 leading-relaxed">
+            <div className="nb-callout">
+              <p className="nb-body">
                 <span className="font-semibold text-white">Structured inquiry.</span> This form
                 routes your message to the right Northbridge team—ventures, advisory, or general
                 questions.

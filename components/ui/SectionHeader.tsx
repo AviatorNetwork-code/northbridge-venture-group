@@ -14,8 +14,8 @@ export function SectionHeader({
   return (
     <div className={`max-w-2xl nb-animate-in ${className}`}>
       {eyebrow && <p className="nb-eyebrow">{eyebrow}</p>}
-      <h2 className={`nb-h2 ${eyebrow ? "mt-4" : ""} text-balance`}>{title}</h2>
-      {description && <p className="mt-4 nb-lead">{description}</p>}
+      <h2 className={`nb-h2 ${eyebrow ? "mt-3 sm:mt-4" : ""}`}>{title}</h2>
+      {description && <p className="mt-4 sm:mt-5 nb-lead">{description}</p>}
     </div>
   );
 }

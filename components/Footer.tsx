@@ -13,7 +13,7 @@ export function Footer() {
             <p className="text-lg font-semibold tracking-tight text-white">
               Northbridge Venture Group
             </p>
-            <p className="mt-3 max-w-md text-sm text-white/55 leading-relaxed">
+            <p className="mt-3 max-w-md text-sm text-white/60 leading-relaxed">
               We build platforms, deliver business solutions, and create custom systems through
               Northbridge Digital when your business needs something specific.
             </p>

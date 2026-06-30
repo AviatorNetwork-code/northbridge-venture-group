@@ -65,13 +65,10 @@ function SolutionDetail({ solution }: { solution: BusinessSolution }) {
           <div className="grid gap-12 lg:grid-cols-2">
             <article>
               <h2 className="nb-h3">The business problem</h2>
-              <ul className="mt-5 space-y-3 text-sm text-white/70 leading-relaxed list-none">
+              <ul className="mt-5 space-y-3 list-none">
                 {solution.problem.map((item) => (
-                  <li key={item} className="flex gap-3">
-                    <span
-                      className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-northbridge-red"
-                      aria-hidden="true"
-                    />
+                  <li key={item} className="nb-list-bullet">
+                    <span className="nb-list-bullet-dot" aria-hidden="true" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -79,13 +76,10 @@ function SolutionDetail({ solution }: { solution: BusinessSolution }) {
             </article>
             <article>
               <h2 className="nb-h3">Who it helps</h2>
-              <ul className="mt-5 space-y-3 text-sm text-white/70 leading-relaxed list-none">
+              <ul className="mt-5 space-y-3 list-none">
                 {solution.whoItHelps.map((item) => (
-                  <li key={item} className="flex gap-3">
-                    <span
-                      className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-northbridge-red"
-                      aria-hidden="true"
-                    />
+                  <li key={item} className="nb-list-bullet">
+                    <span className="nb-list-bullet-dot" aria-hidden="true" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -98,13 +92,10 @@ function SolutionDetail({ solution }: { solution: BusinessSolution }) {
       <Section variant="band">
         <Container narrow>
           <h2 className="nb-h3">What Northbridge evaluates</h2>
-          <ul className="mt-5 space-y-3 text-sm text-white/70 leading-relaxed list-none max-w-2xl">
+          <ul className="nb-section-body space-y-3 list-none max-w-2xl">
             {solution.whatWeEvaluate.map((item) => (
-              <li key={item} className="flex gap-3">
-                <span
-                  className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-northbridge-red"
-                  aria-hidden="true"
-                />
+              <li key={item} className="nb-list-bullet">
+                <span className="nb-list-bullet-dot" aria-hidden="true" />
                 <span>{item}</span>
               </li>
             ))}

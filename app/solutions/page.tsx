@@ -27,7 +27,7 @@ export default function SolutionsPage() {
       </Section>
 
       <Section>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="nb-section-body nb-card-grid-3">
           {businessSolutions.map((solution, index) => (
             <HubCard
               key={solution.slug}

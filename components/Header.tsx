@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { BrandLogo } from "@/components/BrandLogo";
 import { isNavActive, primaryNav } from "@/lib/site-navigation";
 
 export function Header() {
@@ -39,15 +40,9 @@ export function Header() {
         Skip to content
       </a>
       <div className="mx-auto flex max-w-6xl min-w-0 items-center justify-between gap-3 px-4 py-3.5 sm:px-6 lg:px-8 sm:py-4">
-        <Link
-          href="/"
-          className="min-w-0 text-base font-semibold tracking-tight text-white transition-colors hover:text-northbridge-red sm:text-lg"
-        >
-          Northbridge
-          <span className="hidden text-white/60 font-normal sm:inline"> Venture Group</span>
-        </Link>
+        <BrandLogo />
 
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-7" aria-label="Primary">
+        <nav className="hidden lg:flex items-center gap-6 xl:gap-8" aria-label="Primary">
           {primaryNav.map((item) => {
             const active = isNavActive(pathname, item);
             return (
@@ -71,7 +66,7 @@ export function Header() {
 
         <button
           type="button"
-          className="lg:hidden inline-flex min-h-[2.75rem] min-w-[2.75rem] shrink-0 items-center justify-center rounded-md border border-white/15 p-2.5 text-white"
+          className="lg:hidden nb-icon-button"
           aria-expanded={menuOpen}
           aria-controls="mobile-nav"
           aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}

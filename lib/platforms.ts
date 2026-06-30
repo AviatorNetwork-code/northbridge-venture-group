@@ -6,37 +6,37 @@ export const platforms: Venture[] = [
     name: "Aviator Network",
     href: "https://aviatornetwork.com",
     category: "Aviation platform",
-    positioning: "The Operating System for Modern Aviation",
+    positioning: "Complex aviation software at scale",
     description:
-      "Aviator Network brings aviation tools, instructor connections, AI assistance, training management, and connected aviation services into one platform.",
-    ctaLabel: "Explore Aviator Network",
+      "Proof of Northbridge's capability to design and operate a multi-sided aviation software ecosystem—training operations, instructor coordination, and connected services in a regulated domain.",
+    ctaLabel: "View Aviator Network",
     external: true,
   },
   {
     name: "Workforce Operations Platform",
     href: "",
     category: "In development",
-    positioning: "Intelligent workforce coordination",
+    positioning: "Workforce coordination systems",
     description:
-      "Intelligent scheduling, staffing, and operational support originally developed for aviation and adaptable to other workforce-driven industries.",
+      "Demonstrates Northbridge's ability to build scheduling, staffing, and operational coordination systems—originally scoped for aviation and adaptable to other workforce-driven industries.",
     comingSoon: true,
   },
   {
     name: "Trucker Network",
     href: "",
     category: "In development",
-    positioning: "Connected logistics operations",
+    positioning: "Operational platform engineering",
     description:
-      "Connected tools for professional drivers and logistics operations—designed to support coordination, visibility, and workforce-driven workflows.",
+      "Demonstrates operational platform engineering for logistics—community systems, driver-facing tooling, and coordination infrastructure for workforce-driven transportation operations.",
     comingSoon: true,
   },
   {
     name: "Quadrix",
     href: "",
     category: "In development",
-    positioning: "Real-time systems at scale",
+    positioning: "Real-time engineering at scale",
     description:
-      "Strategic gaming platform demonstrating real-time systems, multiplayer infrastructure, and product design—proof of Northbridge engineering capability.",
+      "Demonstrates real-time engineering, multiplayer infrastructure, product design, and system architecture—proof that Northbridge can build responsive, high-concurrency platforms.",
     comingSoon: true,
   },
 ];
@@ -48,7 +48,7 @@ export const additionalPlatforms: Venture[] = [
     href: "https://airtaxfinancial.com",
     category: "Financial services",
     description:
-      "Tax and financial services for pilots and aviation professionals—filing support, notices, and guidance.",
+      "Demonstrates Northbridge's ability to deliver specialized professional-services platforms—domain-specific workflows for aviation financial services.",
     external: true,
   },
 ];

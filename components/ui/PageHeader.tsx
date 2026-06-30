@@ -20,13 +20,13 @@ export function PageHeader({
   return (
     <header className={`nb-animate-in ${alignClass}`}>
       {eyebrow && <p className="nb-eyebrow">{eyebrow}</p>}
-      <h1 className={`nb-h1 ${eyebrow ? "mt-4" : ""} text-balance`}>{title}</h1>
+      <h1 className={`nb-h1 ${eyebrow ? "mt-3 sm:mt-4" : ""}`}>{title}</h1>
       {description && (
-        <div className={`mt-6 nb-lead text-balance ${typeof description === "string" ? "" : ""}`}>
+        <div className={`mt-5 sm:mt-6 nb-lead ${align === "center" ? "mx-auto" : ""}`}>
           {typeof description === "string" ? <p>{description}</p> : description}
         </div>
       )}
-      {children && <div className="mt-10">{children}</div>}
+      {children && <div className="mt-8 sm:mt-10">{children}</div>}
     </header>
   );
 }
