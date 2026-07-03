@@ -8,7 +8,7 @@ export function buildTrustStatement(
     return "I want to be transparent: I may not have every detail without learning more about your situation. I'll recommend only what genuinely fits.";
   }
 
-  if (stage === "recommend" || stage === "convert") {
+  if (stage === "recommend" || stage === "close_softly" || stage === "follow_up") {
     return "Northbridge focuses on structured, practical outcomes—not hype. I'll explain my reasoning and alternatives so you can decide confidently.";
   }
 

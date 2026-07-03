@@ -29,6 +29,20 @@ export function trackCatEvent(
   }
 }
 
+export function trackSalesEvent(
+  event:
+    | "discovery_started"
+    | "clarification_requested"
+    | "product_fit_detected"
+    | "objection_detected"
+    | "objection_handled"
+    | "close_recommended"
+    | "qualified_lead_detected",
+  properties?: CatAnalyticsPayload["properties"],
+): void {
+  trackCatEvent(event, properties);
+}
+
 export function trackConversionEvent(
   type: "cta_click" | "qualified_lead" | "consultation_intent" | "conversation_complete",
   properties?: CatAnalyticsPayload["properties"],

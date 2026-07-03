@@ -56,6 +56,7 @@ export interface CatAssistantResponse {
   };
   qualifiedLead?: boolean;
   primaryIntent?: string;
+  salesAnalyticsEvents?: CatAnalyticsEventName[];
 }
 
 export interface CatQuickQuestion {
@@ -90,7 +91,14 @@ export type CatAnalyticsEventName =
   | "cat_session_scores_updated"
   | "cat_conversation_completed"
   | "cat_qualified_lead_signal"
-  | "cat_neo_export";
+  | "cat_neo_export"
+  | "discovery_started"
+  | "clarification_requested"
+  | "product_fit_detected"
+  | "objection_detected"
+  | "objection_handled"
+  | "close_recommended"
+  | "qualified_lead_detected";
 
 export interface CatAnalyticsPayload {
   event: CatAnalyticsEventName;

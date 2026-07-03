@@ -1,10 +1,11 @@
 export type ConversationStage =
-  | "understand"
-  | "educate"
-  | "discover_fit"
-  | "build_trust"
+  | "discover"
+  | "clarify"
+  | "teach"
   | "recommend"
-  | "convert";
+  | "handle_objections"
+  | "close_softly"
+  | "follow_up";
 
 export type VisitorType =
   | "business_owner"
@@ -16,6 +17,8 @@ export type VisitorType =
   | "researcher"
   | "unknown";
 
+export type LaunchContext = "new" | "modernizing" | "exploring";
+
 export interface VisitorProfile {
   visitorType: VisitorType;
   industry?: string;
@@ -26,6 +29,29 @@ export interface VisitorProfile {
   urgency?: "low" | "medium" | "high";
   budgetMentioned?: boolean;
   signals: string[];
+}
+
+export interface SalesDiscoveryState {
+  discoveryStarted: boolean;
+  launchContext?: LaunchContext;
+  primaryChallenge?: string;
+  discoveryComplete: boolean;
+  clarificationComplete: boolean;
+  teachingComplete: boolean;
+  activeObjection?: string;
+  objectionsHandled: string[];
+  productFitDetected: boolean;
+  closeRecommended: boolean;
+  intentCaptured: boolean;
+}
+
+export interface LeadQualificationScore {
+  overall: number;
+  budgetFit: number;
+  urgencyFit: number;
+  problemClarity: number;
+  authoritySignals: number;
+  isQualified: boolean;
 }
 
 export interface ProductRecommendation {
@@ -64,6 +90,8 @@ export interface ConversationIntelligenceCapture {
 export interface ConsultantSessionState {
   profile: VisitorProfile;
   stage: ConversationStage;
+  sales: SalesDiscoveryState;
+  leadQualification: LeadQualificationScore;
   scores: SessionScores;
   intelligence: ConversationIntelligenceCapture;
   turnCount: number;
@@ -80,7 +108,25 @@ export function createInitialSessionState(): ConsultantSessionState {
       goals: [],
       signals: [],
     },
-    stage: "understand",
+    stage: "discover",
+    sales: {
+      discoveryStarted: false,
+      discoveryComplete: false,
+      clarificationComplete: false,
+      teachingComplete: false,
+      objectionsHandled: [],
+      productFitDetected: false,
+      closeRecommended: false,
+      intentCaptured: false,
+    },
+    leadQualification: {
+      overall: 0.1,
+      budgetFit: 0,
+      urgencyFit: 0,
+      problemClarity: 0,
+      authoritySignals: 0,
+      isQualified: false,
+    },
     scores: {
       productUnderstanding: 0.1,
       visitorConfidence: 0.3,
@@ -104,4 +150,12 @@ export function createInitialSessionState(): ConsultantSessionState {
     recommendationAccepted: false,
     ctaClicked: false,
   };
+}
+
+export function createInitialSalesState(): SalesDiscoveryState {
+  return createInitialSessionState().sales;
+}
+
+export function createInitialLeadQualification(): LeadQualificationScore {
+  return createInitialSessionState().leadQualification;
 }

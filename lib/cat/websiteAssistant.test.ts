@@ -20,10 +20,14 @@ describe("websiteAssistant", () => {
     assert.ok(response.stage);
   });
 
-  it("handles flight school intent with product recommendation", () => {
+  it("does not immediately recommend on flight school opener", () => {
     const response = respondToVisitorInput("I run a flight school");
-    assert.ok(response.productRecommendation || response.session?.recommendedProductId);
     assert.ok(response.message.length > 0);
+    assert.ok(
+      response.stage === "discover" ||
+        response.stage === "clarify" ||
+        !response.productRecommendation,
+    );
   });
 
   it("matches aviator network questions", () => {
@@ -42,7 +46,7 @@ describe("websiteAssistant", () => {
   it("returns guided fallback for unknown input", () => {
     const response = respondToVisitorInput("xyzzy plugh");
     assert.ok(response.message.length > 0);
-    assert.ok(response.followUpQuestion || response.stage === "understand");
+    assert.ok(response.followUpQuestion || response.stage === "discover");
   });
 
   it("never exposes internal architecture in responses", () => {

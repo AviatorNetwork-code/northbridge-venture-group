@@ -118,7 +118,13 @@ export default function CatPanel({ isOpen, onClose }: CatPanelProps) {
       trackConversionEvent("qualified_lead", { stage: response.stage });
     }
 
-    if (response.stage === "convert") {
+    if (response.salesAnalyticsEvents) {
+      for (const event of response.salesAnalyticsEvents) {
+        trackCatEvent(event, { stage: response.stage });
+      }
+    }
+
+    if (response.stage === "close_softly" || response.stage === "follow_up") {
       trackConversionEvent("consultation_intent", {
         conversion_probability: response.session?.scores.conversionProbability,
       });

@@ -23,13 +23,13 @@ export function buildMetricsSnapshot(
     visitorConfidenceScore: round(scores.visitorConfidence),
     recommendationAcceptanceRate: session.recommendationAccepted ? 1 : 0,
     ctaClickThroughRate: session.ctaClicked ? 1 : 0,
-    meetingBookingRate: session.ctaClicked && session.stage === "convert" ? 1 : 0,
+    meetingBookingRate: session.ctaClicked && (session.stage === "close_softly" || session.stage === "follow_up") ? 1 : 0,
     qualifiedLeadRate:
       scores.conversionProbability >= 0.55 &&
       (session.profile.budgetMentioned || session.intelligence.buyingSignals.length >= 2)
         ? 1
         : 0,
-    conversationCompletionRate: session.stage === "convert" ? 1 : round(session.turnCount / 6),
+    conversationCompletionRate: session.stage === "follow_up" ? 1 : round(session.turnCount / 7),
     returnVisitorRate: 0,
     conversationSatisfaction: round((scores.trust + scores.visitorConfidence) / 2),
     customerUnderstandingImprovement: round(

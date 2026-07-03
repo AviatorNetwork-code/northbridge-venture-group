@@ -1,43 +1,49 @@
 import type { ConversationStage, ConsultantSessionState } from "./consultantTypes";
+import { shouldSoftClose } from "./leadQualification";
 
 const STAGE_ORDER: ConversationStage[] = [
-  "understand",
-  "educate",
-  "discover_fit",
-  "build_trust",
+  "discover",
+  "clarify",
+  "teach",
   "recommend",
-  "convert",
+  "handle_objections",
+  "close_softly",
+  "follow_up",
 ];
 
 export function determineStage(session: ConsultantSessionState): ConversationStage {
-  const { profile, turnCount, recommendedProductId } = session;
-  const hasContext =
-    profile.industry ||
-    profile.problems.length > 0 ||
-    profile.goals.length > 0 ||
-    profile.visitorType !== "unknown";
+  const { sales, profile, turnCount } = session;
+  const hasContactIntent =
+    profile.goals.some((g) => /contact|meeting|consultation/.test(g)) ||
+    session.intelligence.buyingSignals.some((s) =>
+      ["contact", "consultation", "meeting"].includes(s),
+    );
 
-  if (turnCount === 0) return "understand";
-  if (!hasContext && turnCount <= 2) return "understand";
-  if (turnCount <= 2 && !profile.industry && profile.visitorType === "unknown") {
-    return "understand";
+  if (hasContactIntent && turnCount >= 2) return "follow_up";
+  if (sales.activeObjection) return "handle_objections";
+  if (shouldSoftClose(session) && session.recommendedProductId) return "close_softly";
+  if (
+    session.recommendedProductId &&
+    sales.clarificationComplete &&
+    sales.primaryChallenge
+  ) {
+    return "recommend";
   }
-  if (!recommendedProductId && turnCount <= 4) return "educate";
-  if (!recommendedProductId) return "discover_fit";
-  if (session.scores.trust < 0.65) return "build_trust";
-  if (session.scores.conversionProbability >= 0.6) return "convert";
-  if (recommendedProductId) return "recommend";
-  return "discover_fit";
+  if (sales.primaryChallenge && !sales.teachingComplete) return "teach";
+  if (sales.launchContext && !sales.primaryChallenge) return "clarify";
+  if (turnCount >= 1) return "discover";
+  return "discover";
 }
 
 export function getStageLabel(stage: ConversationStage): string {
   const labels: Record<ConversationStage, string> = {
-    understand: "Understanding your needs",
-    educate: "Sharing how Northbridge helps",
-    discover_fit: "Finding the right fit",
-    build_trust: "Building clarity and trust",
-    recommend: "Recommending a solution",
-    convert: "Next steps",
+    discover: "Understanding your situation",
+    clarify: "Clarifying priorities",
+    teach: "Sharing relevant context",
+    recommend: "Exploring fit",
+    handle_objections: "Addressing your questions",
+    close_softly: "Next steps",
+    follow_up: "Following up",
   };
   return labels[stage];
 }
@@ -47,4 +53,17 @@ export function hasStageProgressed(
   next: ConversationStage,
 ): boolean {
   return STAGE_ORDER.indexOf(next) > STAGE_ORDER.indexOf(previous);
+}
+
+export function isDiscoveryPhase(stage: ConversationStage): boolean {
+  return stage === "discover" || stage === "clarify";
+}
+
+export function isRecommendationPhase(stage: ConversationStage): boolean {
+  return stage === "recommend" || stage === "close_softly" || stage === "follow_up";
+}
+
+export function getStageProgress(stage: ConversationStage): number {
+  const idx = STAGE_ORDER.indexOf(stage);
+  return idx >= 0 ? Math.round(((idx + 1) / STAGE_ORDER.length) * 100) : 0;
 }

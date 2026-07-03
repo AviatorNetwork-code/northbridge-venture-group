@@ -1,4 +1,4 @@
-import type { VisitorProfile, VisitorType } from "./consultantTypes.js";
+import type { VisitorProfile, VisitorType } from "./consultantTypes";
 
 interface IntentMatch {
   intent: string;
