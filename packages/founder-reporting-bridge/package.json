@@ -1,0 +1,33 @@
+{
+  "name": "@neos/founder-reporting-bridge",
+  "version": "1.0.0",
+  "description": "Founder Reporting Bridge (FRB) — read-only Slack reporting from NEO intelligence to the Founder.",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "founder-report": "./cli.mjs"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "tsx --test tests/**/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "neos",
+    "founder-reporting",
+    "slack",
+    "executive-intelligence"
+  ],
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.4.5"
+  }
+}

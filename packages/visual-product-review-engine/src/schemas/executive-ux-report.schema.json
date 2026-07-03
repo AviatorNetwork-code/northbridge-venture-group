@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neos.northbridge.dev/schemas/executive-ux-report.schema.json",
+  "title": "ExecutiveUXReport",
+  "type": "object",
+  "required": [
+    "reportId",
+    "productId",
+    "productName",
+    "generatedAt",
+    "executiveSummary",
+    "overallScores",
+    "screenReviews",
+    "prioritizedIssues",
+    "governance"
+  ],
+  "properties": {
+    "reportId": { "type": "string" },
+    "productId": { "type": "string" },
+    "productName": { "type": "string" },
+    "generatedAt": { "type": "number" },
+    "executiveSummary": { "type": "string" },
+    "overallScores": { "$ref": "#/definitions/screenScores" },
+    "prioritizedIssues": { "type": "array" },
+    "topOpportunities": { "type": "array", "items": { "type": "string" } },
+    "governance": {
+      "type": "object",
+      "required": ["readOnly", "requiresFounderApproval"],
+      "properties": {
+        "readOnly": { "const": true },
+        "requiresFounderApproval": { "const": true }
+      }
+    }
+  },
+  "definitions": {
+    "screenScores": {
+      "type": "object",
+      "required": [
+        "uxScore",
+        "productUnderstandingScore",
+        "trustScore",
+        "conversionScore",
+        "frictionScore",
+        "accessibilityScore"
+      ],
+      "properties": {
+        "uxScore": { "type": "number", "minimum": 0, "maximum": 100 },
+        "productUnderstandingScore": { "type": "number", "minimum": 0, "maximum": 100 },
+        "trustScore": { "type": "number", "minimum": 0, "maximum": 100 },
+        "conversionScore": { "type": "number", "minimum": 0, "maximum": 100 },
+        "frictionScore": { "type": "number", "minimum": 0, "maximum": 100 },
+        "accessibilityScore": { "type": "number", "minimum": 0, "maximum": 100 }
+      }
+    }
+  }
+}

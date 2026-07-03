@@ -1,0 +1,30 @@
+{
+  "name": "@neos/adaptive-experience-engine",
+  "version": "1.0.0",
+  "description": "Adaptive Experience Engine (AEE) — recommends personalized customer experiences across Northbridge operating companies.",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "tsx --test tests/**/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "neos",
+    "adaptive-experience",
+    "personalization",
+    "recommendations"
+  ],
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.4.5"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "text": ":rotating_light: *Critical Alert: broken build*\n_Priority: critical (send immediately)_\n\n*Alert*\n• Aviator build failed\n\n*Suggested Founder action*\n• Review build logs and assign engineering triage — do not auto-merge fixes.\n\n_Critical alert — read-only report. NEO did not execute fixes._",
+  "blocks": [
+    {
+      "type": "header",
+      "text": { "type": "plain_text", "text": "Critical Alert: broken build", "emoji": true }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Priority:* `critical` · send immediately"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Alert*\n• Aviator build failed"
+      }
+    }
+  ]
+}
