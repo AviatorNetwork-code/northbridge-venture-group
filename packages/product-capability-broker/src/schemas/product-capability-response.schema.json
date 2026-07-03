@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neos.northbridge.dev/schemas/product-capability-response.schema.json",
+  "title": "ProductCapabilityResponse",
+  "type": "object",
+  "required": [
+    "responseId",
+    "targetProductId",
+    "answeredBy",
+    "currentCapabilities",
+    "plannedCapabilities",
+    "unsupportedClaims",
+    "recommendedPositioning",
+    "recommendedCTA",
+    "confidence",
+    "evidence",
+    "escalationRequired",
+    "publicSafeSummary",
+    "lastUpdated"
+  ],
+  "properties": {
+    "responseId": { "type": "string" },
+    "targetProductId": { "type": "string" },
+    "answeredBy": { "type": "string" },
+    "currentCapabilities": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/capabilityItem" }
+    },
+    "plannedCapabilities": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/capabilityItem" }
+    },
+    "unsupportedClaims": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/unsupportedClaim" }
+    },
+    "recommendedPositioning": { "type": "string" },
+    "recommendedCTA": { "type": "string" },
+    "confidence": { "enum": ["high", "medium", "low"] },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source", "detail"],
+        "properties": {
+          "source": { "type": "string" },
+          "detail": { "type": "string" }
+        }
+      }
+    },
+    "escalationRequired": { "type": "boolean" },
+    "publicSafeSummary": { "type": "string" },
+    "privateNotes": { "type": "string" },
+    "lastUpdated": { "type": "number" }
+  },
+  "definitions": {
+    "capabilityItem": {
+      "type": "object",
+      "required": ["id", "label", "description", "disclosureLevel"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "disclosureLevel": {
+          "enum": ["public", "sales_safe", "partner_safe", "internal_only"]
+        }
+      }
+    },
+    "unsupportedClaim": {
+      "type": "object",
+      "required": ["claim", "reason"],
+      "properties": {
+        "claim": { "type": "string" },
+        "reason": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": false
+}
