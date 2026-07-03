@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://northbridgeventuregroup.com/schemas/neos/vii/capability-registration/1.0.0",
+  "title": "VII NEOS Capability Registration",
+  "description": "Capability descriptor for Visitor Intent Intelligence in NEOS.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "version", "package", "mode", "governance"],
+  "properties": {
+    "id": { "type": "string", "const": "neos.visitor-intent-intelligence" },
+    "name": { "type": "string" },
+    "version": { "type": "string" },
+    "description": { "type": "string" },
+    "package": { "type": "string" },
+    "mode": { "type": "string", "enum": ["read-only"] },
+    "inputs": { "type": "array", "items": { "type": "string" } },
+    "outputs": { "type": "array", "items": { "type": "string" } },
+    "governance": {
+      "type": "object",
+      "required": ["readOnly", "requiresFounderApproval"],
+      "properties": {
+        "readOnly": { "type": "boolean", "const": true },
+        "requiresFounderApproval": { "type": "boolean", "const": true }
+      }
+    }
+  }
+}
