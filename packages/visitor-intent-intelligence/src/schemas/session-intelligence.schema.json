@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://northbridgeventuregroup.com/schemas/neos/vii/session-intelligence/1.0.0",
+  "title": "VII Session Intelligence",
+  "description": "Visitor Intent Intelligence output for a single session. Read-only analytics artifact.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "sessionId",
+    "productId",
+    "startedAt",
+    "endedAt",
+    "intent",
+    "confidence",
+    "journey",
+    "outcome",
+    "catImprovementRecommendations",
+    "productImprovementRecommendations"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "sessionId": { "type": "string" },
+    "productId": { "type": "string" },
+    "startedAt": { "type": "number" },
+    "endedAt": { "type": "number" },
+    "intent": { "type": "object" },
+    "confidence": { "type": "object" },
+    "journey": { "type": "object" },
+    "conversation": { "type": "object" },
+    "outcome": { "type": "object" },
+    "business": { "type": "object" },
+    "catImprovementRecommendations": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "productImprovementRecommendations": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
