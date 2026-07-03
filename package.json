@@ -19,7 +19,9 @@
     "build:vpre": "npm run build --workspace=@neos/visual-product-review-engine",
     "test:vpre": "npm run test --workspace=@neos/visual-product-review-engine",
     "build:sie": "npm run build --workspace=@neos/seo-intelligence",
-    "test:sie": "npm run test --workspace=@neos/seo-intelligence"
+    "test:sie": "npm run test --workspace=@neos/seo-intelligence",
+    "build:frb": "npm run build --workspace=@neos/founder-reporting-bridge",
+    "test:frb": "npm run test --workspace=@neos/founder-reporting-bridge"
   },
   "dependencies": {
     "next": "14.2.18",

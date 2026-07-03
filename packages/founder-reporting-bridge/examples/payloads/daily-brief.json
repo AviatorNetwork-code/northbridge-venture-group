@@ -1,0 +1,39 @@
+{
+  "text": ":large_blue_diamond: *Daily Founder Brief*\n_Priority: normal (daily digest)_\n\n*What changed today*\n• CAT consultative selling stages live\n• Product Capability Broker Aviator adapter complete\n\n*Highest-value recommendation*\n• Connect Website CAT to Product Capability Broker via thin adapter\n\n*Pending decisions*\n• Approve PCB adapter integration for Website CAT\n\n_Next suggested action:_ Review pending decision: Approve PCB adapter integration for Website CAT\n\n_Read-only NEO report. No tasks executed. Founder approval required for all actions._",
+  "blocks": [
+    {
+      "type": "header",
+      "text": { "type": "plain_text", "text": "Daily Founder Brief", "emoji": true }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Priority:* `normal` · daily digest"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*What changed today*\n• CAT consultative selling stages live\n• Product Capability Broker Aviator adapter complete"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Highest-value recommendation*\n• Connect Website CAT to Product Capability Broker via thin adapter"
+      }
+    },
+    {
+      "type": "context",
+      "elements": [
+        {
+          "type": "mrkdwn",
+          "text": "Read-only NEO report. No tasks executed. Founder approval required for all actions."
+        }
+      ]
+    }
+  ]
+}
