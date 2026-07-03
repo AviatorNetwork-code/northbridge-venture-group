@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://northbridgeventuregroup.com/schemas/neos/vii/executive-report/1.0.0",
+  "title": "VII Executive Report",
+  "description": "Aggregated visitor intent intelligence for executive reporting.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "productId",
+    "sessionCount",
+    "intentDistribution",
+    "visitorSuccessScore",
+    "intentAccuracyScore",
+    "catGuidanceScore",
+    "journeyCompletionRate",
+    "topUnansweredQuestions",
+    "recommendedCatImprovements",
+    "recommendedProductImprovements"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "generatedAt": { "type": "number" },
+    "productId": { "type": "string" },
+    "sessionCount": { "type": "integer", "minimum": 0 },
+    "intentDistribution": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "visitorSuccessScore": { "type": "number", "minimum": 0, "maximum": 1 },
+    "intentAccuracyScore": { "type": "number", "minimum": 0, "maximum": 1 },
+    "catGuidanceScore": { "type": "number", "minimum": 0, "maximum": 1 },
+    "journeyCompletionRate": { "type": "number", "minimum": 0, "maximum": 1 },
+    "topUnansweredQuestions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "highestFrictionIntentId": { "type": "string" },
+    "highestValueIntentId": { "type": "string" },
+    "recommendedCatImprovements": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "recommendedProductImprovements": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://northbridgeventuregroup.com/schemas/neos/aee/capability-registration/1.0.0",
+  "title": "AEE NEOS Capability Registration",
+  "type": "object",
+  "required": ["id", "name", "version", "package", "mode", "governance"],
+  "properties": {
+    "id": { "type": "string", "const": "neos.adaptive-experience-engine" },
+    "name": { "type": "string" },
+    "version": { "type": "string" },
+    "package": { "type": "string" },
+    "mode": { "type": "string", "enum": ["read-only"] },
+    "governance": {
+      "type": "object",
+      "required": ["readOnly", "requiresFounderApproval"],
+      "properties": {
+        "readOnly": { "type": "boolean", "const": true },
+        "requiresFounderApproval": { "type": "boolean", "const": true }
+      }
+    }
+  }
+}
