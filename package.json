@@ -15,7 +15,9 @@
     "build:aee": "npm run build --workspace=@neos/adaptive-experience-engine",
     "test:aee": "npm run test --workspace=@neos/adaptive-experience-engine",
     "build:pcb": "npm run build --workspace=@neos/product-capability-broker",
-    "test:pcb": "npm run test --workspace=@neos/product-capability-broker"
+    "test:pcb": "npm run test --workspace=@neos/product-capability-broker",
+    "build:vpre": "npm run build --workspace=@neos/visual-product-review-engine",
+    "test:vpre": "npm run test --workspace=@neos/visual-product-review-engine"
   },
   "dependencies": {
     "next": "14.2.18",

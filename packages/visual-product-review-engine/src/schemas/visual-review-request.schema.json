@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neos.northbridge.dev/schemas/visual-review-request.schema.json",
+  "title": "VisualReviewRequest",
+  "type": "object",
+  "required": ["reviewId", "requesterId", "productId", "productName", "screens", "timestamp"],
+  "properties": {
+    "reviewId": { "type": "string" },
+    "requesterId": { "type": "string" },
+    "productId": { "type": "string" },
+    "productName": { "type": "string" },
+    "customerPersona": { "type": "string" },
+    "reviewGoal": { "type": "string" },
+    "timestamp": { "type": "number" },
+    "screens": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/screenCapture" },
+      "minItems": 1
+    }
+  },
+  "definitions": {
+    "screenCapture": {
+      "type": "object",
+      "required": ["captureId", "screenId", "screenName", "sourceType", "viewport", "capturedAt", "signals"],
+      "properties": {
+        "captureId": { "type": "string" },
+        "screenId": { "type": "string" },
+        "screenName": { "type": "string" },
+        "sourceType": {
+          "enum": ["browser_screenshot", "local_screenshot", "mobile_screenshot", "screen_recording", "browser_automation"]
+        },
+        "viewport": { "enum": ["desktop", "tablet", "mobile"] },
+        "path": { "type": "string" },
+        "url": { "type": "string" },
+        "capturedAt": { "type": "number" },
+        "customerJourneyStep": { "type": "string" }
+      }
+    }
+  }
+}
