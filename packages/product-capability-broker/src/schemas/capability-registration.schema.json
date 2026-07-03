@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neos.northbridge.dev/schemas/pcb-capability-registration.schema.json",
+  "title": "ProductCapabilityBrokerCapabilityRegistration",
+  "type": "object",
+  "required": ["id", "name", "version", "package", "mode", "governance"],
+  "properties": {
+    "id": { "const": "neos.product-capability-broker" },
+    "name": { "const": "Product Capability Broker" },
+    "version": { "type": "string" },
+    "package": { "const": "@neos/product-capability-broker" },
+    "mode": { "const": "read-only" },
+    "governance": {
+      "type": "object",
+      "required": ["readOnly"],
+      "properties": {
+        "readOnly": { "const": true }
+      }
+    }
+  }
+}

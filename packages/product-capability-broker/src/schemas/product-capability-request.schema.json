@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neos.northbridge.dev/schemas/product-capability-request.schema.json",
+  "title": "ProductCapabilityRequest",
+  "type": "object",
+  "required": [
+    "requestId",
+    "requesterId",
+    "targetProductId",
+    "visitorIntent",
+    "visitorContext",
+    "question",
+    "requiredConfidence",
+    "publicFacing",
+    "allowedDisclosureLevel",
+    "timestamp"
+  ],
+  "properties": {
+    "requestId": { "type": "string", "minLength": 1 },
+    "requesterId": { "type": "string", "minLength": 1 },
+    "targetProductId": { "type": "string", "minLength": 1 },
+    "visitorIntent": { "type": "string" },
+    "visitorContext": {
+      "type": "object",
+      "properties": {
+        "industry": { "type": "string" },
+        "visitorType": { "type": "string" },
+        "challenge": { "type": "string" },
+        "launchContext": { "type": "string" },
+        "goals": { "type": "array", "items": { "type": "string" } },
+        "signals": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "question": { "type": "string", "minLength": 1 },
+    "requiredConfidence": { "enum": ["high", "medium", "low"] },
+    "publicFacing": { "type": "boolean" },
+    "allowedDisclosureLevel": {
+      "enum": ["public", "sales_safe", "partner_safe", "internal_only"]
+    },
+    "timestamp": { "type": "number" }
+  },
+  "additionalProperties": false
+}

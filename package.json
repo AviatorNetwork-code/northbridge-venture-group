@@ -13,7 +13,9 @@
     "build:vii": "npm run build --workspace=@neos/visitor-intent-intelligence",
     "test:vii": "npm run test --workspace=@neos/visitor-intent-intelligence",
     "build:aee": "npm run build --workspace=@neos/adaptive-experience-engine",
-    "test:aee": "npm run test --workspace=@neos/adaptive-experience-engine"
+    "test:aee": "npm run test --workspace=@neos/adaptive-experience-engine",
+    "build:pcb": "npm run build --workspace=@neos/product-capability-broker",
+    "test:pcb": "npm run test --workspace=@neos/product-capability-broker"
   },
   "dependencies": {
     "next": "14.2.18",
