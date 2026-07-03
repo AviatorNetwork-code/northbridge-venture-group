@@ -2,11 +2,16 @@
   "name": "northbridge-venture-group",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:vii": "npm run build --workspace=@neos/visitor-intent-intelligence",
+    "test:vii": "npm run test --workspace=@neos/visitor-intent-intelligence"
   },
   "dependencies": {
     "next": "14.2.18",
