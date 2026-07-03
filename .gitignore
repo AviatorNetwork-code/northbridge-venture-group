@@ -6,6 +6,9 @@
 # testing
 /coverage
 
+# neo client reports
+/.northbridge/reports/
+
 # next.js
 /.next/
 /out/

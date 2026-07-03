@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://northbridgeventuregroup.com/schemas/neo/repo-status/1.0.0",
+  "title": "NEO Client Repository Status",
+  "description": "Point-in-time repository health snapshot for NEO client ingestion. No secrets, no customer data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "reportKind",
+    "reportId",
+    "generatedAt",
+    "client",
+    "repository",
+    "workingTree",
+    "validation",
+    "governance"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "reportKind": {
+      "type": "string",
+      "const": "repo-status"
+    },
+    "reportId": {
+      "type": "string",
+      "minLength": 8
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "client": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "displayName"],
+      "properties": {
+        "id": { "type": "string" },
+        "displayName": { "type": "string" },
+        "adapterVersion": { "type": "string" }
+      }
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "branch", "commit", "defaultBranch"],
+      "properties": {
+        "name": { "type": "string" },
+        "branch": { "type": "string" },
+        "commit": { "type": "string", "minLength": 7 },
+        "commitShort": { "type": "string" },
+        "defaultBranch": { "type": "string" },
+        "remoteUrl": { "type": "string" },
+        "isDefaultBranch": { "type": "boolean" },
+        "aheadOfRemote": { "type": "integer", "minimum": 0 },
+        "behindRemote": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "workingTree": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clean"],
+      "properties": {
+        "clean": { "type": "boolean" },
+        "modifiedCount": { "type": "integer", "minimum": 0 },
+        "untrackedCount": { "type": "integer", "minimum": 0 },
+        "stagedCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lint", "test", "typecheck"],
+      "properties": {
+        "lint": { "$ref": "#/$defs/checkResult" },
+        "test": { "$ref": "#/$defs/checkResult" },
+        "typecheck": { "$ref": "#/$defs/checkResult" },
+        "skipped": { "type": "boolean" }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["liveApiEnabled", "containsSecrets", "containsCustomerData"],
+      "properties": {
+        "liveApiEnabled": { "type": "boolean", "const": false },
+        "containsSecrets": { "type": "boolean", "const": false },
+        "containsCustomerData": { "type": "boolean", "const": false },
+        "productionWrites": { "type": "boolean", "const": false },
+        "flags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "documentRefs": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "ingest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "type": "string", "enum": ["local-only"] },
+        "apiEndpointPlaceholder": { "type": "string", "format": "uri" },
+        "apiEndpointNote": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "checkResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["passed", "failed", "skipped", "not_run"]
+        },
+        "command": { "type": "string" },
+        "exitCode": { "type": "integer" },
+        "durationMs": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

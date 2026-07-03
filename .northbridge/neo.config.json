@@ -1,0 +1,51 @@
+{
+  "$schema": "./neo.config.schema.json",
+  "schemaVersion": "1.0.0",
+  "client": {
+    "id": "northbridge-website",
+    "displayName": "Northbridge Website",
+    "operatingCompany": "Northbridge Venture Group",
+    "platformOwner": "Northbridge Venture Group"
+  },
+  "repository": {
+    "name": "northbridge-venture-group",
+    "defaultBranch": "main",
+    "packageManager": "npm"
+  },
+  "adapter": {
+    "version": "1.0.0",
+    "kind": "neo-client-lightweight",
+    "description": "Local JSON session and repo-status reports for NEO ingestion (no runtime, no live API)."
+  },
+  "reporting": {
+    "outputDirectory": ".northbridge/reports",
+    "sessionReportSchema": ".northbridge/session-report.schema.json",
+    "repoStatusSchema": ".northbridge/repo-status.schema.json",
+    "includeUntrackedFiles": false,
+    "maxFilesChanged": 500
+  },
+  "validation": {
+    "typecheckCommand": "npm run build --if-present",
+    "testCommand": "npm test",
+    "lintCommand": "npm run lint --if-present"
+  },
+  "ingest": {
+    "mode": "local-only",
+    "liveApiEnabled": false,
+    "apiEndpointPlaceholder": "https://neo.northbridgeventuregroup.com/api/v1/ingest/session-report",
+    "apiEndpointNote": "Not active. Future NEO central ingest will accept session-report.schema.json payloads with service credentials issued by Northbridge Intelligence Team."
+  },
+  "governance": {
+    "documentRefs": [
+      "docs/neo-client-adapter.md"
+    ],
+    "forbiddenPayloadPatterns": [
+      "customer",
+      "pii",
+      "password",
+      "secret",
+      "api_key",
+      "service_role"
+    ]
+  }
+}

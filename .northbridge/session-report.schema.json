@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://northbridgeventuregroup.com/schemas/neo/session-report/1.0.0",
+  "title": "NEO Client Session Report",
+  "description": "Lightweight engineering session report exported by a NEO client repository adapter. No secrets, no customer data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "reportKind",
+    "reportId",
+    "generatedAt",
+    "client",
+    "repository",
+    "session",
+    "changes",
+    "validation",
+    "governance"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "reportKind": {
+      "type": "string",
+      "const": "session-report"
+    },
+    "reportId": {
+      "type": "string",
+      "minLength": 8,
+      "description": "Stable id for this report file (uuid or slug)."
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "client": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "displayName"],
+      "properties": {
+        "id": { "type": "string" },
+        "displayName": { "type": "string" },
+        "adapterVersion": { "type": "string" }
+      }
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "branch", "commit"],
+      "properties": {
+        "name": { "type": "string" },
+        "branch": { "type": "string" },
+        "commit": { "type": "string", "minLength": 7 },
+        "commitShort": { "type": "string", "minLength": 7, "maxLength": 12 },
+        "remoteUrl": { "type": "string" }
+      }
+    },
+    "session": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary"],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable prompt or session summary."
+        },
+        "area": {
+          "type": "string",
+          "description": "Primary package or product area touched (e.g. lib/cat, app/app)."
+        },
+        "packagesChanged": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "learningNotes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "changes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["filesChanged"],
+      "properties": {
+        "filesChanged": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "filesChangedCount": { "type": "integer", "minimum": 0 },
+        "truncated": { "type": "boolean" }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lint", "test", "typecheck"],
+      "properties": {
+        "lint": { "$ref": "#/$defs/checkResult" },
+        "test": { "$ref": "#/$defs/checkResult" },
+        "typecheck": { "$ref": "#/$defs/checkResult" },
+        "skipped": { "type": "boolean" }
+      }
+    },
+    "pullRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "number": { "type": "integer", "minimum": 1 },
+        "url": { "type": "string", "format": "uri" },
+        "title": { "type": "string" }
+      }
+    },
+    "humanReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "decision": {
+          "type": "string",
+          "enum": ["approved", "rejected", "pending", "not_applicable"]
+        },
+        "reviewer": { "type": "string" },
+        "notes": { "type": "string" },
+        "recordedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["liveApiEnabled", "containsSecrets", "containsCustomerData"],
+      "properties": {
+        "liveApiEnabled": { "type": "boolean", "const": false },
+        "containsSecrets": { "type": "boolean", "const": false },
+        "containsCustomerData": { "type": "boolean", "const": false },
+        "productionWrites": { "type": "boolean", "const": false },
+        "flags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Optional governance tags (e.g. protected-area-touch, schema-change)."
+        },
+        "documentRefs": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "ingest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "type": "string", "enum": ["local-only"] },
+        "apiEndpointPlaceholder": { "type": "string", "format": "uri" },
+        "apiEndpointNote": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "checkResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["passed", "failed", "skipped", "not_run"]
+        },
+        "command": { "type": "string" },
+        "exitCode": { "type": "integer" },
+        "durationMs": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}
