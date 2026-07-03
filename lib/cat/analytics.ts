@@ -6,7 +6,6 @@ import type {
 
 let analyticsHandler: CatAnalyticsHandler | null = null;
 
-/** Register a backend or third-party analytics handler when available. */
 export function setCatAnalyticsHandler(handler: CatAnalyticsHandler | null): void {
   analyticsHandler = handler;
 }
@@ -28,4 +27,18 @@ export function trackCatEvent(
       new CustomEvent("northbridge:cat-analytics", { detail: payload }),
     );
   }
+}
+
+export function trackConversionEvent(
+  type: "cta_click" | "qualified_lead" | "consultation_intent" | "conversation_complete",
+  properties?: CatAnalyticsPayload["properties"],
+): void {
+  const eventMap = {
+    cta_click: "cat_cta_clicked",
+    qualified_lead: "cat_qualified_lead_signal",
+    consultation_intent: "cat_conversion_intent",
+    conversation_complete: "cat_conversation_completed",
+  } as const;
+
+  trackCatEvent(eventMap[type], properties);
 }

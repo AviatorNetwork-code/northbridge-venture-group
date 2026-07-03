@@ -1,3 +1,10 @@
+import type {
+  ConsultantSessionState,
+  ConversationStage,
+  ProductRecommendation,
+  SessionScores,
+} from "./consultantTypes";
+
 export type CatRecommendationAction =
   | "explore_products"
   | "complete_assessment"
@@ -5,10 +12,7 @@ export type CatRecommendationAction =
   | "book_meeting"
   | "continue_browsing";
 
-export type CatCtaKind =
-  | "internal"
-  | "external"
-  | "email";
+export type CatCtaKind = "internal" | "external" | "email";
 
 export interface CatCta {
   id: string;
@@ -24,6 +28,10 @@ export interface CatMessageRecord {
   content: string;
   ctas?: CatCta[];
   timestamp: number;
+  stage?: ConversationStage;
+  stageLabel?: string;
+  followUpQuestion?: string;
+  productRecommendation?: ProductRecommendation;
 }
 
 export interface CatRecommendation {
@@ -37,6 +45,17 @@ export interface CatAssistantResponse {
   ctas: CatCta[];
   recommendation?: CatRecommendation;
   matchedTopic?: string;
+  stage?: ConversationStage;
+  stageLabel?: string;
+  followUpQuestion?: string;
+  productRecommendation?: ProductRecommendation;
+  session?: ConsultantSessionState;
+  sessionScoreDelta?: {
+    before: SessionScores;
+    after: SessionScores;
+  };
+  qualifiedLead?: boolean;
+  primaryIntent?: string;
 }
 
 export interface CatQuickQuestion {
@@ -46,23 +65,32 @@ export interface CatQuickQuestion {
 }
 
 export interface CatRuntimeAdapter {
-  /** Future hook for live CAT runtime integration. */
-  mode: "static" | "runtime";
+  mode: "static" | "consultant";
   respond: (input: string, context?: CatConversationContext) => Promise<CatAssistantResponse>;
 }
 
 export interface CatConversationContext {
   messageHistory: CatMessageRecord[];
   pagePath?: string;
+  session?: ConsultantSessionState;
 }
 
 export type CatAnalyticsEventName =
   | "cat_opened"
+  | "cat_closed"
   | "cat_question_selected"
   | "cat_message_sent"
   | "cat_recommendation_generated"
   | "cat_cta_clicked"
-  | "cat_closed";
+  | "cat_stage_transition"
+  | "cat_product_recommended"
+  | "cat_follow_up_asked"
+  | "cat_understanding_signal_captured"
+  | "cat_conversion_intent"
+  | "cat_session_scores_updated"
+  | "cat_conversation_completed"
+  | "cat_qualified_lead_signal"
+  | "cat_neo_export";
 
 export interface CatAnalyticsPayload {
   event: CatAnalyticsEventName;
@@ -71,3 +99,5 @@ export interface CatAnalyticsPayload {
 }
 
 export type CatAnalyticsHandler = (payload: CatAnalyticsPayload) => void;
+
+export type { ConsultantSessionState, ConversationStage, ProductRecommendation, SessionScores };

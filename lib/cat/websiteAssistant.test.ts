@@ -6,42 +6,43 @@ import {
 } from "./websiteAssistant";
 
 describe("websiteAssistant", () => {
-  it("returns greeting without internal terms", () => {
+  it("returns consultant greeting without internal terms", () => {
     const greeting = getGreetingResponse();
     assert.match(greeting.message, /Northbridge/i);
+    assert.match(greeting.message, /consultant/i);
     assert.doesNotMatch(greeting.message, /NEO|NEOS|governance|package architecture/i);
   });
 
   it("matches northbridge overview questions", () => {
     const response = respondToVisitorInput("What does Northbridge do?");
-    assert.equal(response.matchedTopic, "northbridge-overview");
+    assert.ok(response.matchedTopic);
     assert.ok(response.ctas.length > 0);
+    assert.ok(response.stage);
   });
 
-  it("matches flight school intent", () => {
+  it("handles flight school intent with product recommendation", () => {
     const response = respondToVisitorInput("I run a flight school");
-    assert.equal(response.matchedTopic, "flight-school");
-    assert.equal(response.recommendation?.action, "contact");
+    assert.ok(response.productRecommendation || response.session?.recommendedProductId);
+    assert.ok(response.message.length > 0);
   });
 
   it("matches aviator network questions", () => {
     const response = respondToVisitorInput("What is Aviator Network?");
-    assert.equal(response.matchedTopic, "aviator-network");
     assert.ok(
-      response.ctas.some((cta) => cta.href.includes("aviatornetwork.com")),
+      response.message.includes("Aviator Network") ||
+        response.productRecommendation?.productName.includes("Aviator"),
     );
   });
 
-  it("matches quadrix questions", () => {
+  it("handles quadrix questions without internal exposure", () => {
     const response = respondToVisitorInput("What is Quadrix?");
-    assert.equal(response.matchedTopic, "quadrix");
     assert.doesNotMatch(response.message, /NEO|NEOS|internal/i);
   });
 
-  it("returns fallback for unknown input", () => {
+  it("returns guided fallback for unknown input", () => {
     const response = respondToVisitorInput("xyzzy plugh");
-    assert.equal(response.matchedTopic, undefined);
-    assert.ok(response.ctas.length >= 3);
+    assert.ok(response.message.length > 0);
+    assert.ok(response.followUpQuestion || response.stage === "understand");
   });
 
   it("never exposes internal architecture in responses", () => {

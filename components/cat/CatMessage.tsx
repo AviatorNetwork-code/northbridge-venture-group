@@ -20,7 +20,29 @@ export default function CatMessage({ message, onCtaClick }: CatMessageProps) {
             : "bg-red text-white"
         }`}
       >
+        {isAssistant && message.stageLabel && (
+          <p className="text-[10px] uppercase tracking-wider text-red/90 mb-2">
+            {message.stageLabel}
+          </p>
+        )}
         <p className="whitespace-pre-wrap">{message.content}</p>
+
+        {isAssistant && message.productRecommendation && (
+          <div className="mt-3 p-2.5 border border-white/10 bg-black/40 text-xs text-silver">
+            <p className="font-semibold text-white text-sm mb-1">
+              Recommended: {message.productRecommendation.productName}
+            </p>
+            <p className="mb-1">{message.productRecommendation.why}</p>
+            <p className="text-silver/80">
+              Fit confidence: {Math.round(message.productRecommendation.fitScore * 100)}%
+            </p>
+          </div>
+        )}
+
+        {isAssistant && message.followUpQuestion && (
+          <p className="mt-2 text-xs text-white/80 italic">{message.followUpQuestion}</p>
+        )}
+
         {isAssistant && message.ctas && message.ctas.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2">
             {message.ctas.map((cta) => (

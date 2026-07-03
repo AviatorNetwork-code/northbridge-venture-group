@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:cat": "tsx --test lib/cat/websiteAssistant.test.ts"
+    "test:cat": "tsx --test lib/cat/consultant.test.ts lib/cat/websiteAssistant.test.ts"
   },
   "dependencies": {
     "next": "14.2.18",
