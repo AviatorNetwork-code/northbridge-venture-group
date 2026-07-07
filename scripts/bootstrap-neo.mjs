@@ -170,23 +170,96 @@ function isNeoRepoPresent(neoPath) {
   );
 }
 
-/** Resolve a usable `neo` executable, preferring the freshly built NEO repo. */
-function resolveNeoBin(neoPath, cliBin) {
+/**
+ * Resolve how to invoke the NEO CLI without relying on the neo shebang
+ * (`#!/usr/bin/env npx tsx`), which fails in minimal environments.
+ * Probes candidates in reliability order and returns the first runnable invoker.
+ */
+function resolveNeoInvoker(neoPath, cliCfg = {}) {
   const candidates = [];
-  if (cliBin && cliBin !== "neo") {
-    candidates.push(path.isAbsolute(cliBin) ? cliBin : path.join(neoPath, cliBin));
+
+  if (cliCfg.bin && cliCfg.bin !== "neo") {
+    const configured = path.isAbsolute(cliCfg.bin)
+      ? cliCfg.bin
+      : path.join(neoPath, cliCfg.bin);
+    candidates.push({
+      label: path.relative(neoPath, configured),
+      command: configured,
+      baseArgs: [],
+      cwd: REPO_ROOT,
+      source: "neo-config",
+    });
   }
-  candidates.push(path.join(neoPath, "node_modules", ".bin", "neo"));
-  candidates.push(path.join(neoPath, "bin", "neo"));
-  for (const candidate of candidates) {
-    if (existsSync(candidate)) return { bin: candidate, source: "neo-repo" };
+
+  const distJs = path.join(neoPath, "packages", "neo-cli", "dist", "bin", "neo.js");
+  if (existsSync(distJs)) {
+    candidates.push({
+      label: "packages/neo-cli/dist/bin/neo.js",
+      command: process.execPath,
+      baseArgs: [distJs],
+      cwd: REPO_ROOT,
+      source: "neo-repo:dist",
+    });
   }
-  // Fall back to a `neo` on PATH.
-  const probe = run(process.platform === "win32" ? "where" : "command", ["-v", "neo"]);
-  if (probe.ok && firstLine(probe.stdout)) {
-    return { bin: "neo", source: "PATH" };
+
+  const tsxBin = path.join(neoPath, "node_modules", ".bin", "tsx");
+  const neoTs = path.join(neoPath, "packages", "neo-cli", "bin", "neo.ts");
+  if (existsSync(tsxBin) && existsSync(neoTs)) {
+    candidates.push({
+      label: "tsx packages/neo-cli/bin/neo.ts",
+      command: tsxBin,
+      baseArgs: [neoTs],
+      cwd: REPO_ROOT,
+      source: "neo-repo:tsx",
+    });
   }
-  return { bin: null, source: null };
+
+  const neoTsRelative = "packages/neo-cli/bin/neo.ts";
+  if (existsSync(neoTs)) {
+    candidates.push({
+      label: "npm exec -- tsx packages/neo-cli/bin/neo.ts",
+      command: "npm",
+      baseArgs: ["exec", "--", "tsx", neoTsRelative],
+      cwd: neoPath,
+      source: "neo-repo:npm-exec",
+    });
+  }
+
+  candidates.push({
+    label: "neo",
+    command: "neo",
+    baseArgs: [],
+    cwd: REPO_ROOT,
+    source: "PATH",
+  });
+
+  for (const invoker of candidates) {
+    const verify = runNeo(invoker, ["--version"], { timeout: TIMEOUTS.verify });
+    if (verify.ok || firstLine(verify.stdout)) {
+      return invoker;
+    }
+  }
+
+  return null;
+}
+
+function runNeo(invoker, args, options = {}) {
+  if (!invoker) {
+    return {
+      ok: false,
+      status: null,
+      signal: null,
+      stdout: "",
+      stderr: "",
+      notFound: true,
+      timedOut: false,
+      errorMessage: "NEO CLI invoker not resolved",
+    };
+  }
+  return run(invoker.command, [...invoker.baseArgs, ...args], {
+    cwd: invoker.cwd ?? REPO_ROOT,
+    ...options,
+  });
 }
 
 function main() {
@@ -318,36 +391,58 @@ function main() {
     report.neo.buildStatus = "skipped (NEO repo missing)";
   }
 
-  // Verify the CLI works.
-  const resolved = resolveNeoBin(neoPath, cliCfg.bin || "neo");
-  if (resolved.bin) {
-    const verify = run(resolved.bin, ["--version"], { timeout: TIMEOUTS.verify });
+  // Verify the CLI works (explicit invoker — do not rely on neo shebang).
+  const neoInvoker = resolveNeoInvoker(neoPath, cliCfg);
+  if (neoInvoker) {
+    const verify = runNeo(neoInvoker, ["--version"], { timeout: TIMEOUTS.verify });
     if (verify.ok || firstLine(verify.stdout)) {
       report.neo.cliStatus = `available (${firstLine(verify.stdout) || "version unknown"})`;
-      report.neo.cliSource = resolved.source;
-      report.neo.cliBin = resolved.bin;
+      report.neo.cliSource = neoInvoker.source;
+      report.neo.cliBin = neoInvoker.label;
+      report.neo.cliInvoker = {
+        command: neoInvoker.command,
+        baseArgs: neoInvoker.baseArgs,
+        cwd: neoInvoker.cwd,
+      };
     } else {
-      report.neo.cliStatus = "unavailable (binary found but not runnable)";
+      report.neo.cliStatus = "unavailable (invoker found but not runnable)";
     }
   } else {
-    report.neo.cliStatus = "unavailable (no `neo` binary found)";
+    report.neo.cliStatus = "unavailable (no runnable NEO CLI invoker found)";
   }
   const cliAvailable = report.neo.cliStatus.startsWith("available");
 
   // Step 5: dry-run validation from THIS product repo (only if CLI available)
   if (cliAvailable) {
-    const bin = report.neo.cliBin;
-    const validate = run(bin, ["manifest", "validate", platform], { timeout: TIMEOUTS.dryRun });
+    const validate = runNeo(neoInvoker, ["manifest", "validate", platform], { timeout: TIMEOUTS.dryRun });
     report.manifest.validate = validate.ok ? "valid" : "invalid";
     if (!validate.ok) report.notes.push(`manifest validate: ${firstLine(validate.stderr || validate.stdout)}`);
 
-    const plan = run(bin, ["manifest", "plan", platform, "--org", org, "--dry-run"], { timeout: TIMEOUTS.dryRun });
+    const plan = runNeo(
+      neoInvoker,
+      ["manifest", "plan", platform, "--org", org, "--dry-run"],
+      { timeout: TIMEOUTS.dryRun },
+    );
     report.manifest.plan = plan.ok ? "generated" : "not generated";
     if (!plan.ok) report.notes.push(`manifest plan: ${firstLine(plan.stderr || plan.stdout)}`);
 
-    const installDry = run(bin, ["install", "manifest", platform, "--org", org, "--dry-run"], { timeout: TIMEOUTS.dryRun });
-    report.manifest.installDryRun = installDry.ok ? "ok (dry-run)" : "blocked";
-    if (!installDry.ok) report.notes.push(`install dry-run: ${firstLine(installDry.stderr || installDry.stdout)}`);
+    const installDry = runNeo(
+      neoInvoker,
+      ["install", "manifest", platform, "--org", org, "--dry-run"],
+      { timeout: TIMEOUTS.dryRun },
+    );
+    const installOutput = `${installDry.stdout}\n${installDry.stderr}`;
+    const reachedPreflight = /## Preflight|Plan generated:\s*yes/i.test(installOutput);
+    if (installDry.ok) {
+      report.manifest.installDryRun = "ok (dry-run)";
+    } else if (reachedPreflight) {
+      report.manifest.installDryRun = "ok (preflight reached)";
+    } else {
+      report.manifest.installDryRun = "blocked";
+    }
+    if (!installDry.ok && !reachedPreflight) {
+      report.notes.push(`install dry-run: ${firstLine(installDry.stderr || installDry.stdout)}`);
+    }
   } else {
     report.manifest.validate = "unknown (CLI unavailable)";
     report.manifest.plan = "unknown (CLI unavailable)";
