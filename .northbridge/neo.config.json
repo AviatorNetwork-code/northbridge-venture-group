@@ -12,6 +12,13 @@
     "defaultBranch": "main",
     "packageManager": "npm"
   },
+  "installer": {
+    "neoPath": "../neo",
+    "manifestId": "platform-northbridge-digital",
+    "orgId": "org-northbridge-digital",
+    "mode": "dry-run-validation",
+    "note": "Points to the local NEO central repository sibling checkout used by the platform installer CLI."
+  },
   "adapter": {
     "version": "1.0.0",
     "kind": "neo-client-lightweight",
