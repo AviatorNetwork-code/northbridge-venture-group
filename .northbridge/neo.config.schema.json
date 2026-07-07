@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://northbridgeventuregroup.com/schemas/neo.config.schema.json",
+  "title": "Northbridge NEO client config",
+  "description": "Configuration for how this product repo consumes NEO (Northbridge Engineering Operating System): local reporting adapter settings plus operator bootstrap settings used by scripts/bootstrap-neo.mjs.",
+  "type": "object",
+  "required": ["schemaVersion", "client", "repository"],
+  "additionalProperties": true,
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "type": "string" },
+    "client": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": { "type": "string" },
+        "displayName": { "type": "string" },
+        "operatingCompany": { "type": "string" },
+        "platformOwner": { "type": "string" }
+      }
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": "string" },
+        "defaultBranch": { "type": "string" },
+        "packageManager": { "type": "string" }
+      }
+    },
+    "neo": {
+      "type": "object",
+      "description": "Where NEO lives and how to build its CLI. Consumed by scripts/bootstrap-neo.mjs.",
+      "additionalProperties": true,
+      "properties": {
+        "repoUrl": { "type": "string" },
+        "defaultBranch": { "type": "string" },
+        "localPath": {
+          "type": "string",
+          "description": "Path (relative to this repo root) where NEO is cloned."
+        },
+        "cli": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "bin": { "type": "string" },
+            "installCommand": { "type": "string" },
+            "buildCommand": { "type": "string" },
+            "verifyCommand": { "type": "string" }
+          }
+        }
+      }
+    },
+    "manifest": {
+      "type": "object",
+      "description": "Default platform/org identifiers used for NEO dry-run validation.",
+      "additionalProperties": true,
+      "properties": {
+        "platform": { "type": "string" },
+        "org": { "type": "string" }
+      }
+    },
+    "connectors": {
+      "type": "object",
+      "description": "Connector credentials required by NEO for this org. Names only; values are supplied via environment variables and are never committed.",
+      "additionalProperties": true,
+      "properties": {
+        "org": { "type": "string" },
+        "requiredCredentials": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["env"],
+            "additionalProperties": true,
+            "properties": {
+              "name": { "type": "string" },
+              "env": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "adapter": { "type": "object", "additionalProperties": true },
+    "reporting": { "type": "object", "additionalProperties": true },
+    "validation": { "type": "object", "additionalProperties": true },
+    "ingest": { "type": "object", "additionalProperties": true },
+    "governance": { "type": "object", "additionalProperties": true }
+  }
+}
