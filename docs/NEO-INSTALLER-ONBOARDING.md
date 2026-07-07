@@ -83,6 +83,24 @@ that file:
 > This repo does **not** modify NEO. The bootstrap only clones and builds NEO
 > locally; if NEO's real build commands differ, update the `neo.cli` block here.
 
+### If NEO is private and the clone fails
+
+NEO is a **private** repository. If your ambient git credentials (or the
+Cloud Agent's GitHub App installation) can't see it, the clone fails with
+`Repository not found`. Provide a repo-scoped read token via the env var named
+in `neo.cloneTokenEnv` (default `NEO_REPO_TOKEN`) — set it in your shell or in
+`.env`:
+
+```bash
+NEO_REPO_TOKEN=ghp_your_readonly_token npm run neo:bootstrap
+```
+
+The token is used **only** to build the clone URL and is never stored or
+printed. Alternatively, grant the GitHub App installation access to the NEO
+repo. In a Cloud Agent, note that installation tokens are minted at session
+start, so a newly granted repo is only visible to a **new** session (or when you
+supply `NEO_REPO_TOKEN` explicitly).
+
 ---
 
 ## How to configure credentials
