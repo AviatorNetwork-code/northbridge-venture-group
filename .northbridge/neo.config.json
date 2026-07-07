@@ -16,6 +16,7 @@
     "repoUrl": "https://github.com/AviatorNetwork-code/northbridge-engineering-operating-system.git",
     "defaultBranch": "main",
     "localPath": ".neo/northbridge-engineering-operating-system",
+    "cloneTokenEnv": "NEO_REPO_TOKEN",
     "cli": {
       "bin": "neo",
       "installCommand": "npm install",

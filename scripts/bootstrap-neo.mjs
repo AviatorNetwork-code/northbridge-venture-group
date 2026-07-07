@@ -85,6 +85,9 @@ Options:
 Notes:
   - Never runs a real install: NEO manifest installs always use --dry-run.
   - Never prints secret values; only reports whether each credential is set.
+  - If ambient git credentials can't clone the private NEO repo, set a
+    repo-scoped read token in $NEO_REPO_TOKEN (env or .env). It is used only
+    for the clone and is never stored or printed.
 `);
 }
 
@@ -240,6 +243,16 @@ function main() {
   report.neo.repoUrl = repoUrl;
   report.neo.localPath = localPath;
 
+  // Load .env once (used for the optional clone token and for credentials).
+  const dotEnv = loadDotEnv();
+
+  // Optional explicit clone token (repo-scoped PAT or installation token).
+  // Lets an operator clone NEO when the ambient git credentials can't see it.
+  const cloneTokenEnv = neoCfg.cloneTokenEnv || "NEO_REPO_TOKEN";
+  const cloneToken = process.env[cloneTokenEnv] || dotEnv[cloneTokenEnv] || "";
+  report.neo.cloneTokenEnv = cloneTokenEnv;
+  report.neo.cloneTokenUsed = false;
+
   // Step 2/3: resolve NEO path, clone if missing
   if (isNeoRepoPresent(neoPath)) {
     report.neo.repoState = "found";
@@ -251,17 +264,33 @@ function main() {
     report.notes.push("Set neo.repoUrl in .northbridge/neo.config.json to enable cloning.");
   } else {
     const branch = neoCfg.defaultBranch || "main";
+    // Inject the token only into the URL passed to git; never store/print it.
+    let cloneUrl = repoUrl;
+    if (cloneToken && /^https:\/\/github\.com\//.test(repoUrl)) {
+      cloneUrl = repoUrl.replace("https://", `https://x-access-token:${cloneToken}@`);
+      report.neo.cloneTokenUsed = true;
+    }
     const clone = run(
       "git",
-      ["clone", "--depth", "1", "--branch", branch, repoUrl, neoPath],
+      ["clone", "--depth", "1", "--branch", branch, cloneUrl, neoPath],
       { timeout: TIMEOUTS.clone },
     );
     if (clone.ok && isNeoRepoPresent(neoPath)) {
       report.neo.repoState = "found";
-      report.neo.cloneStatus = "cloned";
+      report.neo.cloneStatus = report.neo.cloneTokenUsed
+        ? `cloned (using $${cloneTokenEnv})`
+        : "cloned";
     } else {
       report.neo.repoState = "missing";
       report.neo.cloneStatus = `failed: ${errorLine(clone.stderr) || clone.errorMessage || "unknown error"}`;
+      if (/not found|could not read|denied|authentication|403|404/i.test(clone.stderr || "")) {
+        report.notes.push(
+          `NEO clone was rejected. This usually means the repo does not exist under that owner, OR the current git credentials / GitHub App installation lack access. ` +
+            (cloneToken
+              ? `A token from $${cloneTokenEnv} was used but still failed — confirm it has read access to ${repoUrl}.`
+              : `Provide a repo-scoped read token via $${cloneTokenEnv} (env or .env), or grant the GitHub App installation access to the repo, then re-run.`),
+        );
+      }
     }
   }
 
@@ -326,7 +355,6 @@ function main() {
   }
 
   // Credentials (names come from config; values never printed)
-  const dotEnv = loadDotEnv();
   const required = (config.connectors?.requiredCredentials ?? []).map((c) =>
     typeof c === "string" ? { name: c, env: c } : c,
   );
@@ -405,6 +433,9 @@ function finish(report, options) {
   out.push(line(SYMBOLS.info, "Product repo", report.repoRoot));
   out.push(line(SYMBOLS.info, "NEO repo URL", n.repoUrl || "(not set)"));
   out.push(line(SYMBOLS.info, "NEO local path", n.localPath));
+  if (n.cloneTokenUsed) {
+    out.push(line(SYMBOLS.info, "Clone auth", `token from $${n.cloneTokenEnv}`));
+  }
   out.push("");
   out.push("  NEO availability");
   out.push(line(n.repoState === "found" ? SYMBOLS.ok : SYMBOLS.fail, "NEO repo", n.repoState));

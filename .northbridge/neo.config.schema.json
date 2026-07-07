@@ -39,6 +39,10 @@
           "type": "string",
           "description": "Path (relative to this repo root) where NEO is cloned."
         },
+        "cloneTokenEnv": {
+          "type": "string",
+          "description": "Name of an env var holding an optional repo-scoped read token used only for cloning NEO. The value is never stored or printed."
+        },
         "cli": {
           "type": "object",
           "additionalProperties": true,
