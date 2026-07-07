@@ -12,6 +12,43 @@
     "defaultBranch": "main",
     "packageManager": "npm"
   },
+  "neo": {
+    "repoUrl": "https://github.com/AviatorNetwork-code/northbridge-engineering-operating-system.git",
+    "defaultBranch": "main",
+    "localPath": ".neo/northbridge-engineering-operating-system",
+    "cloneTokenEnv": "NEO_REPO_TOKEN",
+    "cli": {
+      "bin": "neo",
+      "installCommand": "npm install",
+      "buildCommand": "npm run build",
+      "verifyCommand": "neo --version"
+    }
+  },
+  "manifest": {
+    "platform": "platform-northbridge-digital",
+    "org": "org-northbridge-digital"
+  },
+  "connectors": {
+    "org": "org-northbridge-digital",
+    "requiredCredentials": [
+      {
+        "name": "Supabase project URL",
+        "env": "NEOS_ORG_NORTHBRIDGE_DIGITAL_CONNECTOR_SUPABASE_PROJECT_URL"
+      },
+      {
+        "name": "Supabase service role key",
+        "env": "NEOS_ORG_NORTHBRIDGE_DIGITAL_CONNECTOR_SUPABASE_SERVICE_ROLE_KEY"
+      },
+      {
+        "name": "GitHub access token",
+        "env": "NEOS_ORG_NORTHBRIDGE_DIGITAL_CONNECTOR_GITHUB_ACCESS_TOKEN"
+      },
+      {
+        "name": "Vercel access token",
+        "env": "NEOS_ORG_NORTHBRIDGE_DIGITAL_CONNECTOR_VERCEL_ACCESS_TOKEN"
+      }
+    ]
+  },
   "adapter": {
     "version": "1.0.0",
     "kind": "neo-client-lightweight",
