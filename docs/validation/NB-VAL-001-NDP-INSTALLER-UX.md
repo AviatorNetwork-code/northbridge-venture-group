@@ -5,8 +5,11 @@
 | **Validation ID** | NB-VAL-001 |
 | **Title** | NDP Installer UX Validation (Dry Run) |
 | **Date** | 2026-07-07 |
+| **Last updated** | 2026-07-07 (Run 2 — NEO bootstrap attempt) |
 | **Agent run** | [Ndp installer ux validation](https://cursor.com/agents/bc-21c2e3ec-b5b3-46aa-a03b-38071f7d2cd0) |
 | **Scope** | Installer UX validation only — no website build, no real install |
+| **NEO expected path** | `/neo` |
+| **NEO remote (expected)** | `https://github.com/AviatorNetwork-code/northbridge-engineering-operating-system.git` |
 
 ---
 
@@ -60,7 +63,7 @@ Updated `.northbridge/neo.config.json` to add an `installer` block pointing at t
 
 | Config value | Resolved absolute path | Exists? |
 |--------------|------------------------|---------|
-| `installer.neoPath` → `../neo` | `/neo` | **No** |
+| `installer.neoPath` → `../neo` | `/neo` | **Directory exists; git checkout missing** |
 
 The existing lightweight client adapter fields (`client`, `adapter`, `reporting`, `ingest`, `governance`) were preserved unchanged.
 
@@ -69,12 +72,12 @@ The existing lightweight client adapter fields (`client`, `adapter`, `reporting`
 | Artifact | Status |
 |----------|--------|
 | `.northbridge/neo.config.schema.json` | Referenced by `$schema`; not present in website repo |
-| Local NEO central repo at `/neo` | Not cloned in this environment |
-| `neo` CLI on `PATH` | Not installed |
+| Local NEO central repo at `/neo` | `/neo` created; clone failed (repo not found) |
+| `neo` CLI on `PATH` | Not installed (blocked by missing repo) |
 
 ---
 
-## 4. Command Execution (Dry Run)
+## 4. Command Execution (Dry Run — Run 1)
 
 All commands were run from the website repository root (`/workspace`).
 
@@ -173,16 +176,88 @@ Because the `neo` CLI could not be invoked, installer UX could only be assessed 
 | `neo manifest plan … --dry-run` | **BLOCKED** (exit 127) |
 | `neo install manifest … --dry-run` | **BLOCKED** (exit 127) |
 
-**Overall: INCOMPLETE — blocked on missing NEO central repository and `neo` CLI.**
+**Overall (Run 1): INCOMPLETE — blocked on missing NEO central repository and `neo` CLI.**
 
 ---
 
-## 8. Unblock Checklist (for follow-up run)
+## 8. NEO Bootstrap Attempt (Run 2)
 
-1. Clone the NEO central repository to `/neo` (sibling of `/workspace`), or update `installer.neoPath` to the actual checkout location.
-2. Install or build the `neo` CLI from the NEO repo and ensure it is on `PATH` (or document invocation via `$(neoPath)/bin/neo`).
-3. Provide `.northbridge/neo.config.schema.json` (from NEO repo) so installer fields are schema-validated.
-4. Re-run from `/workspace`:
+Run 2 attempted to bootstrap the NEO central repository inside the cloud validation environment per the expected layout:
+
+| Step | Command / action | Result |
+|------|------------------|--------|
+| 1 | `sudo mkdir -p /neo && sudo chown ubuntu:ubuntu /neo` | **PASS** — `/neo` writable |
+| 2 | `git clone https://github.com/AviatorNetwork-code/northbridge-engineering-operating-system.git /neo` | **FAIL** — `remote: Repository not found` (exit 128) |
+| 3 | `gh repo clone AviatorNetwork-code/northbridge-engineering-operating-system /neo` | **FAIL** — GraphQL: Could not resolve to a Repository |
+| 4 | `gh api repos/AviatorNetwork-code/northbridge-engineering-operating-system` | **FAIL** — HTTP 404 |
+| 5 | `curl -sI https://github.com/AviatorNetwork-code/northbridge-engineering-operating-system` | **FAIL** — HTTP 404 |
+| 6 | GraphQL inventory of `AviatorNetwork-code` repositories | Only 3 repos visible (see below) |
+| 7 | Install NEO dependencies in `/neo` | **SKIPPED** — no checkout |
+| 8 | Build `packages/neo-cli` | **SKIPPED** — no checkout |
+| 9 | Verify `neo` CLI | **SKIPPED** — no checkout |
+| 10 | Re-run dry-run installer commands from `/workspace` | **SKIPPED** — `neo` unavailable |
+
+### GitHub account inventory (`AviatorNetwork-code`)
+
+GraphQL query on 2026-07-07 returned only these repositories:
+
+| Repository | Private | Updated |
+|------------|---------|---------|
+| `northbridge-venture-group` | no | 2026-07-03 |
+| `airtax-financial` | no | 2026-03-13 |
+| `royal-international-flight-school` | no | 2026-02-05 |
+
+`northbridge-engineering-operating-system` is **not present** in this account (public or private) with the cloud-agent GitHub token in use.
+
+### Failure classification (Run 2)
+
+| Category | Applies? | Evidence |
+|----------|----------|----------|
+| **Missing NEO repo** | **YES** | Clone returns `Repository not found`; GitHub API 404; not in account repo list |
+| Missing CLI build | No (not reached) | Cannot install/build without checkout |
+| Missing env vars | No evidence | No installer env vars referenced before clone failure |
+| Missing connector credentials | No evidence | Clone fails before any connector/auth step |
+| Installer validation issue | No (not reached) | `neo` commands never executed |
+
+**Primary blocker: missing NEO repo** — the expected GitHub remote does not exist or is not accessible to this cloud agent.
+
+### Planned `neo` invocation (once `/neo` is cloned)
+
+When the NEO checkout is available, use one of:
+
+```bash
+# Option A — add neo-cli bin to PATH for the session
+export PATH="/neo/packages/neo-cli/bin:$PATH"
+cd /workspace
+
+# Option B — direct bin path (if present after build)
+/neo/packages/neo-cli/bin/neo --version
+
+# Option C — package manager script from NEO repo root (if defined)
+cd /neo && npm run neo -- --version
+```
+
+Then from `/workspace`:
+
+```bash
+neo manifest validate platform-northbridge-digital
+neo manifest plan platform-northbridge-digital --org org-northbridge-digital --dry-run
+neo install manifest platform-northbridge-digital --org org-northbridge-digital --dry-run
+```
+
+---
+
+## 9. Unblock Checklist (for follow-up run)
+
+1. **Create or publish** `AviatorNetwork-code/northbridge-engineering-operating-system` on GitHub, or grant the Cursor cloud-agent GitHub app read access if the repo is private under another owner.
+2. Clone to `/neo`:
+   ```bash
+   git clone https://github.com/AviatorNetwork-code/northbridge-engineering-operating-system.git /neo
+   ```
+3. In `/neo`: install dependencies, build `packages/neo-cli`, verify `neo --version`.
+4. Expose CLI to `/workspace` sessions (`export PATH="/neo/packages/neo-cli/bin:$PATH"` or documented equivalent).
+5. Provide `.northbridge/neo.config.schema.json` (from NEO repo) so installer fields are schema-validated.
+6. Re-run from `/workspace`:
 
    ```bash
    neo manifest validate platform-northbridge-digital
@@ -190,11 +265,27 @@ Because the `neo` CLI could not be invoked, installer UX could only be assessed 
    neo install manifest platform-northbridge-digital --org org-northbridge-digital --dry-run
    ```
 
-5. Update this document with CLI stdout/stderr, plan diff summary, and installer UX notes (error messages, dry-run clarity, idempotency signals).
+7. Update this document with CLI stdout/stderr, plan diff summary, and installer UX notes (error messages, dry-run clarity, idempotency signals).
 
 ---
 
-## 9. Artifacts
+## 10. Validation Verdict (Run 2)
+
+| Step | Status |
+|------|--------|
+| Create `/neo` mount path | **PASS** |
+| Clone NEO repo | **FAIL** — repository not found |
+| Install NEO dependencies | **SKIPPED** |
+| Build `neo` CLI | **SKIPPED** |
+| `neo manifest validate …` | **SKIPPED** (blocked) |
+| `neo manifest plan … --dry-run` | **SKIPPED** (blocked) |
+| `neo install manifest … --dry-run` | **SKIPPED** (blocked) |
+
+**Overall (Run 2): INCOMPLETE — blocked on missing NEO repo at the expected GitHub remote.**
+
+---
+
+## 11. Artifacts
 
 | Artifact | Location |
 |----------|----------|
