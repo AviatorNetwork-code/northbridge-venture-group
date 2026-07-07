@@ -166,3 +166,30 @@ Recommendations 4–5 are optional enhancements to `scripts/bootstrap-neo.mjs` i
 - **Recommendations:** grant App access / provide clone token / confirm repo slug (required); improve 404 error messaging and optional clone-token support (nice-to-have).
 
 > Success criterion not yet met: the only acceptable remaining blockers are external credentials, but the current blocker is **repository access**. Once the agent (or operator) can clone the real NEO repo, re-run `npm run neo:bootstrap` to proceed to dependency install → CLI build → manifest validate/plan → installer preflight.
+
+---
+
+## Addendum — retest after access grant (2026-07-07T22:37Z)
+
+After the operator reported granting the Cloud Agent access to the NEO repo, the checks were re-run **in the same session**:
+
+| Probe | Result |
+| --- | --- |
+| `gh api /installation/repositories` | Still `total_count = 1` (only `northbridge-venture-group`) |
+| `gh api repos/.../northbridge-engineering-operating-system` | Still **HTTP 404** |
+| `git clone` NEO | Still `Repository not found` (exit 128) |
+
+**Root cause of the persistent block:** git and `gh` both authenticate with the **same GitHub App installation token** (`ghs_…`), injected via a global `url."https://x-access-token:…@github.com/".insteadOf` rewrite. GitHub App **installation tokens fix their repository scope at mint time and are immutable for their ~1h lifetime.** This session's token was minted *before* the grant, so it cannot see the newly added repo. This is a token-freshness limitation, not a new failure.
+
+**Two ways to actually reach preflight:**
+
+1. **New Cloud Agent session** — a fresh session mints a new installation token that reflects the grant; then `npm run neo:bootstrap` clones NEO with no changes.
+2. **Explicit clone token (works this session)** — set a repo-scoped read token in `NEO_REPO_TOKEN` (env or `.env`). NB-FIX-003 was extended so the bootstrap uses it *only* to build the clone URL (never stored/printed):
+
+   ```bash
+   NEO_REPO_TOKEN=<repo-scoped-token> npm run neo:bootstrap
+   ```
+
+**Bootstrap capability verified:** the tokenized clone path was exercised end-to-end against a real, accessible GitHub repo and succeeded (`✓ NEO repo found`, `Clone status: cloned (using $NEO_REPO_TOKEN)`, `Clone auth: token from $NEO_REPO_TOKEN`). So the moment a token/session with NEO read access is available, the bootstrap will proceed past discovery into install → build → CLI verify → dry-run validate/plan → preflight.
+
+Net: the consumer-side bootstrap is now robust to private-repo access; the remaining action is purely providing NEO read access (fresh session or `NEO_REPO_TOKEN`).
