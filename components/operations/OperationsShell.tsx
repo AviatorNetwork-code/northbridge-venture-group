@@ -8,6 +8,7 @@ import SidebarNav from "@/components/operations/SidebarNav";
 import { navigationItems } from "@/components/operations/mock-data";
 import { CatProvider } from "@/components/cat/CatProvider";
 import CatPanel from "@/components/cat/CatPanel";
+import { ConnectorProvider } from "@/components/connectors/ConnectorProvider";
 
 type OperationsShellProps = {
   children: React.ReactNode;
@@ -52,7 +53,8 @@ export default function OperationsShell({ children }: OperationsShellProps) {
 
   return (
     <CatProvider>
-      <div className="flex min-h-screen bg-black text-white">
+      <ConnectorProvider>
+        <div className="flex min-h-screen bg-black text-white">
         <SidebarNav
           activeId={activeNavId}
           isOpen={navOpen}
@@ -74,6 +76,7 @@ export default function OperationsShell({ children }: OperationsShellProps) {
 
         <CatPanel />
       </div>
+      </ConnectorProvider>
     </CatProvider>
   );
 }

@@ -1,19 +1,15 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import OnboardingHireTransfer from "@/components/hire/OnboardingHireTransfer";
+import OnboardingConnectorChecklist from "@/components/connectors/OnboardingConnectorChecklist";
 import {
   DataRow,
-  MetricCard,
   ModuleContainer,
   ModuleHeader,
-  ProgressBar,
   SectionPanel,
-  StatusPill,
 } from "@/components/operations/ModuleUI";
-import {
-  onboardingChecklist,
-  onboardingRecommendations,
-} from "@/components/operations/module-mock-data";
+import { onboardingRecommendations } from "@/components/operations/module-mock-data";
+import OnboardingMetrics from "@/components/connectors/OnboardingMetrics";
 
 export const metadata: Metadata = {
   title: "Onboarding | AI Operations Center",
@@ -21,9 +17,6 @@ export const metadata: Metadata = {
 };
 
 export default function OnboardingPage() {
-  const completed = onboardingChecklist.filter((item) => item.complete).length;
-  const readiness = Math.round((completed / onboardingChecklist.length) * 100);
-
   return (
     <ModuleContainer>
       <ModuleHeader
@@ -32,12 +25,7 @@ export default function OnboardingPage() {
         description="Track connector setup, workforce deployment, and recommended next steps to reach full operational readiness."
       />
 
-      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard label="Readiness Score" value={`${readiness}%`} detail={`${completed} of ${onboardingChecklist.length} complete`} trend="up" />
-        <MetricCard label="Connectors" value="3/4" detail="HubSpot remaining" trend="neutral" />
-        <MetricCard label="Workforce" value="4/5" detail="Support specialist pending" trend="neutral" />
-        <MetricCard label="Est. Go-Live" value="3 days" detail="If checklist completed" trend="up" />
-      </div>
+      <OnboardingMetrics />
 
       <Suspense fallback={null}>
         <div className="mb-8">
@@ -46,25 +34,7 @@ export default function OnboardingPage() {
       </Suspense>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <SectionPanel title="Connector Checklist" subtitle="Required integrations">
-          <div className="mb-5">
-            <ProgressBar value={readiness} label="Overall readiness" />
-          </div>
-          <ul className="space-y-2">
-            {onboardingChecklist.map((item) => (
-              <li
-                key={item.id}
-                className="flex items-center justify-between rounded-lg border border-white/10 bg-black/30 px-3 py-2.5"
-              >
-                <span className="text-sm text-silver">{item.item}</span>
-                <StatusPill
-                  status={item.complete ? "Complete" : "Pending"}
-                  variant={item.complete ? "success" : "warning"}
-                />
-              </li>
-            ))}
-          </ul>
-        </SectionPanel>
+        <OnboardingConnectorChecklist />
 
         <SectionPanel title="Workforce Recommendations" subtitle="Suggested deployments">
           <div className="space-y-3">

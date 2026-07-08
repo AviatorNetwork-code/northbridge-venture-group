@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ConnectorDashboardSummary from "@/components/connectors/ConnectorDashboardSummary";
 import {
   dashboardMetrics,
   quickActions,
@@ -52,6 +53,8 @@ export default function OperationsPage() {
         </section>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <ConnectorDashboardSummary />
+
           <section
             aria-labelledby="quick-actions-heading"
             className="rounded-xl border border-white/10 bg-slate/40 p-5 sm:p-6 lg:col-span-2"

@@ -1,11 +1,15 @@
 import {
   billingPlan,
-  connectors,
-  onboardingChecklist,
   workforceManagers,
   workforceSpecialists,
   workforceTeams,
 } from "@/components/operations/module-mock-data";
+import {
+  buildDefaultConnectorState,
+  mergeConnectorInstances,
+  summarizeConnectorHealth,
+} from "@/lib/connectors/connector-health";
+import { buildOnboardingConnectorSummary } from "@/lib/connectors/connector-recommendations";
 
 export type OperationsSnapshot = {
   currentModule: string;
@@ -51,8 +55,10 @@ export function getModuleLabel(moduleId: string): string {
 }
 
 export function buildOperationsSnapshot(currentModule: string): OperationsSnapshot {
-  const completed = onboardingChecklist.filter((item) => item.complete).length;
-  const readinessPercent = Math.round((completed / onboardingChecklist.length) * 100);
+  const instances = mergeConnectorInstances(buildDefaultConnectorState());
+  const connectorHealth = summarizeConnectorHealth(instances);
+  const connectorOnboarding = buildOnboardingConnectorSummary(instances, {});
+  const readinessPercent = connectorOnboarding.launchReadinessPercent;
   const avgWorkload = Math.round(
     workforceSpecialists.reduce((sum, specialist) => sum + specialist.workload, 0) /
       workforceSpecialists.length,
@@ -62,19 +68,21 @@ export function buildOperationsSnapshot(currentModule: string): OperationsSnapsh
     currentModule,
     onboarding: {
       readinessPercent,
-      completed,
-      total: onboardingChecklist.length,
-      canLaunch: readinessPercent >= 70,
-      items: onboardingChecklist.map((item) => ({
-        item: item.item,
-        complete: item.complete,
+      completed: connectorOnboarding.connected,
+      total: connectorOnboarding.recommended,
+      canLaunch: connectorHealth.readyToLaunch,
+      items: connectorOnboarding.items.map((item) => ({
+        item: `Connect ${item.name}`,
+        complete: item.level === "connected",
       })),
     },
-    connectors: connectors.map((connector) => ({
-      name: connector.name,
-      status: connector.status,
-      connected: connector.status === "Connected",
-    })),
+    connectors: instances
+      .filter((item) => item.status === "connected" || item.status === "syncing")
+      .map((connector) => ({
+        name: connector.name,
+        status: connector.status,
+        connected: connector.status === "connected" || connector.status === "syncing",
+      })),
     workforce: {
       specialistCount: workforceSpecialists.length,
       teamCount: workforceTeams.length,

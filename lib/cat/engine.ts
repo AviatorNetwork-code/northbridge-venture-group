@@ -9,6 +9,14 @@ import {
   formatRecommendations,
   pricingKnowledge,
 } from "@/lib/cat/knowledge";
+import {
+  buildDefaultConnectorState,
+  mergeConnectorInstances,
+} from "@/lib/connectors/connector-health";
+import {
+  getCatConnectorMessages,
+  explainConnectorPurpose,
+} from "@/lib/connectors/connector-recommendations";
 import type {
   BusinessProfile,
   CatEngineContext,
@@ -369,6 +377,39 @@ export function processCatMessage(
       quickReplies: ["Recommend Specialists", "Take me to Workforce", "Show onboarding status"],
       actions: [{ type: "navigate", label: "Open Workforce", href: "/operations/workforce" }],
     };
+  }
+
+  if (
+    includesAny(text, [
+      "connector",
+      "connectors",
+      "gmail connected",
+      "google calendar",
+      "hubspot",
+      "whatsapp",
+      "integration",
+      "connect service",
+    ])
+  ) {
+    const instances = mergeConnectorInstances(buildDefaultConnectorState());
+    const messages = getCatConnectorMessages(instances, profile);
+
+    if (messages.length > 0) {
+      return {
+        reply: ["**Connector Status**", "", ...messages.map((m) => `• ${m}`)].join("\n"),
+        quickReplies: ["Take me to Connectors", "Show onboarding status", "What do I need?"],
+        actions: [{ type: "navigate", label: "Open Connector Center", href: "/operations/connectors" }],
+      };
+    }
+
+    const calendar = instances.find((item) => item.id === "google-calendar");
+    if (calendar) {
+      return {
+        reply: explainConnectorPurpose("google-calendar"),
+        quickReplies: ["Take me to Connectors", "Recommend Specialists"],
+        actions: [{ type: "navigate", label: "Connect Google Calendar", href: "/operations/connectors" }],
+      };
+    }
   }
 
   if (
