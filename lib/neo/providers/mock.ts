@@ -1,70 +1,108 @@
 import type { NeoPlatformServices } from "@/lib/neo/contracts";
-import {
-  mockActivity,
-  mockAnalytics,
-  mockAudit,
-  mockAvailableApps,
-  mockBusinessHealth,
-  mockCommandSuggestions,
-  mockConnectedApps,
-  mockInbox,
-  mockOnboarding,
-  mockRecommendations,
-  mockSystemHealth,
-  mockTeamHierarchy,
-  mockTimeline,
-  mockWorkforceMembers,
-  mockWorkItems,
-} from "@/lib/neo/mocks/data";
+import { neoEventBus } from "@/lib/neo/events";
+import { createInitialNeoState } from "@/lib/neo/state/seed";
+import { neoStateStore } from "@/lib/neo/state/store";
 
-/** Mock provider — swap for live NEO package bindings via neo install manifest. */
+const seed = createInitialNeoState();
+
+function fromSeed<T>(selector: (s: typeof seed) => T): Promise<T> {
+  return Promise.resolve(selector(seed));
+}
+
+/** Static mock provider — no live events. Used when live engine is disabled. */
 export const mockNeoPlatform: NeoPlatformServices = {
   workforce: {
-    listMembers: async () => mockWorkforceMembers,
-    getTeamHierarchy: async () => mockTeamHierarchy,
+    listMembers: () => fromSeed((s) => s.workforce),
+    getTeamHierarchy: () => fromSeed((s) => s.teamHierarchy),
   },
   collaboration: {
-    listTodayActivity: async () => mockActivity,
+    listTodayActivity: () => fromSeed((s) => s.activity),
   },
   workItems: {
-    listActive: async () => mockWorkItems.filter((w) => w.status === "active"),
-    listWaitingApprovals: async () =>
-      mockWorkItems.filter((w) => w.status === "waiting_approval"),
-    listEscalations: async () =>
-      mockWorkItems.filter((w) => w.status === "escalated"),
-    getTimeline: async () => mockTimeline,
-    getAuditHistory: async () => mockAudit,
+    listActive: () =>
+      fromSeed((s) =>
+        s.workItems.filter(
+          (w) => w.status === "active" || w.status === "running"
+        )
+      ),
+    listWaitingApprovals: () =>
+      fromSeed((s) =>
+        s.workItems.filter((w) => w.status === "waiting_approval")
+      ),
+    listEscalations: () =>
+      fromSeed((s) => s.workItems.filter((w) => w.status === "escalated")),
+    getTimeline: () => fromSeed((s) => s.timeline),
+    getAuditHistory: () => fromSeed((s) => s.audit),
+    listWorkflowEvents: () => fromSeed((s) => s.workflowEvents),
   },
   connectors: {
-    listConnected: async () => mockConnectedApps,
-    listAvailable: async () => mockAvailableApps,
+    listConnected: () => fromSeed((s) => s.connectedConnectors),
+    listAvailable: () => fromSeed((s) => s.availableConnectors),
   },
   onboarding: {
-    getSnapshot: async () => mockOnboarding,
+    getSnapshot: () => fromSeed((s) => s.onboarding),
   },
   messaging: {
-    listInbox: async () => mockInbox,
-    listChannels: async () => [
-      "email",
-      "sms",
-      "whatsapp",
-      "telegram",
-      "social",
-    ],
+    listInbox: () =>
+      fromSeed((s) =>
+        s.conversations.map((c) => ({
+          id: c.id,
+          channel: c.channel,
+          from: c.customer.name,
+          subject: c.subject,
+          preview: c.preview,
+          receivedAt: c.receivedAt,
+          unread: c.unread,
+        }))
+      ),
+    listChannels: () =>
+      Promise.resolve([
+        "whatsapp",
+        "email",
+        "sms",
+        "telegram",
+        "messenger",
+        "instagram",
+        "tiktok",
+        "webchat",
+      ]),
+    listConversations: () => fromSeed((s) => s.conversations),
   },
   learning: {
-    listRecommendations: async () => mockRecommendations,
+    listRecommendations: () => fromSeed((s) => s.recommendations),
   },
   executive: {
-    getBusinessHealth: async () => mockBusinessHealth,
-    getTodayActivity: async () => mockActivity,
-    getRecommendations: async () => mockRecommendations,
+    getBusinessHealth: () =>
+      fromSeed((s) => ({
+        score: s.executive.businessHealthScore,
+        level: s.executive.level,
+        summary: s.executive.summary,
+        connectedSystems: s.executive.connectedIntegrations,
+        activeWorkflows: s.executive.runningWorkflows,
+      })),
+    getKPIs: () => fromSeed((s) => s.executive),
+    getTodayActivity: () => fromSeed((s) => s.activity),
+    getRecommendations: () => fromSeed((s) => s.recommendations),
   },
   analytics: {
-    getSnapshot: async () => mockAnalytics,
+    getSnapshot: () => fromSeed((s) => s.analytics),
+    getTimeSeries: () => fromSeed((s) => s.analyticsSeries),
   },
   command: {
-    getSystemHealth: async () => mockSystemHealth,
-    listCommandSuggestions: async () => mockCommandSuggestions,
+    getSystemHealth: () => fromSeed((s) => s.systemHealth),
+    listCommandSuggestions: () =>
+      Promise.resolve([
+        { id: "cmd-1", label: "Ask CAT", prompt: "What should I prioritize today?" },
+      ]),
+    askCat: async (prompt) => ({
+      message: `Static mock mode — live engine disabled. You asked: "${prompt}"`,
+    }),
+  },
+  realtime: {
+    subscribe: (handler) => neoEventBus.subscribe(handler),
+    subscribeState: (listener) => neoStateStore.subscribe(listener),
+    getState: () => seed,
+    getVersion: () => 0,
+    start: () => undefined,
   },
 };

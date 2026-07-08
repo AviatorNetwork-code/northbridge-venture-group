@@ -1,4 +1,29 @@
-# NB-WEB-OPS-001 — AI Operations Center Integration Plan
+# NB-WEB-OPS — AI Operations Center Integration Plan
+
+## NB-WEB-OPS-002 — Live Operations Center (current)
+
+| Layer | Status |
+|-------|--------|
+| Event bus | `lib/neo/events/bus.ts` — transport-agnostic; swap for WebSocket/SSE |
+| State store | `lib/neo/state/store.ts` — single source of truth |
+| Live mock engine | `lib/neo/engine/live-mock.ts` — emits events every ~4s |
+| Default provider | `lib/neo/providers/live-mock.ts` via `getNeoPlatform()` |
+| React bindings | `useNeoState()`, `NeoLiveProvider`, toast notifications |
+| UI | Client views in `components/operations/views/*` — auto-update, no refresh |
+
+### Realtime upgrade path
+
+```typescript
+// Future: lib/neo/transports/websocket.ts
+neoEventBus.connectWebSocket(process.env.NEO_WS_URL);
+// State patches arrive from NEO platform instead of live-mock engine
+```
+
+Disable mock engine: `enableLiveMockEngine(false)` and inject live `NeoPlatformServices` via `setNeoPlatform()`.
+
+---
+
+## NB-WEB-OPS-001 — Foundation
 
 ## Architecture
 
@@ -22,14 +47,15 @@ NEO Platform Packages (intelligence + operations)
 
 The website **does not** own business logic, connector OAuth, workflow engines, or domain models. It renders NEO service snapshots through typed contracts in `lib/neo/contracts/`.
 
-## Current state (v1 foundation)
+## Current state
 
 | Layer | Status |
 |-------|--------|
-| Operations shell | `/operations/*` — 8 sections with sidebar navigation |
-| NEO client | `getNeoPlatform()` with mock provider (`lib/neo/providers/mock.ts`) |
+| Operations shell | `/operations/*` — 8 live sections with sidebar navigation |
+| NEO client | `getNeoPlatform()` with **live mock engine** (`lib/neo/providers/live-mock.ts`) |
+| Event subscriptions | `neo.realtime.subscribe()` + `useNeoState()` |
 | Marketing site | Unchanged content; route group `(marketing)` preserves Header/Footer |
-| Live NEO packages | Not linked — mock data until `neo install manifest` bindings |
+| Live NEO packages | Not linked — event engine simulates platform until bindings installed |
 
 ## Swapping mocks for live NEO packages
 

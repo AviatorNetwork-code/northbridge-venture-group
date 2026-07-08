@@ -5,7 +5,10 @@ const channelLabels: Record<InboxMessage["channel"], string> = {
   sms: "SMS",
   whatsapp: "WhatsApp",
   telegram: "Telegram",
-  social: "Social",
+  messenger: "Messenger",
+  instagram: "Instagram",
+  tiktok: "TikTok",
+  webchat: "Web Chat",
 };
 
 export default function InboxList({ messages }: { messages: InboxMessage[] }) {

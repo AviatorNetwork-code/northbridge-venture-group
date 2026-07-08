@@ -1,24 +1,27 @@
-/**
- * NEO platform service contracts consumed by the Operations Center.
- * Implementations live in NEO packages; the website wires providers only.
- */
-
 import type {
   ActivityItem,
   AIRecommendation,
   AnalyticsSnapshot,
+  AnalyticsTimeSeries,
   AuditEntry,
   BusinessHealthSnapshot,
   CatCommandSuggestion,
+  CatMessage,
+  CatResponse,
   ConnectorApp,
+  Conversation,
+  ExecutiveKPIs,
   InboxMessage,
   OnboardingSnapshot,
   SystemHealthSnapshot,
   TeamNode,
   TimelineEvent,
   WorkItem,
+  WorkflowStreamEvent,
   WorkforceMember,
 } from "@/lib/neo/types";
+import type { NeoEvent, NeoEventHandler } from "@/lib/neo/events";
+import type { NeoPlatformState } from "@/lib/neo/state/seed";
 
 export interface WorkforceService {
   listMembers(): Promise<WorkforceMember[]>;
@@ -28,6 +31,7 @@ export interface WorkforceService {
 export interface ConnectorPlatformService {
   listConnected(): Promise<ConnectorApp[]>;
   listAvailable(): Promise<ConnectorApp[]>;
+  reconnect?(connectorId: string): Promise<void>;
 }
 
 export interface CustomerOnboardingService {
@@ -40,11 +44,13 @@ export interface WorkItemsService {
   listEscalations(): Promise<WorkItem[]>;
   getTimeline(workItemId: string): Promise<TimelineEvent[]>;
   getAuditHistory(): Promise<AuditEntry[]>;
+  listWorkflowEvents?(): Promise<WorkflowStreamEvent[]>;
 }
 
 export interface MessagingService {
   listInbox(): Promise<InboxMessage[]>;
   listChannels(): Promise<string[]>;
+  listConversations?(): Promise<Conversation[]>;
 }
 
 export interface InstitutionalLearningService {
@@ -57,17 +63,28 @@ export interface CollaborationService {
 
 export interface ExecutiveDashboardService {
   getBusinessHealth(): Promise<BusinessHealthSnapshot>;
+  getKPIs?(): Promise<ExecutiveKPIs>;
   getTodayActivity(): Promise<ActivityItem[]>;
   getRecommendations(): Promise<AIRecommendation[]>;
 }
 
 export interface AnalyticsService {
   getSnapshot(): Promise<AnalyticsSnapshot>;
+  getTimeSeries?(): Promise<AnalyticsTimeSeries>;
 }
 
 export interface CommandCenterService {
   getSystemHealth(): Promise<SystemHealthSnapshot>;
   listCommandSuggestions(): Promise<CatCommandSuggestion[]>;
+  askCat?(prompt: string, history: CatMessage[]): Promise<CatResponse>;
+}
+
+export interface NeoRealtimeService {
+  subscribe(handler: NeoEventHandler): () => void;
+  subscribeState(listener: (state: NeoPlatformState) => void): () => void;
+  getState(): NeoPlatformState;
+  getVersion(): number;
+  start(): void;
 }
 
 export interface NeoPlatformServices {
@@ -81,4 +98,5 @@ export interface NeoPlatformServices {
   executive: ExecutiveDashboardService;
   analytics: AnalyticsService;
   command: CommandCenterService;
+  realtime: NeoRealtimeService;
 }

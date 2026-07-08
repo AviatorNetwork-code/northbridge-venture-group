@@ -1,17 +1,23 @@
 import type { NeoPlatformServices } from "@/lib/neo/contracts";
+import { liveMockNeoPlatform } from "@/lib/neo/providers/live-mock";
 import { mockNeoPlatform } from "@/lib/neo/providers/mock";
 
-let platform: NeoPlatformServices = mockNeoPlatform;
+let platform: NeoPlatformServices = liveMockNeoPlatform;
+let useLive = true;
 
-/**
- * Returns the active NEO platform service bindings for the Operations Center.
- * Live bindings replace mocks when @neos/* packages are installed from NEO.
- */
 export function getNeoPlatform(): NeoPlatformServices {
   return platform;
 }
 
-/** Test-only hook to inject live NEO providers without duplicating domain logic. */
 export function setNeoPlatform(services: NeoPlatformServices): void {
   platform = services;
+}
+
+export function enableLiveMockEngine(enabled = true): void {
+  useLive = enabled;
+  platform = enabled ? liveMockNeoPlatform : (mockNeoPlatform as NeoPlatformServices);
+}
+
+export function isLiveMode(): boolean {
+  return useLive;
 }

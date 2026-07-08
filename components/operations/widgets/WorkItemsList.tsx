@@ -3,6 +3,7 @@ import type { WorkItem } from "@/lib/neo/types";
 
 const statusLabel: Record<WorkItem["status"], string> = {
   active: "Active",
+  running: "Running",
   waiting_approval: "Waiting approval",
   escalated: "Escalated",
   completed: "Completed",
@@ -13,6 +14,7 @@ const statusLevel: Record<
   "healthy" | "degraded" | "critical" | "unknown"
 > = {
   active: "healthy",
+  running: "healthy",
   waiting_approval: "degraded",
   escalated: "critical",
   completed: "unknown",

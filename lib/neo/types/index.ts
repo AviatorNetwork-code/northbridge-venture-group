@@ -1,7 +1,6 @@
 /**
- * Presentation-layer type imports from NEO platform packages.
- * When @neos/* packages are linked via neo install manifest, replace this
- * module with re-exports: export type * from '@neos/workforce', etc.
+ * Presentation-layer types consumed from NEO platform packages.
+ * Replace with package re-exports when @neos/* bindings are live.
  */
 
 export type HealthLevel = "healthy" | "degraded" | "critical" | "unknown";
@@ -11,6 +10,14 @@ export type WorkforceRole =
   | "manager"
   | "team_leader"
   | "coordinator";
+
+/** Live operational status for workforce monitor */
+export type LiveWorkforceStatus =
+  | "idle"
+  | "working"
+  | "waiting"
+  | "escalated"
+  | "offline";
 
 export type WorkforceStatus =
   | "active"
@@ -26,8 +33,13 @@ export interface WorkforceMember {
   title: string;
   teamId: string;
   status: WorkforceStatus;
+  liveStatus: LiveWorkforceStatus;
   currentTask?: string;
+  currentAssignment?: string;
+  queueSize: number;
   performanceScore: number;
+  tasksCompletedToday: number;
+  avgResponseMinutes: number;
   avatarInitials: string;
 }
 
@@ -39,14 +51,27 @@ export interface TeamNode {
   childTeamIds: string[];
 }
 
+export type ConnectorLifecycle =
+  | "connected"
+  | "connecting"
+  | "authorization_required"
+  | "error"
+  | "syncing"
+  | "healthy";
+
 export interface ConnectorApp {
   id: string;
   name: string;
   category: string;
   connected: boolean;
+  lifecycle: ConnectorLifecycle;
   health: HealthLevel;
   lastSyncAt?: string;
   permissions: string[];
+  oauthStatus: "valid" | "expiring" | "expired" | "missing";
+  refreshTokenAgeDays: number;
+  usagePercent: number;
+  errorMessage?: string;
 }
 
 export interface OnboardingChecklistItem {
@@ -58,19 +83,34 @@ export interface OnboardingChecklistItem {
 
 export interface OnboardingSnapshot {
   readinessScore: number;
+  targetScore: number;
   checklist: OnboardingChecklistItem[];
   recommendedConnectorIds: string[];
   recommendedSpecialistIds: string[];
   stage: string;
+  businessDiscoveryComplete: boolean;
+  launchReadiness: "not_ready" | "almost_ready" | "ready";
+  missingRequirements: string[];
+  estimatedSetupHours: number;
 }
 
 export interface WorkItem {
   id: string;
   title: string;
-  status: "active" | "waiting_approval" | "escalated" | "completed";
+  status: "active" | "waiting_approval" | "escalated" | "completed" | "running";
   assigneeId?: string;
   priority: "low" | "medium" | "high" | "urgent";
   updatedAt: string;
+  workflowId?: string;
+}
+
+export interface WorkflowStreamEvent {
+  id: string;
+  workItemId: string;
+  label: string;
+  timestamp: string;
+  actor: string;
+  kind: "started" | "progress" | "approval" | "escalation" | "completed";
 }
 
 export interface TimelineEvent {
@@ -88,9 +128,45 @@ export interface AuditEntry {
   detail: string;
 }
 
+export type ConversationChannel =
+  | "whatsapp"
+  | "email"
+  | "sms"
+  | "telegram"
+  | "messenger"
+  | "instagram"
+  | "tiktok"
+  | "webchat";
+
+export type ConversationStatus = "open" | "waiting" | "resolved" | "escalated";
+export type Sentiment = "positive" | "neutral" | "negative";
+
+export interface CustomerProfile {
+  id: string;
+  name: string;
+  company: string;
+  tier: string;
+}
+
+export interface Conversation {
+  id: string;
+  channel: ConversationChannel;
+  customer: CustomerProfile;
+  assignedSpecialistId?: string;
+  status: ConversationStatus;
+  sentiment: Sentiment;
+  slaMinutesRemaining: number;
+  slaBreached: boolean;
+  linkedWorkflowId?: string;
+  subject: string;
+  preview: string;
+  receivedAt: string;
+  unread: boolean;
+}
+
 export interface InboxMessage {
   id: string;
-  channel: "email" | "sms" | "whatsapp" | "telegram" | "social";
+  channel: ConversationChannel;
   from: string;
   subject: string;
   preview: string;
@@ -113,6 +189,20 @@ export interface ActivityItem {
   type: string;
 }
 
+export interface ExecutiveKPIs {
+  businessHealthScore: number;
+  level: HealthLevel;
+  summary: string;
+  activeSpecialists: number;
+  activeManagers: number;
+  runningWorkflows: number;
+  waitingApprovals: number;
+  connectedIntegrations: number;
+  openConversations: number;
+  revenueMtdUsd: number;
+  revenueTrendPercent: number;
+}
+
 export interface BusinessHealthSnapshot {
   score: number;
   level: HealthLevel;
@@ -128,6 +218,23 @@ export interface AnalyticsSnapshot {
   customerSatisfaction: number;
   costSavingsUsd: number;
   hoursSaved: number;
+  workflowsPerDay: number;
+  automationPercent: number;
+  avgResponseMinutes: number;
+  tasksCompleted: number;
+  conversationVolume: number;
+}
+
+export interface AnalyticsDataPoint {
+  label: string;
+  value: number;
+}
+
+export interface AnalyticsTimeSeries {
+  workflowsPerDay: AnalyticsDataPoint[];
+  conversationVolume: AnalyticsDataPoint[];
+  specialistUtilization: AnalyticsDataPoint[];
+  connectorHealth: AnalyticsDataPoint[];
 }
 
 export interface SystemHealthSnapshot {
@@ -142,4 +249,24 @@ export interface CatCommandSuggestion {
   id: string;
   label: string;
   prompt: string;
+}
+
+export interface CatMessage {
+  id: string;
+  role: "user" | "cat";
+  content: string;
+  timestamp: string;
+}
+
+export interface CatResponse {
+  message: string;
+  suggestions?: string[];
+}
+
+export interface OpsNotification {
+  id: string;
+  title: string;
+  message: string;
+  level: "info" | "success" | "warning" | "critical";
+  timestamp: string;
 }
