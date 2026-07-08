@@ -1,0 +1,197 @@
+import {
+  billingPlan,
+  connectors,
+  onboardingChecklist,
+  workforceManagers,
+  workforceSpecialists,
+  workforceTeams,
+} from "@/components/operations/module-mock-data";
+
+export type OperationsSnapshot = {
+  currentModule: string;
+  onboarding: {
+    readinessPercent: number;
+    completed: number;
+    total: number;
+    canLaunch: boolean;
+    items: { item: string; complete: boolean }[];
+  };
+  connectors: {
+    name: string;
+    status: string;
+    connected: boolean;
+  }[];
+  workforce: {
+    specialistCount: number;
+    teamCount: number;
+    managerCount: number;
+    avgWorkload: number;
+  };
+  billing: {
+    plan: string;
+    price: string;
+  };
+};
+
+const moduleLabels: Record<string, string> = {
+  dashboard: "Dashboard",
+  "digital-workforce": "Digital Workforce",
+  workflows: "Workflows",
+  communications: "Communications",
+  connectors: "Connectors",
+  onboarding: "Onboarding",
+  analytics: "Analytics",
+  billing: "Billing",
+  settings: "Settings",
+};
+
+export function getModuleLabel(moduleId: string): string {
+  return moduleLabels[moduleId] ?? "Operations Center";
+}
+
+export function buildOperationsSnapshot(currentModule: string): OperationsSnapshot {
+  const completed = onboardingChecklist.filter((item) => item.complete).length;
+  const readinessPercent = Math.round((completed / onboardingChecklist.length) * 100);
+  const avgWorkload = Math.round(
+    workforceSpecialists.reduce((sum, specialist) => sum + specialist.workload, 0) /
+      workforceSpecialists.length,
+  );
+
+  return {
+    currentModule,
+    onboarding: {
+      readinessPercent,
+      completed,
+      total: onboardingChecklist.length,
+      canLaunch: readinessPercent >= 70,
+      items: onboardingChecklist.map((item) => ({
+        item: item.item,
+        complete: item.complete,
+      })),
+    },
+    connectors: connectors.map((connector) => ({
+      name: connector.name,
+      status: connector.status,
+      connected: connector.status === "Connected",
+    })),
+    workforce: {
+      specialistCount: workforceSpecialists.length,
+      teamCount: workforceTeams.length,
+      managerCount: workforceManagers.length,
+      avgWorkload,
+    },
+    billing: {
+      plan: billingPlan.name,
+      price: billingPlan.price,
+    },
+  };
+}
+
+export const moduleKnowledge: Record<
+  string,
+  { summary: string; catCanHelp: string[]; href: string }
+> = {
+  dashboard: {
+    summary: "Your operational overview — system health, key metrics, and quick access to all modules.",
+    catCanHelp: [
+      "Explain what each metric means",
+      "Guide you to the right module",
+      "Summarize your current readiness",
+    ],
+    href: "/operations",
+  },
+  "digital-workforce": {
+    summary: "Where Specialists, Teams, and Managers live. Specialists do the work; Managers oversee — I help you decide what you need.",
+    catCanHelp: [
+      "Recommend Specialists for your business",
+      "Explain when a Team makes sense",
+      "Advise against premature Manager hires",
+    ],
+    href: "/operations/workforce",
+  },
+  workflows: {
+    summary: "Automated processes, approvals, and escalations. Specialists execute workflows — I help you plan which ones to enable.",
+    catCanHelp: [
+      "Suggest starter workflows",
+      "Explain the approval process",
+      "Navigate you here when processes are needed",
+    ],
+    href: "/operations/workflows",
+  },
+  communications: {
+    summary: "Unified inbox across WhatsApp, Email, SMS, and Instagram. I help you decide which channels to connect first.",
+    catCanHelp: [
+      "Recommend communication channels",
+      "Match channels to your customer habits",
+      "Guide connector setup",
+    ],
+    href: "/operations/communications",
+  },
+  connectors: {
+    summary: "Integrations with Google, Gmail, Stripe, WhatsApp, HubSpot, Vercel, and GitHub.",
+    catCanHelp: [
+      "Recommend minimum connectors",
+      "Explain what's missing from onboarding",
+      "Advise against unnecessary integrations",
+    ],
+    href: "/operations/connectors",
+  },
+  onboarding: {
+    summary: "Deployment readiness — connector checklist, workforce recommendations, and go-live progress.",
+    catCanHelp: [
+      "Report your readiness percentage",
+      "Prioritize next setup steps",
+      "Tell you what you can skip for now",
+    ],
+    href: "/operations/onboarding",
+  },
+  analytics: {
+    summary: "Team tasks, time saved, utilization, and response time across your digital workforce.",
+    catCanHelp: [
+      "Explain ROI from your metrics",
+      "Advise when to scale up",
+      "Help interpret utilization data",
+    ],
+    href: "/operations/analytics",
+  },
+  billing: {
+    summary: "Your plan, usage limits, and invoices. I explain pricing — I never approve charges or financial decisions.",
+    catCanHelp: [
+      "Explain your current plan",
+      "Estimate ROI before upgrades",
+      "Recommend waiting before scaling costs",
+    ],
+    href: "/operations/billing",
+  },
+  settings: {
+    summary: "Organization, users, permissions, and CAT preferences.",
+    catCanHelp: [
+      "Explain permission levels",
+      "Guide CAT preference setup",
+      "Navigate you here for team access",
+    ],
+    href: "/operations/settings",
+  },
+};
+
+export const navigationAliases: Record<string, string> = {
+  dashboard: "dashboard",
+  home: "dashboard",
+  operations: "dashboard",
+  workforce: "digital-workforce",
+  "digital workforce": "digital-workforce",
+  specialists: "digital-workforce",
+  workflows: "workflows",
+  workflow: "workflows",
+  communications: "communications",
+  communication: "communications",
+  inbox: "communications",
+  connectors: "connectors",
+  connector: "connectors",
+  integrations: "connectors",
+  onboarding: "onboarding",
+  analytics: "analytics",
+  billing: "billing",
+  pricing: "billing",
+  settings: "settings",
+};
