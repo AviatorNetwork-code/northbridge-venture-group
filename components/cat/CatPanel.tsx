@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { IconCat, IconClose } from "@/components/operations/icons";
 import CatMessageContent from "@/components/cat/CatMessageContent";
 import CatRecommendations from "@/components/cat/CatRecommendations";
@@ -9,6 +9,7 @@ import { useCat } from "@/components/cat/CatProvider";
 
 export default function CatPanel() {
   const router = useRouter();
+  const pathname = usePathname();
   const {
     isOpen,
     isThinking,
@@ -31,7 +32,7 @@ export default function CatPanel() {
     }
   }, [isOpen, messages, isThinking]);
 
-  if (!isOpen) return null;
+  if (pathname === "/" || !isOpen) return null;
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();

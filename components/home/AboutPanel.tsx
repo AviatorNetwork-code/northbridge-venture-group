@@ -27,14 +27,14 @@ const sections: AboutSection[] = [
     title: "Security",
     body: [
       "Your conversations and business details are handled with strict access controls.",
-      "Nothing you share with CAT is sold, and it is never used to train external models. Sensitive actions always require your explicit authorization.",
+      "Nothing you share with Nordi is sold, and it is never used to train external models. Sensitive actions always require your explicit authorization.",
     ],
   },
   {
     title: "Privacy",
     body: [
       "You decide what to share, and when.",
-      "CAT only asks for what is needed to recommend the right workforce. You can save this conversation to your identity or discard it entirely at any time.",
+      "Nordi only asks for what is needed to recommend the right workforce. You can save this conversation to your identity or discard it entirely at any time.",
     ],
   },
   {
@@ -45,10 +45,10 @@ const sections: AboutSection[] = [
     ],
   },
   {
-    title: "How CAT works",
+    title: "How Nordi works",
     body: [
-      "CAT is an advisor, not a worker.",
-      "She listens, understands your business, and recommends the smallest solution that fits. She never performs operational work or makes financial decisions on your behalf — she guides, and you stay in control.",
+      "Nordi is an advisor, not a worker.",
+      "Nordi listens, understands your business, and recommends the smallest solution that fits. Nordi never performs operational work or makes financial decisions on your behalf — it guides, and you stay in control.",
     ],
   },
 ];

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { IconCat } from "@/components/operations/icons";
+import NordiAvatar from "@/components/home/NordiAvatar";
 
 export type SavedIdentity = {
   method: "phone" | "email" | "both";
@@ -103,9 +103,7 @@ export default function SaveConversationCard({ onComplete, onCancel }: SaveConve
 
   return (
     <div className="flex items-start gap-3 animate-fade-slide-up">
-      <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red text-white">
-        <IconCat className="h-5 w-5" />
-      </span>
+      <NordiAvatar />
 
       <div className="w-full max-w-[92%] rounded-2xl border border-white/10 bg-slate/50 px-4 py-4">
         <p className="text-sm leading-relaxed text-silver">{prompt}</p>

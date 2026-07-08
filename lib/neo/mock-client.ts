@@ -6,7 +6,13 @@ import type {
   NeoSendOptions,
 } from "@/lib/neo/types";
 import { processCatMessage } from "@/lib/cat/engine";
+import { processDiscoveryMessage } from "@/lib/cat/discovery-engine";
 import type { CatSession } from "@/lib/cat/types";
+import type { DiscoveryProfile } from "@/lib/cat/discovery-types";
+
+function isHomepageDiscovery(options: NeoSendOptions): boolean {
+  return options.currentModule === "homepage";
+}
 
 export class MockNeoClient implements NeoClient {
   readonly status: NeoConnectionStatus = "standby";
@@ -21,6 +27,22 @@ export class MockNeoClient implements NeoClient {
 
   async send(request: NeoRequest, options: NeoSendOptions): Promise<NeoResponse> {
     const session = options.session as CatSession;
+    const profile = (session.businessProfile ?? {}) as DiscoveryProfile;
+
+    if (isHomepageDiscovery(options)) {
+      const result = processDiscoveryMessage(request.message, profile);
+
+      return {
+        reply: result.reply,
+        profileUpdates: result.profileUpdates,
+        metadata: {
+          source: "mock-neo",
+          engine: "cat-discovery-v1",
+          triggerWebsiteAnalysis: result.triggerWebsiteAnalysis,
+        },
+      };
+    }
+
     const result = processCatMessage(request.message, {
       session,
       currentModule: options.currentModule,

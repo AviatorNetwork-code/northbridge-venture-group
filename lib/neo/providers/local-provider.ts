@@ -68,6 +68,10 @@ function createLocalCatClient(baseUrl: string, fallback: NeoClient): NeoClient {
       status = "disconnected";
     },
     async send(request: NeoRequest, options: NeoSendOptions): Promise<NeoResponse> {
+      if (options.currentModule === "homepage") {
+        return fallback.send(request, options);
+      }
+
       const result = await fetchJson<unknown>(baseUrl, "/api/cat/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
