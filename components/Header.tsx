@@ -4,8 +4,9 @@ import Link from "next/link";
 import NorthbridgeLogo from "@/components/NorthbridgeLogo";
 import { useState } from "react";
 
-const navLinks = [
+const navLinks: { href: string; label: string; highlight?: boolean }[] = [
   { href: "/", label: "Home" },
+  { href: "/workforce", label: "Workforce", highlight: true },
   { href: "/about", label: "About" },
   { href: "/portfolio", label: "Ventures" },
   { href: "/services", label: "Services" },
@@ -30,12 +31,16 @@ export default function Header() {
           </Link>
 
           {/* Desktop nav (md+) */}
-          <ul className="hidden md:flex items-center gap-8 shrink-0">
+          <ul className="hidden md:flex items-center gap-5 lg:gap-7 shrink-0">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sm font-semibold tracking-wide text-silver hover:text-white transition-colors"
+                  className={`text-sm font-semibold tracking-wide transition-colors ${
+                    link.highlight
+                      ? "text-red hover:text-red-hover"
+                      : "text-silver hover:text-white"
+                  }`}
                 >
                   {link.label}
                 </Link>
