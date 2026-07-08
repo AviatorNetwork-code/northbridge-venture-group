@@ -23,6 +23,12 @@ export default function OperationsPage() {
             Operational overview for your digital workforce, workflows, and connected
             systems. This shell uses mock data and is ready for future NEO integration.
           </p>
+          <Link
+            href="/operations/hire"
+            className="mt-4 inline-flex rounded-xl bg-red px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover"
+          >
+            Hire Workforce
+          </Link>
         </header>
 
         <section aria-labelledby="metrics-heading" className="mb-8">

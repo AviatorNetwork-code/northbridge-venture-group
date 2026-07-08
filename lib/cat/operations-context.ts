@@ -43,6 +43,7 @@ const moduleLabels: Record<string, string> = {
   analytics: "Analytics",
   billing: "Billing",
   settings: "Settings",
+  hire: "Hire Workforce",
 };
 
 export function getModuleLabel(moduleId: string): string {
@@ -108,6 +109,15 @@ export const moduleKnowledge: Record<
       "Advise against premature Manager hires",
     ],
     href: "/operations/workforce",
+  },
+  hire: {
+    summary: "Interactive hiring experience — discover your needs, customize your workforce, and start onboarding.",
+    catCanHelp: [
+      "Guide you through hiring Specialists",
+      "Recommend minimum viable workforce",
+      "Transfer selections to onboarding",
+    ],
+    href: "/operations/hire",
   },
   workflows: {
     summary: "Automated processes, approvals, and escalations. Specialists execute workflows — I help you plan which ones to enable.",
@@ -178,6 +188,8 @@ export const navigationAliases: Record<string, string> = {
   dashboard: "dashboard",
   home: "dashboard",
   operations: "dashboard",
+  hire: "hire",
+  "hire workforce": "hire",
   workforce: "digital-workforce",
   "digital workforce": "digital-workforce",
   specialists: "digital-workforce",

@@ -1,0 +1,261 @@
+import type {
+  ManagerCatalogItem,
+  SpecialistCatalogItem,
+  TeamCatalogItem,
+} from "@/lib/workforce/types";
+
+export const specialistCatalog: SpecialistCatalogItem[] = [
+  {
+    id: "customer-service",
+    name: "Customer Service Specialist",
+    responsibilities: ["Inbound inquiries", "Follow-ups", "Client communication"],
+    canDo: ["Answer FAQs", "Route messages", "Send follow-up reminders", "Triage support requests"],
+    cannotDo: ["Approve refunds", "Make policy exceptions", "Sign contracts"],
+    essentialPrice: 249,
+    proPrice: 399,
+    elitePrice: 599,
+    essentialTasks: 200,
+    proTasks: 500,
+    eliteTasks: 1000,
+    industries: ["general", "dental", "retail", "hospitality"],
+    catIds: ["customer-service"],
+  },
+  {
+    id: "scheduling",
+    name: "Scheduling Specialist",
+    responsibilities: ["Appointments", "Calendar coordination", "Reminders"],
+    canDo: ["Book appointments", "Reschedule visits", "Send confirmations", "Manage waitlists"],
+    cannotDo: ["Override provider schedules", "Make clinical decisions"],
+    essentialPrice: 229,
+    proPrice: 379,
+    elitePrice: 549,
+    essentialTasks: 200,
+    proTasks: 500,
+    eliteTasks: 1000,
+    industries: ["dental", "healthcare", "salon", "fitness"],
+    catIds: ["appointment"],
+  },
+  {
+    id: "sales",
+    name: "Sales Specialist",
+    responsibilities: ["Lead follow-up", "Pipeline nurturing", "Outreach"],
+    canDo: ["Qualify leads", "Send proposals", "Schedule demos", "Update CRM records"],
+    cannotDo: ["Negotiate final pricing", "Sign agreements"],
+    essentialPrice: 299,
+    proPrice: 449,
+    elitePrice: 649,
+    essentialTasks: 150,
+    proTasks: 400,
+    eliteTasks: 800,
+    industries: ["saas", "professional-services", "retail"],
+    catIds: ["sales"],
+  },
+  {
+    id: "marketing",
+    name: "Marketing Specialist",
+    responsibilities: ["Campaign support", "Content scheduling", "Audience engagement"],
+    canDo: ["Draft social posts", "Schedule campaigns", "Track engagement metrics"],
+    cannotDo: ["Approve ad spend", "Launch paid campaigns without review"],
+    essentialPrice: 279,
+    proPrice: 429,
+    elitePrice: 629,
+    essentialTasks: 150,
+    proTasks: 400,
+    eliteTasks: 800,
+    industries: ["retail", "hospitality", "saas"],
+    catIds: ["marketing"],
+  },
+  {
+    id: "finance",
+    name: "Finance Specialist",
+    responsibilities: ["Invoicing", "Payment follow-up", "Billing coordination"],
+    canDo: ["Generate invoices", "Send payment reminders", "Reconcile transactions"],
+    cannotDo: ["Approve refunds", "Authorize charges", "File taxes"],
+    essentialPrice: 269,
+    proPrice: 419,
+    elitePrice: 599,
+    essentialTasks: 200,
+    proTasks: 500,
+    eliteTasks: 1000,
+    industries: ["dental", "professional-services", "general"],
+    catIds: ["billing", "finance"],
+  },
+  {
+    id: "inventory",
+    name: "Inventory Specialist",
+    responsibilities: ["Stock tracking", "Reorder alerts", "Supplier coordination"],
+    canDo: ["Monitor stock levels", "Flag low inventory", "Draft purchase orders"],
+    cannotDo: ["Authorize purchases", "Negotiate supplier contracts"],
+    essentialPrice: 239,
+    proPrice: 389,
+    elitePrice: 559,
+    essentialTasks: 200,
+    proTasks: 500,
+    eliteTasks: 1000,
+    industries: ["retail", "hospitality", "hvac"],
+    catIds: ["inventory"],
+  },
+  {
+    id: "hr",
+    name: "HR Specialist",
+    responsibilities: ["Employee onboarding", "Policy FAQs", "Scheduling coordination"],
+    canDo: ["Answer HR FAQs", "Coordinate interviews", "Track onboarding tasks"],
+    cannotDo: ["Terminate employees", "Approve compensation changes"],
+    essentialPrice: 259,
+    proPrice: 409,
+    elitePrice: 589,
+    essentialTasks: 150,
+    proTasks: 400,
+    eliteTasks: 800,
+    industries: ["general", "professional-services"],
+    catIds: ["hr", "onboarding"],
+  },
+];
+
+export const teamCatalog: TeamCatalogItem[] = [
+  {
+    id: "dental-clinic",
+    name: "Dental Clinic Team",
+    includedSpecialists: ["Scheduling Specialist", "Customer Service Specialist", "Finance Specialist"],
+    teamLeader: "Dental Team Lead",
+    responsibilities: ["Patient scheduling", "Billing coordination", "Patient communication"],
+    industries: ["dental", "healthcare"],
+    estimatedRoi: "18–25 hrs saved per week",
+    monthlyPrice: 899,
+    teamTasks: 1200,
+  },
+  {
+    id: "restaurant",
+    name: "Restaurant Team",
+    includedSpecialists: ["Customer Service Specialist", "Scheduling Specialist", "Inventory Specialist"],
+    teamLeader: "Restaurant Team Lead",
+    responsibilities: ["Reservations", "Guest communication", "Inventory alerts"],
+    industries: ["hospitality", "restaurant"],
+    estimatedRoi: "15–22 hrs saved per week",
+    monthlyPrice: 849,
+    teamTasks: 1100,
+  },
+  {
+    id: "hvac",
+    name: "HVAC Team",
+    includedSpecialists: ["Scheduling Specialist", "Customer Service Specialist", "Sales Specialist"],
+    teamLeader: "HVAC Team Lead",
+    responsibilities: ["Service scheduling", "Lead follow-up", "Customer updates"],
+    industries: ["hvac", "professional-services"],
+    estimatedRoi: "20–28 hrs saved per week",
+    monthlyPrice: 949,
+    teamTasks: 1300,
+  },
+  {
+    id: "flight-school",
+    name: "Flight School Team",
+    includedSpecialists: ["Scheduling Specialist", "Customer Service Specialist", "Finance Specialist"],
+    teamLeader: "Flight School Team Lead",
+    responsibilities: ["Lesson scheduling", "Student communication", "Billing support"],
+    industries: ["aviation", "education"],
+    estimatedRoi: "16–24 hrs saved per week",
+    monthlyPrice: 899,
+    teamTasks: 1200,
+  },
+  {
+    id: "legal-office",
+    name: "Legal Office Team",
+    includedSpecialists: ["Customer Service Specialist", "Scheduling Specialist", "Finance Specialist"],
+    teamLeader: "Legal Team Lead",
+    responsibilities: ["Client intake", "Appointment coordination", "Billing follow-up"],
+    industries: ["legal", "professional-services"],
+    estimatedRoi: "14–20 hrs saved per week",
+    monthlyPrice: 929,
+    teamTasks: 1150,
+  },
+  {
+    id: "retail",
+    name: "Retail Team",
+    includedSpecialists: ["Customer Service Specialist", "Inventory Specialist", "Marketing Specialist"],
+    teamLeader: "Retail Team Lead",
+    responsibilities: ["Customer support", "Stock management", "Campaign support"],
+    industries: ["retail"],
+    estimatedRoi: "17–23 hrs saved per week",
+    monthlyPrice: 879,
+    teamTasks: 1150,
+  },
+  {
+    id: "general-business",
+    name: "General Business Team",
+    includedSpecialists: ["Customer Service Specialist", "Scheduling Specialist"],
+    teamLeader: "Operations Team Lead",
+    responsibilities: ["General operations", "Client communication", "Scheduling"],
+    industries: ["general"],
+    estimatedRoi: "12–18 hrs saved per week",
+    monthlyPrice: 749,
+    teamTasks: 900,
+  },
+];
+
+export const managerCatalog: ManagerCatalogItem[] = [
+  {
+    id: "general-manager",
+    name: "General Manager",
+    responsibilities: ["Cross-team oversight", "Performance monitoring", "Escalation routing"],
+    supervises: "Multiple Specialists and Teams",
+    reportsGenerated: ["Weekly performance summary", "Workload distribution report"],
+    dailyBriefings: "Morning operational briefing",
+    escalationAuthority: "Level 2 — routes to human leadership",
+    monthlyPrice: 699,
+    teamTasks: 500,
+    minSpecialists: 6,
+  },
+  {
+    id: "operations-manager",
+    name: "Operations Manager",
+    responsibilities: ["Workflow oversight", "Capacity planning", "Quality assurance"],
+    supervises: "Specialists across active workflows",
+    reportsGenerated: ["Daily ops dashboard", "Bottleneck analysis", "SLA compliance"],
+    dailyBriefings: "Twice-daily ops sync",
+    escalationAuthority: "Level 3 — full operational escalation",
+    monthlyPrice: 799,
+    teamTasks: 600,
+    minSpecialists: 8,
+  },
+  {
+    id: "regional-manager",
+    name: "Regional Manager",
+    responsibilities: ["Multi-location coordination", "Regional reporting", "Strategic oversight"],
+    supervises: "Operations Managers and Teams across locations",
+    reportsGenerated: ["Regional performance", "Location comparison", "Growth forecasts"],
+    dailyBriefings: "Regional morning briefing",
+    escalationAuthority: "Level 4 — executive escalation path",
+    monthlyPrice: 1199,
+    teamTasks: 800,
+    minSpecialists: 15,
+  },
+];
+
+export const growthStages = [
+  { id: "start", label: "Start", description: "Business discovery with CAT" },
+  { id: "specialists", label: "Specialists", description: "Hire your first AI employees" },
+  { id: "team", label: "Team", description: "Coordinated specialist units" },
+  { id: "manager", label: "Manager", description: "Oversight when scale demands it" },
+  { id: "regional-manager", label: "Regional Manager", description: "Multi-location operations" },
+  { id: "executive", label: "Executive Workforce", description: "Full digital operations layer" },
+] as const;
+
+export function getSpecialistById(id: string): SpecialistCatalogItem | undefined {
+  return specialistCatalog.find((item) => item.id === id);
+}
+
+export function getTeamById(id: string): TeamCatalogItem | undefined {
+  return teamCatalog.find((item) => item.id === id);
+}
+
+export function getManagerById(id: string): ManagerCatalogItem | undefined {
+  return managerCatalog.find((item) => item.id === id);
+}
+
+export function getTeamForIndustry(industry: string): TeamCatalogItem | undefined {
+  const normalized = industry.toLowerCase();
+  return (
+    teamCatalog.find((team) => team.industries.includes(normalized)) ??
+    teamCatalog.find((team) => team.id === "general-business")
+  );
+}

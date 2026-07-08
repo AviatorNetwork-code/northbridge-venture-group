@@ -39,6 +39,10 @@ type CatContextValue = {
 const CatContext = createContext<CatContextValue | null>(null);
 
 function getActiveModuleId(pathname: string): string {
+  if (pathname.startsWith("/operations/hire")) {
+    return "digital-workforce";
+  }
+
   const match = navigationItems.find((item) => {
     if (item.href === "/operations") {
       return pathname === "/operations";

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   DataRow,
   MetricCard,
@@ -39,6 +40,15 @@ export default function WorkforcePage() {
         title="Specialists, Teams & Managers"
         description="Monitor agent capacity, team health, and manager oversight across your digital workforce. Mock data only — NEO integration pending."
       />
+
+      <div className="mb-6">
+        <Link
+          href="/operations/hire"
+          className="inline-flex rounded-xl bg-red px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover"
+        >
+          Hire Workforce
+        </Link>
+      </div>
 
       <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard label="Active Specialists" value={String(activeCount)} detail="of 4 deployed" trend="up" />

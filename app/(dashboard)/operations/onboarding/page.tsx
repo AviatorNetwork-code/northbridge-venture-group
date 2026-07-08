@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import OnboardingHireTransfer from "@/components/hire/OnboardingHireTransfer";
 import {
   DataRow,
   MetricCard,
@@ -36,6 +38,12 @@ export default function OnboardingPage() {
         <MetricCard label="Workforce" value="4/5" detail="Support specialist pending" trend="neutral" />
         <MetricCard label="Est. Go-Live" value="3 days" detail="If checklist completed" trend="up" />
       </div>
+
+      <Suspense fallback={null}>
+        <div className="mb-8">
+          <OnboardingHireTransfer />
+        </div>
+      </Suspense>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <SectionPanel title="Connector Checklist" subtitle="Required integrations">
