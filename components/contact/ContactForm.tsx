@@ -16,8 +16,15 @@ const initialState: ContactFormState = {
   message: "",
 };
 
-export default function ContactForm() {
-  const [form, setForm] = useState<ContactFormState>(initialState);
+type ContactFormProps = {
+  defaultTopic?: string;
+};
+
+export default function ContactForm({ defaultTopic = "general" }: ContactFormProps) {
+  const [form, setForm] = useState<ContactFormState>({
+    ...initialState,
+    topic: defaultTopic,
+  });
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -121,9 +128,10 @@ export default function ContactForm() {
           className="w-full min-h-11 rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-base text-white focus:border-red/50 focus:outline-none focus:ring-1 focus:ring-red/30"
         >
           <option value="general">General inquiry</option>
+          <option value="nordi">Nordi support</option>
+          <option value="custom">Custom digital solution</option>
           <option value="partnerships">Partnership</option>
-          <option value="digital">Website / digital project</option>
-          <option value="operations">AI Operations Center</option>
+          <option value="operations">Operations Center</option>
         </select>
       </div>
 
@@ -138,7 +146,11 @@ export default function ContactForm() {
           value={form.message}
           onChange={(event) => setForm((current) => ({ ...current, message: event.target.value }))}
           className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-base text-white placeholder:text-stone focus:border-red/50 focus:outline-none focus:ring-1 focus:ring-red/30"
-          placeholder="Tell us about your project or question"
+          placeholder={
+            form.topic === "custom"
+              ? "Describe your operational requirements and what you need built"
+              : "Tell us how we can help"
+          }
           required
         />
       </div>
@@ -149,7 +161,7 @@ export default function ContactForm() {
         type="submit"
         className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover sm:w-auto"
       >
-        Send Message
+        {form.topic === "custom" ? "Submit Custom Project Request" : "Send Message"}
       </button>
     </form>
   );

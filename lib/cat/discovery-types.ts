@@ -1,4 +1,5 @@
 import type { BusinessProfile } from "@/lib/cat/types";
+import type { NordiMessageCard } from "@/lib/nordi/cards";
 
 export type DiscoveryPhase =
   | "learning"
@@ -28,6 +29,7 @@ export type WebsiteAnalysisResult = {
   hasContactForm: boolean;
   hasEmergencyMessaging: boolean;
   phoneProminent: boolean;
+  hasGoogleBusinessProfile: boolean;
   technologies: string[];
   signals: WebsiteSignal[];
   analyzedAt: string;
@@ -38,18 +40,30 @@ export type DiscoveryProfile = BusinessProfile & {
   discoveryPhase?: DiscoveryPhase;
   userMessageCount?: number;
   websiteAsked?: boolean;
+  websitePermissionAsked?: boolean;
+  websitePermissionGranted?: boolean;
   websiteAnalysisPending?: boolean;
   websiteAnalysis?: WebsiteAnalysisResult;
   insightDelivered?: boolean;
   pendingInsight?: string;
   callRequested?: boolean;
+  locationCount?: number;
+  answeredQuestions?: string[];
+  discoveryAnswers?: Record<string, string>;
+  pendingQuestionId?: string;
+  areasForSupport?: string[];
+  isReturningVisitor?: boolean;
 };
 
 export type DiscoveryEngineResult = {
   reply: string;
+  progressiveReply?: string[];
+  thinkingContext?: "general" | "reviewing-business" | "analyzing-shared" | "comparing" | "website" | "preparing";
   profileUpdates?: Partial<DiscoveryProfile>;
   triggerWebsiteAnalysis?: string;
   deliverPendingInsight?: boolean;
+  showWebsiteAnalyzing?: boolean;
+  cards?: NordiMessageCard[];
 };
 
 export type StructuredRecommendation = {

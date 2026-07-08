@@ -39,6 +39,10 @@ export class MockNeoClient implements NeoClient {
           source: "mock-neo",
           engine: "cat-discovery-v1",
           triggerWebsiteAnalysis: result.triggerWebsiteAnalysis,
+          showWebsiteAnalyzing: result.showWebsiteAnalyzing,
+          progressiveReply: result.progressiveReply,
+          thinkingContext: result.thinkingContext,
+          cards: result.cards,
         },
       };
     }

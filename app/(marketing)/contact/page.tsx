@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import ContactForm from "@/components/contact/ContactForm";
-import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 
 export const metadata: Metadata = {
-  title: "Contact | Northbridge Venture Group",
+  title: "Contact | Northbridge Digital",
   description:
-    "Contact Northbridge Venture Group for partnerships, strategic conversations, and website and digital infrastructure projects.",
+    "Talk to Nordi or request a custom digital solution from the Northbridge Digital engineering team.",
 };
 
 export default function ContactPage() {
@@ -16,20 +16,58 @@ export default function ContactPage() {
           Contact
         </h1>
         <p className="text-base sm:text-lg text-silver mb-8 sm:mb-10 leading-relaxed">
-          We welcome inquiries regarding partnerships, strategic business
-          conversations, and website and digital infrastructure projects.
+          Choose the path that fits your needs. Most businesses start with
+          Nordi. Organizations with unique operational requirements can request
+          a custom digital solution.
         </p>
 
-        <MarketingPrimaryCta
-          href="/partner"
-          label="Explore Partnerships"
-          secondaryHref="/services"
-          secondaryLabel="View Services"
-        />
+        <div className="mb-10 space-y-4">
+          <div className="rounded-xl border border-white/10 bg-slate/40 p-5 sm:p-6">
+            <h2 className="text-lg font-semibold text-white mb-2">
+              Talk to Nordi
+            </h2>
+            <p className="text-sm text-silver leading-relaxed mb-4">
+              Recommended for most businesses. Describe your operation in your
+              own words and let Nordi build an understanding of how you work.
+            </p>
+            <Link
+              href="/"
+              className="inline-flex min-h-11 items-center justify-center rounded-xl bg-red px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover"
+            >
+              Talk to Nordi
+            </Link>
+          </div>
 
-        <ContactForm />
+          <div
+            id="custom-project"
+            className="rounded-xl border border-white/10 bg-slate/40 p-5 sm:p-6"
+          >
+            <h2 className="text-lg font-semibold text-white mb-2">
+              Request a Custom Project
+            </h2>
+            <p className="text-sm text-silver leading-relaxed mb-4">
+              For organizations seeking a tailored digital solution beyond the
+              standard Nordi platform. Custom projects are reviewed by the
+              Northbridge Digital engineering team.
+            </p>
+            <ContactForm defaultTopic="custom" />
+          </div>
+        </div>
 
-        <div className="mt-10 space-y-8 border-t border-white/10 pt-10">
+        <div className="space-y-8 border-t border-white/10 pt-10">
+          <div>
+            <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-2">
+              General Inquiries
+            </h3>
+            <p className="text-white">
+              <a
+                href="mailto:contact@northbridgeventuregroup.com"
+                className="inline-flex min-h-11 items-center hover:text-red transition-colors text-sm sm:text-base"
+              >
+                contact@northbridgeventuregroup.com
+              </a>
+            </p>
+          </div>
           <div>
             <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-2">
               Partnerships
@@ -41,22 +79,6 @@ export default function ContactPage() {
               >
                 partnerships@northbridgeventuregroup.com
               </a>
-            </p>
-          </div>
-          <div>
-            <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-2">
-              General Inquiries
-            </h3>
-            <p className="text-white">
-              <a
-                href="mailto:info@northbridgeventuregroup.com"
-                className="inline-flex min-h-11 items-center hover:text-red transition-colors text-sm sm:text-base"
-              >
-                info@northbridgeventuregroup.com
-              </a>
-            </p>
-            <p className="text-silver text-sm mt-2">
-              Strategic conversations, website and digital projects, media.
             </p>
           </div>
         </div>

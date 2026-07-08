@@ -2,13 +2,36 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNeo } from "@/components/neo/NeoProvider";
-import NordiAvatar from "@/components/home/NordiAvatar";
-import CatTypewriter from "@/components/home/CatTypewriter";
+import NordiMessageBubble from "@/components/home/NordiMessageBubble";
+import NordiThinkingIndicator from "@/components/home/NordiThinkingIndicator";
 import AboutPanel from "@/components/home/AboutPanel";
-import SaveConversationCard, { type SavedIdentity } from "@/components/home/SaveConversationCard";
+import SaveConversationCard from "@/components/home/SaveConversationCard";
+import BusinessSummaryCard from "@/components/home/BusinessSummaryCard";
 import RequestCallCard, { type CallRequest } from "@/components/home/RequestCallCard";
-import type { DiscoveryProfile, WebsiteAnalysisResult } from "@/lib/cat/discovery-types";
-import { generateFirstInsight } from "@/lib/cat/website-analysis";
+import type { DiscoveryEngineResult, DiscoveryProfile, WebsiteAnalysisResult } from "@/lib/cat/discovery-types";
+import type { NordiMessageCard } from "@/lib/nordi/cards";
+import {
+  createEmptyMemory,
+  deriveMilestones,
+  hasRelationship,
+  touchMemory,
+  type NordiChatMessage,
+} from "@/lib/nordi/conversation-memory";
+import {
+  buildPresenterSequence,
+  buildSimpleSequence,
+  buildWebsiteAnalysisSequence,
+  deliverPresenterSequence,
+} from "@/lib/nordi/conversation-presenter";
+import type { NordiIdentity } from "@/lib/nordi/identity";
+import {
+  buildResumeMessage,
+  buildSaveConfirmation,
+  buildSaveConversationPrompt,
+  buildWelcomeBackMessage,
+  enrichProfileForRelationship,
+} from "@/lib/nordi/relationship";
+import { getNordiStorage } from "@/lib/nordi/storage";
 
 const INTRO_MESSAGE = [
   "Hello.",
@@ -28,113 +51,101 @@ const INTRO_MESSAGE = [
   "Tell me about your business in your own words.",
 ].join("\n");
 
-const STORAGE_KEY = "northbridge-home-cat";
-const INSIGHT_DELAY_MS = 9000;
-
-type ChatRole = "cat" | "user";
-
-type ChatMessage = {
-  id: string;
-  role: ChatRole;
-  content: string;
-  animate: boolean;
-};
-
-type StoredState = {
-  sessionId: string;
-  messages: ChatMessage[];
-  businessProfile: DiscoveryProfile;
-  identity: SavedIdentity | null;
-  saved: boolean;
-  callRequested: boolean;
-};
-
 function createId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
-function loadStoredState(): StoredState | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as StoredState;
-    if (!parsed.messages?.length) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
+function toChatMessage(message: NordiChatMessage): NordiChatMessage {
+  return { ...message, animate: message.animate ?? false };
 }
 
 export default function HomeConversation() {
   const { client } = useNeo();
+  const storage = getNordiStorage();
 
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<NordiChatMessage[]>([]);
   const [businessProfile, setBusinessProfile] = useState<DiscoveryProfile>({
     discoveryPhase: "learning",
     userMessageCount: 0,
   });
-  const [isThinking, setIsThinking] = useState(false);
+  const [knownSince, setKnownSince] = useState(() => new Date().toISOString());
+  const [lastUpdated, setLastUpdated] = useState(() => new Date().toISOString());
+  const [thinkingLabel, setThinkingLabel] = useState<string | null>(null);
+  const [isDelivering, setIsDelivering] = useState(false);
   const [input, setInput] = useState("");
   const [showButtons, setShowButtons] = useState(false);
   const [showInput, setShowInput] = useState(false);
   const [introReady, setIntroReady] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [saveActive, setSaveActive] = useState(false);
+  const [savePromptShown, setSavePromptShown] = useState(false);
   const [callActive, setCallActive] = useState(false);
   const [saved, setSaved] = useState(false);
   const [callRequested, setCallRequested] = useState(false);
-  const [identity, setIdentity] = useState<SavedIdentity | null>(null);
+  const [identity, setIdentity] = useState<NordiIdentity | null>(null);
+  const [isReturning, setIsReturning] = useState(false);
 
   const sessionIdRef = useRef<string>(createId("home"));
+  const messageIndexRef = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const insightDeliveredRef = useRef(false);
   const analysisInFlightRef = useRef<string | null>(null);
-  const profileRef = useRef(businessProfile);
-
-  profileRef.current = businessProfile;
-
-  const appendCatMessage = useCallback((content: string, animate = true) => {
-    setMessages((prev) => [
-      ...prev,
-      { id: createId("cat"), role: "cat", content, animate },
-    ]);
-  }, []);
+  const welcomeBackShownRef = useRef(false);
+  const pendingDoneRef = useRef<Map<string, () => void>>(new Map());
+  const deliveryLockRef = useRef(false);
 
   const scrollToBottom = useCallback(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, []);
 
-  const scheduleInsight = useCallback(
-    (analysis: WebsiteAnalysisResult, url: string) => {
-      window.setTimeout(() => {
-        if (insightDeliveredRef.current) return;
+  const appendCatMessage = useCallback(
+    (content: string, animate = true, card?: NordiMessageCard): Promise<void> => {
+      const id = createId("cat");
+      const timestamp = new Date().toISOString();
 
-        const insight = generateFirstInsight(analysis, profileRef.current);
-        if (!insight) return;
+      return new Promise((resolve) => {
+        if (!animate) {
+          setMessages((prev) => [...prev, { id, role: "cat", content, card, animate: false, timestamp }]);
+          resolve();
+          return;
+        }
 
-        insightDeliveredRef.current = true;
-        appendCatMessage(insight);
-        setBusinessProfile((prev) => ({
-          ...prev,
-          website: url,
-          websiteAnalysis: analysis,
-          websiteAnalysisPending: false,
-          insightDelivered: true,
-          discoveryPhase: "insight_delivered",
-          industry: prev.industry ?? analysis.category,
-        }));
-      }, INSIGHT_DELAY_MS);
+        pendingDoneRef.current.set(id, resolve);
+        setMessages((prev) => [...prev, { id, role: "cat", content, card, animate: true, timestamp }]);
+      });
+    },
+    [],
+  );
+
+  const deliverSequence = useCallback(
+    async (steps: ReturnType<typeof buildPresenterSequence>) => {
+      if (deliveryLockRef.current) return;
+      deliveryLockRef.current = true;
+      setIsDelivering(true);
+
+      try {
+        await deliverPresenterSequence(steps, {
+          onThink: (label) => setThinkingLabel(label),
+          onThinkEnd: () => setThinkingLabel(null),
+          onMessage: appendCatMessage,
+        });
+      } finally {
+        deliveryLockRef.current = false;
+        setIsDelivering(false);
+        setThinkingLabel(null);
+      }
     },
     [appendCatMessage],
   );
 
   const analyzeWebsiteInBackground = useCallback(
-    async (url: string) => {
+    async (url: string, profile: DiscoveryProfile) => {
       if (analysisInFlightRef.current === url) return;
       analysisInFlightRef.current = url;
+
+      const messageIndex = messageIndexRef.current;
+      messageIndexRef.current += 1;
 
       try {
         const response = await fetch("/api/website-analyze", {
@@ -150,67 +161,140 @@ export default function HomeConversation() {
           ...prev,
           website: url,
           websiteAnalysis: analysis,
+          websiteAnalysisPending: false,
+          insightDelivered: true,
+          discoveryPhase: "insight_delivered",
           industry: prev.industry ?? analysis.category,
         }));
 
-        scheduleInsight(analysis, url);
+        const sequence = buildWebsiteAnalysisSequence(
+          analysis,
+          profile,
+          sessionIdRef.current,
+          messageIndex,
+        );
+        await deliverSequence(sequence);
       } catch {
-        // Discovery continues without blocking the customer.
+        await deliverSequence(
+          buildSimpleSequence(
+            "I couldn't reach that website just now. We can keep going — feel free to paste the URL again later.",
+            { animate: true },
+          ),
+        );
       }
     },
-    [scheduleInsight],
+    [deliverSequence],
   );
 
   useEffect(() => {
-    const stored = loadStoredState();
+    const stored = storage.load();
 
-    if (stored) {
+    if (stored && hasRelationship(stored)) {
       sessionIdRef.current = stored.sessionId;
-      setMessages(stored.messages.map((message) => ({ ...message, animate: false })));
-      setBusinessProfile(stored.businessProfile ?? { discoveryPhase: "learning" });
-      insightDeliveredRef.current = Boolean(stored.businessProfile?.insightDelivered);
-      setIdentity(stored.identity ?? null);
+      messageIndexRef.current = stored.messages.length;
+      setMessages(stored.messages.map(toChatMessage));
+      setBusinessProfile(enrichProfileForRelationship(stored.profile));
+      setIdentity(stored.identity);
       setSaved(Boolean(stored.saved));
       setCallRequested(Boolean(stored.callRequested));
+      setKnownSince(stored.knownSince);
+      setLastUpdated(stored.lastUpdated);
+      setIsReturning(true);
       setShowButtons(true);
       setShowInput(true);
       setIntroReady(true);
+
+      if (!stored.welcomeBackShown) {
+        welcomeBackShownRef.current = true;
+        const welcomeMessage = stored.identity
+          ? buildWelcomeBackMessage(stored)
+          : buildResumeMessage(stored);
+
+        window.setTimeout(() => {
+          void deliverSequence(
+            buildSimpleSequence(welcomeMessage, {
+              thinkingContext: "reviewing-business",
+              sessionId: stored.sessionId,
+              messageIndex: stored.messages.length,
+            }),
+          );
+        }, 500);
+      } else {
+        welcomeBackShownRef.current = true;
+      }
       return;
     }
+
+    sessionIdRef.current = createEmptyMemory(createId("home")).sessionId;
 
     const timer = window.setTimeout(() => {
       setMessages((prev) =>
         prev.length
           ? prev
-          : [{ id: "intro", role: "cat", content: INTRO_MESSAGE, animate: true }],
+          : [
+              {
+                id: "intro",
+                role: "cat",
+                content: INTRO_MESSAGE,
+                animate: true,
+                timestamp: new Date().toISOString(),
+              },
+            ],
       );
     }, 450);
 
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [deliverSequence, storage]);
 
   useEffect(() => {
     if (!introReady) return;
-    const data: StoredState = {
+
+    const profileWithRelationship = {
+      ...businessProfile,
+      isReturningVisitor: isReturning,
+    };
+    const nextMilestones = deriveMilestones(profileWithRelationship, []);
+    if (saved) nextMilestones.push("conversation_saved");
+
+    const memory = touchMemory({
+      version: 1,
       sessionId: sessionIdRef.current,
       messages,
-      businessProfile,
+      profile: profileWithRelationship,
       identity,
       saved,
       callRequested,
-    };
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch {
-      // Ignore storage write failures.
-    }
-  }, [introReady, messages, businessProfile, identity, saved, callRequested]);
+      milestones: Array.from(new Set(nextMilestones)),
+      knownSince,
+      lastUpdated: new Date().toISOString(),
+      welcomeBackShown: welcomeBackShownRef.current,
+    });
+
+    storage.save(memory);
+    setLastUpdated(memory.lastUpdated);
+  }, [
+    introReady,
+    messages,
+    businessProfile,
+    identity,
+    saved,
+    callRequested,
+    isReturning,
+    knownSince,
+    storage,
+  ]);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isThinking, showButtons, showInput, saveActive, callActive, scrollToBottom]);
+  }, [messages, thinkingLabel, showButtons, showInput, saveActive, callActive, isDelivering, scrollToBottom]);
 
   const handleCatMessageDone = useCallback((id: string) => {
+    const resolve = pendingDoneRef.current.get(id);
+    if (resolve) {
+      pendingDoneRef.current.delete(id);
+      resolve();
+    }
+
     if (id === "intro") {
       window.setTimeout(() => setShowButtons(true), 600);
       window.setTimeout(() => {
@@ -224,19 +308,27 @@ export default function HomeConversation() {
   const sendMessage = useCallback(
     async (raw: string) => {
       const text = raw.trim();
-      if (!text || isThinking) return;
+      if (!text || isDelivering || thinkingLabel) return;
 
-      const userMessage: ChatMessage = {
+      const userMessage: NordiChatMessage = {
         id: createId("user"),
         role: "user",
         content: text,
         animate: false,
+        timestamp: new Date().toISOString(),
       };
 
       const nextMessages = [...messages, userMessage];
       setMessages(nextMessages);
       setInput("");
-      setIsThinking(true);
+
+      const messageIndex = messageIndexRef.current;
+      messageIndexRef.current += 1;
+
+      const profileForRequest = {
+        ...businessProfile,
+        isReturningVisitor: isReturning,
+      };
 
       try {
         const response = await client.cat.send(
@@ -245,7 +337,7 @@ export default function HomeConversation() {
             message: text,
             context: {
               currentModule: "homepage",
-              businessProfile: businessProfile as Record<string, unknown>,
+              businessProfile: profileForRequest as Record<string, unknown>,
               operationsSnapshot: {},
             },
           },
@@ -253,16 +345,30 @@ export default function HomeConversation() {
             session: {
               id: sessionIdRef.current,
               messages: nextMessages,
-              businessProfile: businessProfile as Record<string, unknown>,
+              businessProfile: profileForRequest as Record<string, unknown>,
             },
             currentModule: "homepage",
           },
         );
 
         const updates = (response.profileUpdates ?? {}) as DiscoveryProfile;
-        setBusinessProfile((prev) => ({ ...prev, ...updates }));
+        const nextProfile = { ...businessProfile, ...updates, isReturningVisitor: isReturning };
+        setBusinessProfile(nextProfile);
 
-        appendCatMessage(response.reply);
+        const engineResult: DiscoveryEngineResult = {
+          reply: response.reply,
+          progressiveReply: response.metadata?.progressiveReply as string[] | undefined,
+          thinkingContext: response.metadata?.thinkingContext as DiscoveryEngineResult["thinkingContext"],
+          cards: response.metadata?.cards as DiscoveryEngineResult["cards"],
+        };
+
+        const sequence = buildPresenterSequence({
+          result: engineResult,
+          sessionId: sessionIdRef.current,
+          messageIndex,
+        });
+
+        await deliverSequence(sequence);
 
         const analysisUrl =
           typeof response.metadata?.triggerWebsiteAnalysis === "string"
@@ -270,17 +376,28 @@ export default function HomeConversation() {
             : undefined;
 
         if (analysisUrl) {
-          void analyzeWebsiteInBackground(analysisUrl);
+          setBusinessProfile((prev) => ({ ...prev, websiteAnalysisPending: true }));
+          void analyzeWebsiteInBackground(analysisUrl, nextProfile);
         }
       } catch {
-        appendCatMessage(
-          "I'm having a brief connection issue. Please try again — I'm still here.",
+        await deliverSequence(
+          buildSimpleSequence(
+            "I'm having a brief connection issue. Please try again — I'm still here.",
+            { thinkingContext: "general", sessionId: sessionIdRef.current, messageIndex },
+          ),
         );
-      } finally {
-        setIsThinking(false);
       }
     },
-    [analyzeWebsiteInBackground, appendCatMessage, businessProfile, client, isThinking, messages],
+    [
+      analyzeWebsiteInBackground,
+      businessProfile,
+      client,
+      deliverSequence,
+      isDelivering,
+      isReturning,
+      messages,
+      thinkingLabel,
+    ],
   );
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -293,8 +410,15 @@ export default function HomeConversation() {
       scrollToBottom();
       return;
     }
-    setSaveActive(true);
+
     setCallActive(false);
+
+    if (!savePromptShown) {
+      void deliverSequence(buildSimpleSequence(buildSaveConversationPrompt()));
+      setSavePromptShown(true);
+    }
+
+    setSaveActive(true);
     window.setTimeout(scrollToBottom, 60);
   };
 
@@ -308,37 +432,25 @@ export default function HomeConversation() {
     window.setTimeout(scrollToBottom, 60);
   };
 
-  const handleSaved = (savedIdentity: SavedIdentity) => {
+  const handleSaved = (savedIdentity: NordiIdentity) => {
     setIdentity(savedIdentity);
     setSaved(true);
     setSaveActive(false);
-
-    const contact =
-      savedIdentity.method === "both"
-        ? `${savedIdentity.email} and ${savedIdentity.phone}`
-        : savedIdentity.email ?? savedIdentity.phone ?? "you";
-
-    const protectedNote = savedIdentity.verified
-      ? " This conversation is now protected with your verification code."
-      : "";
-
-    appendCatMessage(
-      `You're all set — I'll recognize you as **${contact}** next time.${protectedNote}\nWe can pick up right where we left off whenever you come back.`,
-    );
+    void appendCatMessage(buildSaveConfirmation(savedIdentity));
   };
 
   const handleCallRequested = (request: CallRequest) => {
     setCallRequested(true);
     setCallActive(false);
 
-    const contactLabel =
-      request.method === "email" ? request.contact : request.contact;
     const timeNote = request.preferredTime ? ` around ${request.preferredTime}` : "";
 
-    appendCatMessage(
-      `Thank you, ${request.name}. Someone from Northbridge will reach out at **${contactLabel}**${timeNote}.\n\nWe'll continue our conversation here in the meantime.`,
+    void appendCatMessage(
+      `Thank you, ${request.name}. Someone from Northbridge will reach out at **${request.contact}**${timeNote}.\n\nWe'll continue our conversation here in the meantime.`,
     );
   };
+
+  const busy = isDelivering || Boolean(thinkingLabel);
 
   return (
     <section className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-black">
@@ -381,40 +493,35 @@ export default function HomeConversation() {
           </div>
         ) : null}
 
-        <div ref={scrollRef} className="flex-1 overflow-y-auto pr-1">
-          <div className="space-y-5 py-2">
+        <BusinessSummaryCard
+          profile={businessProfile}
+          knownSince={knownSince}
+          lastUpdated={lastUpdated}
+        />
+
+        <div ref={scrollRef} className="flex-1 overflow-y-auto pr-1 scroll-smooth">
+          <div className="space-y-6 py-3">
             {messages.map((message) =>
               message.role === "cat" ? (
-                <div key={message.id} className="flex items-start gap-3 animate-fade-in">
-                  <NordiAvatar />
-                  <div className="max-w-[92%] rounded-2xl border border-white/10 bg-slate/50 px-4 py-3">
-                    <CatTypewriter
-                      text={message.content}
-                      animate={message.animate}
-                      onDone={() => handleCatMessageDone(message.id)}
-                      onProgress={scrollToBottom}
-                    />
-                  </div>
-                </div>
+                <NordiMessageBubble
+                  key={message.id}
+                  messageId={message.id}
+                  content={message.content}
+                  animate={message.animate ?? false}
+                  card={message.card}
+                  onDone={() => handleCatMessageDone(message.id)}
+                  onProgress={scrollToBottom}
+                />
               ) : (
                 <div key={message.id} className="flex justify-end animate-fade-in">
-                  <div className="max-w-[92%] rounded-2xl bg-red/20 px-4 py-3">
+                  <div className="max-w-[92%] rounded-2xl bg-red/20 px-4 py-3 shadow-sm shadow-black/10">
                     <p className="text-sm leading-relaxed text-white">{message.content}</p>
                   </div>
                 </div>
               ),
             )}
 
-            {isThinking ? (
-              <div className="flex items-start gap-3 animate-fade-in">
-                <NordiAvatar />
-                <div className="flex items-center gap-1.5 rounded-2xl border border-white/10 bg-slate/50 px-4 py-4">
-                  <span className="cat-typing-dot" style={{ animationDelay: "0ms" }} />
-                  <span className="cat-typing-dot" style={{ animationDelay: "160ms" }} />
-                  <span className="cat-typing-dot" style={{ animationDelay: "320ms" }} />
-                </div>
-              </div>
-            ) : null}
+            {thinkingLabel ? <NordiThinkingIndicator label={thinkingLabel} /> : null}
 
             {saveActive && !saved ? (
               <SaveConversationCard onComplete={handleSaved} onCancel={() => setSaveActive(false)} />
@@ -453,7 +560,7 @@ export default function HomeConversation() {
               </label>
               <button
                 type="submit"
-                disabled={!input.trim() || isThinking}
+                disabled={!input.trim() || busy}
                 className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-red px-5 text-sm font-semibold text-white transition-colors hover:bg-red-hover disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Send

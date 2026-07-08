@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import CatMessageContent from "@/components/cat/CatMessageContent";
+import { typingPauseForChar, typingSpeedForMessage } from "@/lib/nordi/thinking-states";
 
 type CatTypewriterProps = {
   text: string;
   animate: boolean;
+  messageId?: string;
   speed?: number;
   onDone?: () => void;
   onProgress?: () => void;
@@ -14,7 +16,8 @@ type CatTypewriterProps = {
 export default function CatTypewriter({
   text,
   animate,
-  speed = 16,
+  messageId = "default",
+  speed,
   onDone,
   onProgress,
 }: CatTypewriterProps) {
@@ -35,23 +38,32 @@ export default function CatTypewriter({
     doneRef.current = false;
     setCount(0);
 
+    const baseSpeed = speed ?? typingSpeedForMessage(messageId);
     let index = 0;
-    const interval = window.setInterval(() => {
+    let timeoutId = 0;
+
+    const tick = () => {
       index += 1;
       setCount(index);
       onProgressRef.current?.();
 
       if (index >= text.length) {
-        window.clearInterval(interval);
         if (!doneRef.current) {
           doneRef.current = true;
           onDoneRef.current?.();
         }
+        return;
       }
-    }, speed);
 
-    return () => window.clearInterval(interval);
-  }, [text, animate, speed]);
+      const char = text[index - 1] ?? "";
+      const pause = typingPauseForChar(char, messageId, index);
+      timeoutId = window.setTimeout(tick, baseSpeed + pause);
+    };
+
+    timeoutId = window.setTimeout(tick, baseSpeed);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [text, animate, speed, messageId]);
 
   const isTyping = animate && count < text.length;
 

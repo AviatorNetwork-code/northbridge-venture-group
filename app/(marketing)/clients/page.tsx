@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 
 export const metadata: Metadata = {
-  title: "Clients | Northbridge Venture Group",
+  title: "Clients | Northbridge Digital",
   description:
-    "Organizations we support with digital infrastructure, brand development, and strategic systems.",
+    "Organizations that trust Northbridge Digital for serious digital infrastructure and operational systems.",
 };
 
 const clients = [
@@ -12,7 +12,7 @@ const clients = [
     id: "royal-international-flight-school",
     name: "Royal International Flight School",
     description:
-      "Website and digital presence support for an aviation training organization.",
+      "Aviation training organization supported by Northbridge digital infrastructure.",
     domain: "royalinternationalflightschool.com",
     href: "https://www.royalinternationalflightschool.com/",
   },
@@ -25,11 +25,12 @@ export default function ClientsPage() {
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white mb-4">
           Clients
         </h1>
-        <MarketingPrimaryCta label="Become a Client" />
+
+        <MarketingPrimaryCta />
 
         <p className="text-base sm:text-lg text-silver mb-10 sm:mb-14 max-w-2xl leading-relaxed">
-          Organizations we support with digital infrastructure, brand
-          development, and strategic systems.
+          Northbridge Digital works with organizations that need serious
+          operational systems — the same discipline behind Nordi.
         </p>
 
         <section>

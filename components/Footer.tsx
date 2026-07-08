@@ -1,6 +1,16 @@
 import Link from "next/link";
 import NorthbridgeLogo from "@/components/NorthbridgeLogo";
 
+const navLinks = [
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
+  { href: "/services", label: "Digital Solutions" },
+  { href: "/clients", label: "Clients" },
+  { href: "/help", label: "Help" },
+  { href: "/contact", label: "Contact" },
+  { href: "/privacy", label: "Privacy" },
+];
+
 export default function Footer() {
   return (
     <footer className="border-t border-white/10 bg-black">
@@ -11,18 +21,18 @@ export default function Footer() {
               <Link href="/" className="inline-block w-fit">
                 <NorthbridgeLogo className="h-8 sm:h-9" />
               </Link>
-              <p className="text-silver text-sm max-w-[240px] leading-relaxed">
-                Intelligent Systems for Growing Industries
+              <p className="text-silver text-sm max-w-[280px] leading-relaxed">
+                Northbridge Digital is a software company. Nordi is our flagship
+                platform. We also build custom digital solutions when needed.
               </p>
               <p className="text-silver text-xs sm:text-sm max-w-sm leading-relaxed">
-                For partnership and business inquiries, contact{" "}
+                Questions?{" "}
                 <a
                   href="mailto:contact@northbridgeventuregroup.com"
                   className="underline underline-offset-4 hover:text-white transition-colors"
                 >
                   contact@northbridgeventuregroup.com
                 </a>
-                .
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-10 sm:gap-16">
@@ -31,73 +41,32 @@ export default function Footer() {
                   Navigation
                 </h4>
                 <ul className="space-y-2.5">
-                  <li>
-                    <Link
-                      href="/"
-                      className="text-sm text-white/75 hover:text-white transition-colors"
-                    >
-                      Home
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/about"
-                      className="text-sm text-white/75 hover:text-white transition-colors"
-                    >
-                      About
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/portfolio"
-                      className="text-sm text-white/75 hover:text-white transition-colors"
-                    >
-                      Ventures
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/services"
-                      className="text-sm text-white/75 hover:text-white transition-colors"
-                    >
-                      Services
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/partner"
-                      className="text-sm text-white/75 hover:text-white transition-colors"
-                    >
-                      Partner With Us
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/clients"
-                      className="text-sm text-white/75 hover:text-white transition-colors"
-                    >
-                      Clients
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/contact"
-                      className="text-sm text-white/75 hover:text-white transition-colors"
-                    >
-                      Contact
-                    </Link>
-                  </li>
+                  {navLinks.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-white/75 hover:text-white transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
                 </ul>
               </div>
               <div>
                 <h4 className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-silver/80 mb-3">
-                  Ventures
+                  Start Here
                 </h4>
-                <ul className="space-y-2.5 text-sm text-white/60">
-                  <li>Aviator Network</li>
-                  <li>AirTax Financial</li>
-                  <li>Northbridge Digital</li>
-                </ul>
+                <p className="text-sm text-white/60 leading-relaxed max-w-[200px]">
+                  Talk to Nordi on the homepage. Software that learns your
+                  business — conversation first.
+                </p>
+                <Link
+                  href="/"
+                  className="inline-flex min-h-11 items-center mt-4 text-sm font-medium text-red hover:text-red-hover transition-colors"
+                >
+                  Talk to Nordi →
+                </Link>
               </div>
             </div>
           </div>

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 
 export const metadata: Metadata = {
-  title: "About | Northbridge Venture Group",
+  title: "About | Northbridge Digital",
   description:
-    "Learn about Northbridge Venture Group, our story, philosophy, and focus on building ventures and digital infrastructure systems.",
+    "Northbridge Digital is a software company. Nordi is our flagship platform. We also build custom digital solutions for organizations with unique operational needs.",
 };
 
 export default function AboutPage() {
@@ -12,73 +12,80 @@ export default function AboutPage() {
     <main className="pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 bg-black min-h-screen">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white mb-6 sm:mb-8">
-          About Northbridge
+          About Northbridge Digital
         </h1>
 
         <MarketingPrimaryCta
-          secondaryHref="/partner"
-          secondaryLabel="Partner With Us"
+          secondaryHref="/services"
+          secondaryLabel="Digital Solutions"
         />
 
-        {/* Our Story */}
+        <section className="mb-10 sm:mb-12">
+          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4">
+            Who We Are
+          </h2>
+          <div className="space-y-4 text-silver text-sm sm:text-base leading-relaxed">
+            <p>
+              Northbridge Digital is a software company focused on helping
+              businesses operate more intelligently.
+            </p>
+            <p>
+              Our flagship platform, Nordi, learns how a business operates,
+              connects existing systems, and helps owners understand what is
+              happening across their organization.
+            </p>
+            <p>
+              For businesses with unique operational requirements, our
+              engineering team also develops custom digital solutions.
+            </p>
+          </div>
+        </section>
+
+        <section className="mb-10 sm:mb-12">
+          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4">
+            Our Approach
+          </h2>
+          <div className="space-y-4 text-silver text-sm sm:text-base leading-relaxed">
+            <p>
+              We build technology that helps businesses operate with greater
+              clarity, confidence, and efficiency — not generic automation, and
+              not a consulting engagement.
+            </p>
+            <p>
+              Nordi starts with conversation. You describe your business, Nordi
+              builds an evidence-based understanding, and recommends operational
+              support that fits how you actually work.
+            </p>
+            <p>
+              Human leadership stays in control. Software learns your business;
+              you make the decisions that matter.
+            </p>
+          </div>
+        </section>
+
         <section className="mb-10 sm:mb-12">
           <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4">
             Our Story
           </h2>
           <div className="space-y-4 text-silver text-sm sm:text-base leading-relaxed">
             <p>
-              Throughout my life, I have seen business opportunities and ideas
-              that could become real companies. Like many aspiring
-              entrepreneurs, I often lacked the technical resources or capital
-              required to execute them.
+              Northbridge Venture Group was founded to build and operate serious
+              digital platforms — starting with Aviator Network, a marketplace
+              connecting pilots and flight instructors.
             </p>
             <p>
-              More than once, I later saw similar ideas appear in the market
-              through someone else’s hands.
+              While building real businesses, we saw the same pattern everywhere:
+              owners understand their operation deeply, but lack software that
+              reflects that understanding.
             </p>
             <p>
-              That experience made something clear: many strong ideas never
-              become reality simply because the person behind them lacks the
-              tools to build them.
+              Nordi was built to close that gap — software that learns your
+              business, not a catalog you browse before anyone understands your
+              needs.
             </p>
-            <p>Northbridge Venture Group was founded to change that.</p>
-            <p>
-              The company began as a way to finally execute my own major
-              platform idea — Aviator Network.
-            </p>
-            <p>
-              While building it, I realized that many professionals and
-              entrepreneurs face the same challenge.
-            </p>
-            <p>That realization became the foundation of Northbridge.</p>
           </div>
         </section>
 
-        {/* Our Philosophy */}
-        <section className="mb-10 sm:mb-12">
-          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4">
-            Our Philosophy
-          </h2>
-          <p className="text-sm sm:text-base text-silver leading-relaxed mb-4">
-            Northbridge operates with a simple principle:
-          </p>
-          <p className="text-base sm:text-lg text-white font-medium mb-4">
-            “A great idea should never die on paper.”
-          </p>
-          <p className="text-sm sm:text-base text-silver leading-relaxed mb-4">
-            Through digital infrastructure, platform development, and strategic
-            collaboration, Northbridge works to transform strong concepts into
-            real systems and ventures.
-          </p>
-          <p className="text-sm sm:text-base text-silver leading-relaxed">
-            Some projects become internal ventures. Others are developed for
-            organizations that need digital infrastructure. In select cases,
-            Northbridge partners with founders whose ideas have the potential to
-            reshape an industry.
-          </p>
-        </section>
-
-        {/* Founder */}
         <section>
           <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4">
             Founder
@@ -90,9 +97,9 @@ export default function AboutPage() {
             Founder, Northbridge Venture Group
           </p>
           <p className="text-silver text-sm sm:text-base leading-relaxed">
-            Entrepreneur and aviation professional focused on building platforms
-            and systems that connect professionals and unlock opportunities
-            within specialized industries.
+            Entrepreneur and aviation professional focused on building software
+            that helps operators run better businesses — with human judgment
+            always in the lead.
           </p>
         </section>
       </div>

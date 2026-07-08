@@ -2,64 +2,53 @@
 
 import { useMemo, useState } from "react";
 import NordiAvatar from "@/components/home/NordiAvatar";
-
-export type SavedIdentity = {
-  method: "phone" | "email" | "both";
-  phone?: string;
-  email?: string;
-  verified: boolean;
-};
+import {
+  createIdentity,
+  formatIdentityContact,
+  mockVerificationProvider,
+  normalizePhone,
+  type IdentityMethod,
+  type NordiIdentity,
+} from "@/lib/nordi/identity";
 
 type SaveStep = "method" | "details" | "verifyPrompt" | "code";
 
 type SaveConversationCardProps = {
-  onComplete: (identity: SavedIdentity) => void;
+  onComplete: (identity: NordiIdentity) => void;
   onCancel: () => void;
 };
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function normalizePhone(value: string): string {
-  return value.replace(/[^\d]/g, "");
-}
-
-function maskContact(identity: { method: SavedIdentity["method"]; phone: string; email: string }): string {
-  if (identity.method === "both") return `${identity.email} and ${identity.phone}`;
-  if (identity.method === "email") return identity.email;
-  return identity.phone;
-}
-
 export default function SaveConversationCard({ onComplete, onCancel }: SaveConversationCardProps) {
   const [step, setStep] = useState<SaveStep>("method");
-  const [method, setMethod] = useState<SavedIdentity["method"]>("email");
+  const [method, setMethod] = useState<IdentityMethod>("email");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
-
-  const generatedCode = useMemo(
-    () => Math.floor(100000 + Math.random() * 900000).toString(),
-    [],
-  );
+  const [pendingCode, setPendingCode] = useState<string | null>(null);
 
   const prompt = useMemo(() => {
     switch (step) {
       case "method":
-        return "What's the best way to recognize you next time?";
+        return "How would you like me to recognize you next time?";
       case "details":
-        if (method === "both") return "Perfect. What are your email and phone number?";
-        if (method === "email") return "Great. What email should I use to recognize you?";
-        return "Great. What phone number should I use to recognize you?";
+        return method === "email"
+          ? "What email should I save this conversation under?"
+          : "What phone number should I save this conversation under?";
       case "verifyPrompt":
-        return "Would you like to protect this conversation with a verification code?";
-      case "code":
-        return `I've sent a 6-digit code to ${maskContact({ method, phone, email })}. Enter it below to confirm it's you.`;
+        return "Would you like to secure future access with a verification code?";
+      case "code": {
+        const identity = createIdentity(method, method === "email" ? email : phone, false);
+        return `I've sent a 6-digit code to ${formatIdentityContact(identity)}. Enter it below when you're ready.`;
+      }
       default:
         return "";
     }
   }, [step, method, phone, email]);
 
-  const chooseMethod = (next: SavedIdentity["method"]) => {
+  const chooseMethod = (next: IdentityMethod) => {
     setMethod(next);
     setError(null);
     setStep("details");
@@ -70,11 +59,11 @@ export default function SaveConversationCard({ onComplete, onCancel }: SaveConve
     const cleanEmail = email.trim();
     const cleanPhone = normalizePhone(phone);
 
-    if (method !== "phone" && !emailPattern.test(cleanEmail)) {
+    if (method === "email" && !emailPattern.test(cleanEmail)) {
       setError("Please enter a valid email address.");
       return;
     }
-    if (method !== "email" && cleanPhone.length < 7) {
+    if (method === "phone" && cleanPhone.length < 7) {
       setError("Please enter a valid phone number.");
       return;
     }
@@ -85,16 +74,19 @@ export default function SaveConversationCard({ onComplete, onCancel }: SaveConve
   };
 
   const finish = (verified: boolean) => {
-    onComplete({
-      method,
-      phone: method !== "email" ? normalizePhone(phone) : undefined,
-      email: method !== "phone" ? email.trim() : undefined,
-      verified,
-    });
+    const contact = method === "email" ? email.trim() : phone;
+    onComplete(createIdentity(method, contact, verified));
+  };
+
+  const sendCode = async () => {
+    const identity = createIdentity(method, method === "email" ? email : phone, false);
+    const { code: generated } = await mockVerificationProvider.sendCode(identity);
+    setPendingCode(generated);
+    setStep("code");
   };
 
   const submitCode = () => {
-    if (normalizePhone(code) !== generatedCode) {
+    if (!pendingCode || !mockVerificationProvider.verifyCode(code, pendingCode)) {
       setError("That code doesn't match. Try again.");
       return;
     }
@@ -110,28 +102,26 @@ export default function SaveConversationCard({ onComplete, onCancel }: SaveConve
 
         {step === "method" ? (
           <div className="mt-3 flex flex-wrap gap-2">
-            {(
-              [
-                { id: "phone", label: "Phone" },
-                { id: "email", label: "Email" },
-                { id: "both", label: "Both" },
-              ] as const
-            ).map((option) => (
-              <button
-                key={option.id}
-                type="button"
-                onClick={() => chooseMethod(option.id)}
-                className="min-h-11 rounded-full border border-white/15 bg-black/30 px-5 text-sm text-white transition-colors hover:border-red/40 hover:bg-red/10"
-              >
-                {option.label}
-              </button>
-            ))}
+            <button
+              type="button"
+              onClick={() => chooseMethod("email")}
+              className="min-h-11 rounded-full border border-white/15 bg-black/30 px-5 text-sm text-white transition-colors hover:border-red/40 hover:bg-red/10"
+            >
+              Email
+            </button>
+            <button
+              type="button"
+              onClick={() => chooseMethod("phone")}
+              className="min-h-11 rounded-full border border-white/15 bg-black/30 px-5 text-sm text-white transition-colors hover:border-red/40 hover:bg-red/10"
+            >
+              Phone Number
+            </button>
           </div>
         ) : null}
 
         {step === "details" ? (
           <div className="mt-3 space-y-2">
-            {method !== "phone" ? (
+            {method === "email" ? (
               <input
                 type="email"
                 inputMode="email"
@@ -142,19 +132,18 @@ export default function SaveConversationCard({ onComplete, onCancel }: SaveConve
                 placeholder="you@business.com"
                 className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-base text-white placeholder:text-stone focus:border-red/50 focus:outline-none focus:ring-1 focus:ring-red/30"
               />
-            ) : null}
-            {method !== "email" ? (
+            ) : (
               <input
                 type="tel"
                 inputMode="tel"
-                autoFocus={method === "phone"}
+                autoFocus
                 value={phone}
                 onChange={(event) => setPhone(event.target.value)}
                 onKeyDown={(event) => event.key === "Enter" && submitDetails()}
                 placeholder="(555) 000-0000"
                 className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-base text-white placeholder:text-stone focus:border-red/50 focus:outline-none focus:ring-1 focus:ring-red/30"
               />
-            ) : null}
+            )}
             <div className="flex items-center gap-2 pt-1">
               <button
                 type="button"
@@ -178,27 +167,29 @@ export default function SaveConversationCard({ onComplete, onCancel }: SaveConve
           <div className="mt-3 flex flex-wrap gap-2">
             <button
               type="button"
-              onClick={() => setStep("code")}
+              onClick={() => void sendCode()}
               className="inline-flex min-h-11 items-center justify-center rounded-full bg-red px-5 text-sm font-semibold text-white transition-colors hover:bg-red-hover"
             >
-              Yes, protect it
+              Send Code
             </button>
             <button
               type="button"
               onClick={() => finish(false)}
               className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/15 bg-black/30 px-5 text-sm text-white transition-colors hover:border-white/30 hover:bg-white/5"
             >
-              No, just save it
+              Skip for now
             </button>
           </div>
         ) : null}
 
         {step === "code" ? (
           <div className="mt-3 space-y-2">
-            <p className="text-xs text-stone">
-              Demo verification — your code is{" "}
-              <span className="font-semibold text-silver">{generatedCode}</span>.
-            </p>
+            {pendingCode ? (
+              <p className="text-xs text-stone">
+                Demo verification — your code is{" "}
+                <span className="font-semibold text-silver">{pendingCode}</span>.
+              </p>
+            ) : null}
             <input
               type="text"
               inputMode="numeric"
@@ -223,7 +214,7 @@ export default function SaveConversationCard({ onComplete, onCancel }: SaveConve
                 onClick={() => finish(false)}
                 className="inline-flex min-h-11 items-center justify-center rounded-xl px-4 text-sm text-stone transition-colors hover:text-white"
               >
-                Skip verification
+                Skip for now
               </button>
             </div>
           </div>

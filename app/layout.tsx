@@ -10,13 +10,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Northbridge Venture Group | Venture Studio & Digital Infrastructure",
+  title: "Nordi | Northbridge Digital",
   description:
-    "Northbridge Venture Group develops ventures, digital platforms, and digital infrastructure systems for modern industries.",
+    "Northbridge Digital is a software company. Nordi is our flagship platform for business operating intelligence. We also build custom digital solutions.",
   openGraph: {
-    title: "Northbridge Venture Group | Venture Studio & Digital Infrastructure",
+    title: "Nordi | Northbridge Digital",
     description:
-      "Northbridge Venture Group develops ventures, digital platforms, and infrastructure systems that help modern industries operate more efficiently and unlock new opportunities.",
+      "Northbridge Digital builds Nordi — software that learns your business. We also deliver custom digital solutions for organizations with unique operational needs.",
     images: ["/og-image.png"],
   },
 };

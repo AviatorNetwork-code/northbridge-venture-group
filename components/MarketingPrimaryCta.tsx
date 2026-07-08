@@ -8,8 +8,8 @@ type MarketingPrimaryCtaProps = {
 };
 
 export default function MarketingPrimaryCta({
-  href = "/contact",
-  label = "Start a Conversation",
+  href = "/",
+  label = "Talk to Nordi",
   secondaryHref,
   secondaryLabel,
 }: MarketingPrimaryCtaProps) {

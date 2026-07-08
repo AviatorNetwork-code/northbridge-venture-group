@@ -59,7 +59,9 @@ function detectCategory(text: string, title?: string): string | undefined {
   const map: Record<string, string[]> = {
     dental: ["dental", "dentist", "orthodont", "oral"],
     healthcare: ["clinic", "medical", "physician", "patient", "hospital"],
-    hospitality: ["restaurant", "cafe", "hotel", "dining", "menu"],
+    hvac: ["hvac", "heating", "air conditioning", "furnace", "cooling"],
+    aviation: ["flight school", "aviation", "pilot training", "flying school", "cfi"],
+    hospitality: ["restaurant", "cafe", "hotel", "dining", "menu", "bar"],
     retail: ["shop", "store", "retail", "boutique"],
     fitness: ["gym", "fitness", "yoga", "pilates", "training"],
     salon: ["salon", "spa", "beauty", "hair", "nails"],
@@ -115,7 +117,11 @@ function phoneProminent(html: string): boolean {
   return /href=["']tel:/i.test(headerMatch) || /call (us|now)|phone/i.test(headerMatch);
 }
 
-function buildSignals(analysis: Omit<WebsiteAnalysisResult, "signals" | "analyzedAt">): WebsiteSignal[] {
+function detectGoogleBusinessLink(html: string): boolean {
+  return /google\.com\/maps|g\.page|business\.google|google business/i.test(html);
+}
+
+function buildSignals(analysis: Omit<WebsiteAnalysisResult, "signals" | "analyzedAt" | "hasGoogleBusinessProfile">): WebsiteSignal[] {
   const signals: WebsiteSignal[] = [];
 
   if (analysis.hasAppointmentSystem) {
@@ -236,6 +242,7 @@ export function analyzeWebsiteHtml(url: string, html: string): WebsiteAnalysisRe
     hasEmergencyMessaging: detectEmergencyMessaging(text),
     phoneProminent: phoneProminent(html),
     technologies,
+    hasGoogleBusinessProfile: detectGoogleBusinessLink(html),
   };
 
   const signals = buildSignals(base);
@@ -245,6 +252,57 @@ export function analyzeWebsiteHtml(url: string, html: string): WebsiteAnalysisRe
     signals,
     analyzedAt: new Date().toISOString(),
   };
+}
+
+export function formatWebsiteFindings(analysis: WebsiteAnalysisResult): string {
+  const bullets: string[] = [];
+
+  if (analysis.services.length > 0) {
+    bullets.push(`• ${analysis.services.length} public service${analysis.services.length === 1 ? "" : "s"} listed`);
+  }
+
+  if (analysis.hasContactForm) {
+    bullets.push("• Contact form available");
+  }
+
+  if (analysis.hasAppointmentSystem) {
+    bullets.push(
+      `• Online appointment booking detected${analysis.appointmentProvider ? ` (${analysis.appointmentProvider})` : ""}`,
+    );
+  } else {
+    bullets.push("• No online appointment booking detected");
+  }
+
+  const hasReminderMention = analysis.signals.some((signal) => signal.id === "reminder-gap");
+  if (hasReminderMention || !analysis.hasAppointmentSystem) {
+    bullets.push("• No automated reminder workflow detected");
+  }
+
+  if (analysis.hasGoogleBusinessProfile) {
+    bullets.push("• Google Business profile linked");
+  }
+
+  if (analysis.hasEmergencyMessaging) {
+    bullets.push("• Emergency or urgent service messaging present");
+  }
+
+  if (analysis.hasBusinessHours) {
+    bullets.push("• Business hours published on the site");
+  }
+
+  if (bullets.length === 0) {
+    bullets.push("• Public website reviewed — limited structured signals detected");
+  }
+
+  return [
+    "I've finished reviewing your website.",
+    "",
+    "I found:",
+    "",
+    ...bullets,
+    "",
+    "These are observations only — we'll keep learning as we talk.",
+  ].join("\n");
 }
 
 export function generateFirstInsight(

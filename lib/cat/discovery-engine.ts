@@ -1,4 +1,13 @@
 import type { DiscoveryEngineResult, DiscoveryProfile } from "@/lib/cat/discovery-types";
+import { getIndustryLabel, getNextIndustryQuestion, getIndustryQuestionsAnsweredCount } from "@/lib/cat/industry-questions";
+import { buildRelationshipAcknowledgment } from "@/lib/nordi/relationship";
+import {
+  noticedLeadIn,
+  pickAcknowledgment,
+  pickIndustryAcknowledgment,
+  pickReturningPrefix,
+  softenTransition,
+} from "@/lib/nordi/human-language";
 import { extractWebsiteUrl } from "@/lib/cat/website-analysis";
 
 function includesAny(text: string, terms: string[]): boolean {
@@ -7,10 +16,12 @@ function includesAny(text: string, terms: string[]): boolean {
 
 function extractIndustry(text: string): string | undefined {
   const industries: Record<string, string[]> = {
-    dental: ["dental", "dentist", "dental clinic", "orthodont"],
+    dental: ["dental", "dentist", "dental office", "dental clinic", "orthodont"],
+    hvac: ["hvac", "heating and cooling", "heating", "air conditioning", "furnace"],
+    aviation: ["flight school", "aviation", "pilot training", "flying school", "cfi"],
     healthcare: ["healthcare", "medical", "clinic", "hospital", "patient"],
+    hospitality: ["restaurant", "restaurants", "hotel", "hospitality", "cafe", "bar"],
     retail: ["retail", "store", "shop", "ecommerce", "e-commerce"],
-    hospitality: ["restaurant", "hotel", "hospitality", "cafe", "bar"],
     "professional-services": ["law firm", "accounting", "consulting", "agency"],
     fitness: ["gym", "fitness", "studio", "yoga"],
     salon: ["salon", "spa", "beauty"],
@@ -24,126 +35,207 @@ function extractIndustry(text: string): string | undefined {
 }
 
 function extractEmployeeCount(text: string): number | undefined {
-  const match = text.match(/(\d+)\s*(employees|staff|people|team members)/i);
+  const match = text.match(/(\d+)\s*(employees|staff|people|team members|technicians|instructors|providers|workers)/i);
   if (match) return Number.parseInt(match[1], 10);
+
+  const wordMatch = text.match(/\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\s+(restaurants|locations|offices|stores)/i);
+  if (wordMatch) {
+    const words: Record<string, number> = {
+      two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12,
+    };
+    return words[wordMatch[1].toLowerCase()];
+  }
+
   if (includesAny(text, ["just me", "solo", "one person", "only me"])) return 1;
   if (includesAny(text, ["small team", "few people"])) return 5;
   return undefined;
 }
 
-function hasWebsiteAffirmation(text: string): boolean {
-  return includesAny(text, [
-    "yes",
-    "yeah",
-    "yep",
-    "we do",
-    "i do",
-    "we have",
-    "i have",
-    "here is",
-    "here's",
-    "our site",
-    "our website",
-    "my website",
-  ]);
+function extractLocationCount(text: string): number | undefined {
+  const match = text.match(/(\d+)\s*(locations|restaurants|offices|stores|sites)/i);
+  if (match) return Number.parseInt(match[1], 10);
+  if (includesAny(text, ["two restaurants", "2 restaurants"])) return 2;
+  return undefined;
 }
 
-function hasWebsiteNegation(text: string): boolean {
-  return includesAny(text, ["no website", "don't have a website", "do not have a website", "not yet"]);
+function matchesWholeWord(text: string, words: string[]): boolean {
+  return words.some((word) => new RegExp(`\\b${word}\\b`, "i").test(text));
+}
+
+function isAffirmative(text: string): boolean {
+  return matchesWholeWord(text, ["yes", "yeah", "yep", "sure", "please", "ok", "okay", "absolutely"])
+    || includesAny(text, ["go ahead"]);
+}
+
+function isNegative(text: string): boolean {
+  return matchesWholeWord(text, ["no", "nope", "nah"])
+    || includesAny(text, ["not now", "no website", "rather not", "skip"]);
 }
 
 function isSalesPressure(text: string): boolean {
   return includesAny(text, ["how much", "pricing", "price", "cost", "buy", "subscribe", "plan"]);
 }
 
-function mergeProfile(
-  current: DiscoveryProfile,
-  updates: Partial<DiscoveryProfile>,
-): DiscoveryProfile {
-  return { ...current, ...updates };
+function mergeProfile(current: DiscoveryProfile, updates: Partial<DiscoveryProfile>): DiscoveryProfile {
+  return {
+    ...current,
+    ...updates,
+    answeredQuestions: updates.answeredQuestions ?? current.answeredQuestions,
+    discoveryAnswers: { ...current.discoveryAnswers, ...updates.discoveryAnswers },
+    communicationChannels: updates.communicationChannels ?? current.communicationChannels,
+    notes: updates.notes ?? current.notes,
+  };
 }
 
-function buildLearningReply(profile: DiscoveryProfile, userText: string): string {
-  const industry = profile.industry;
+function recordAnswer(profile: DiscoveryProfile, questionId: string, answer: string): DiscoveryProfile {
+  const answered = new Set(profile.answeredQuestions ?? []);
+  answered.add(questionId);
 
-  if (!industry) {
-    return [
-      "Thank you — that's helpful context.",
-      "",
-      "What kind of business is it, and roughly how many people are involved in day-to-day operations?",
-    ].join("\n");
-  }
-
-  if (!profile.employeeCount) {
-    const labels: Record<string, string> = {
-      dental: "dental practice",
-      healthcare: "healthcare operation",
-      hospitality: "restaurant or hospitality business",
-      retail: "retail business",
-      salon: "salon or spa",
-      fitness: "fitness business",
-      "professional-services": "professional services firm",
-    };
-
-    return [
-      `A ${labels[industry] ?? "business"} — understood.`,
-      "",
-      "Roughly how many people are involved in running it day to day?",
-    ].join("\n");
-  }
-
-  if (!profile.communicationChannels?.length) {
-    return [
-      "That's a useful picture.",
-      "",
-      "How do customers usually reach you — phone, email, text, walk-ins, or something else?",
-    ].join("\n");
-  }
-
-  return [
-    "I appreciate you walking me through that.",
-    "",
-    "What tends to create the most friction in a typical week — scheduling, follow-ups, billing, staffing, or something else?",
-  ].join("\n");
+  return mergeProfile(profile, {
+    answeredQuestions: Array.from(answered),
+    discoveryAnswers: { [questionId]: answer },
+    pendingQuestionId: undefined,
+  });
 }
 
-function shouldAskForWebsite(profile: DiscoveryProfile): boolean {
+function extractPassiveSignals(text: string, rawMessage: string, profile: DiscoveryProfile): DiscoveryProfile {
+  let next = { ...profile };
+
+  const industry = extractIndustry(text);
+  const employees = extractEmployeeCount(text);
+  const locations = extractLocationCount(text);
+
+  if (industry) next = mergeProfile(next, { industry });
+  if (employees) next = mergeProfile(next, { employeeCount: employees });
+  if (locations) next = mergeProfile(next, { locationCount: locations });
+
+  const channels = new Set(next.communicationChannels ?? []);
+  if (includesAny(text, ["whatsapp"])) channels.add("WhatsApp");
+  if (includesAny(text, ["phone", "call us", "by phone"])) channels.add("Phone");
+  if (includesAny(text, ["email", "gmail"])) channels.add("Email");
+  if (includesAny(text, ["walk-in", "walk in"])) channels.add("Walk-ins");
+  if (channels.size > 0) next = mergeProfile(next, { communicationChannels: Array.from(channels) });
+
+  if (rawMessage.trim().length > 12) {
+    next = mergeProfile(next, { notes: [...(next.notes ?? []), rawMessage.trim()] });
+  }
+
+  return next;
+}
+
+function acknowledgeIndustry(profile: DiscoveryProfile): string {
+  const label = getIndustryLabel(profile.industry);
+  return pickIndustryAcknowledgment(label, profile.userMessageCount ?? 0);
+}
+
+function shouldAskWebsitePermission(profile: DiscoveryProfile): boolean {
+  if (profile.websitePermissionAsked || profile.website) return false;
+  if (!profile.industry) return false;
+
+  const industryAnswered = getIndustryQuestionsAnsweredCount(profile);
+  return industryAnswered >= 2 || getNextIndustryQuestion(profile) === null;
+}
+
+function websitePermissionPrompt(): string {
+  return "Would you like me to take a quick look at your public website while we continue?";
+}
+
+function buildSupportAreas(profile: DiscoveryProfile): string[] {
+  const areas: string[] = [];
+
+  if (profile.discoveryAnswers?.["dental-reminders"]?.toLowerCase().includes("no")) {
+    areas.push("appointment reminder follow-through");
+  }
+  if (profile.discoveryAnswers?.["hvac-emergency"]?.toLowerCase().includes("yes")) {
+    areas.push("after-hours and emergency dispatch coordination");
+  }
+  if (profile.discoveryAnswers?.["aviation-online-booking"]?.toLowerCase().includes("no")) {
+    areas.push("student scheduling visibility");
+  }
+  if (profile.websiteAnalysis && !profile.websiteAnalysis.hasAppointmentSystem) {
+    areas.push("making scheduling clearer for new customers");
+  }
+  if (profile.websiteAnalysis?.signals.some((signal) => signal.id === "reminder-gap")) {
+    areas.push("automated appointment reminders");
+  }
+  if ((profile.communicationChannels?.length ?? 0) > 2) {
+    areas.push("keeping customer messages organized across channels");
+  }
+
+  if (areas.length === 0 && profile.industry) {
+    areas.push("operational follow-through", "customer communication consistency");
+  }
+
+  return Array.from(new Set(areas)).slice(0, 3);
+}
+
+function buildRecommendationReply(profile: DiscoveryProfile): DiscoveryEngineResult {
+  const areas = buildSupportAreas(profile);
+  const seed = profile.userMessageCount ?? 0;
+
+  return {
+    thinkingContext: "preparing",
+    progressiveReply: [
+      noticedLeadIn(seed),
+      "Based on what you've shared, a few areas stand out where extra operational support may matter.",
+      [
+        ...areas.map((area) => `• ${area.charAt(0).toUpperCase()}${area.slice(1)}`),
+        "",
+        "I'm not recommending products yet — just noting what I'm seeing.",
+        "",
+        "Tell me more about how your team handles these today.",
+      ].join("\n"),
+    ],
+    reply: "",
+    profileUpdates: mergeProfile(profile, {
+      discoveryPhase: "recommendations",
+      areasForSupport: areas,
+    }),
+  };
+}
+
+function shouldOfferRecommendation(profile: DiscoveryProfile): boolean {
   return (
-    !profile.websiteAsked &&
-    Boolean(profile.industry) &&
-    (profile.userMessageCount ?? 0) >= 1 &&
-    !profile.website
+    profile.discoveryPhase !== "recommendations" &&
+    (profile.answeredQuestions?.length ?? 0) >= 3 &&
+    Boolean(profile.websiteAnalysis || profile.websitePermissionAsked)
   );
 }
 
-function websiteAskMessage(): string {
-  return "Do you have a website?";
-}
+function askNextQuestion(profile: DiscoveryProfile): DiscoveryEngineResult | null {
+  const question = getNextIndustryQuestion(profile);
+  if (!question) return null;
 
-function websiteAcknowledgement(): string {
-  return [
-    "Perfect.",
-    "",
-    "I'll take a quick look while we continue talking so I can better understand your business.",
-  ].join("\n");
-}
+  const seed = profile.userMessageCount ?? 0;
+  let prefix = `${pickAcknowledgment(seed)}\n\n`;
 
-function websiteDeclinedReply(): string {
-  return [
-    "No problem at all.",
-    "",
-    "We can keep learning from the conversation.",
-    "",
-    "What does a typical customer journey look like from first contact to completed service?",
-  ].join("\n");
-}
+  if (profile.isReturningVisitor && profile.industry) {
+    prefix = `${pickReturningPrefix(seed)}\n\n`;
+  } else if (profile.userMessageCount === 1 && profile.industry) {
+    prefix = `${acknowledgeIndustry(profile)}\n\n`;
+  }
 
-function blockSalesDuringDiscovery(): string {
-  return [
-    "I want to understand your business properly before we talk about solutions.",
-    "",
-    "Help me with one more operational detail — what part of the week feels most repetitive or time-consuming for your team?",
-  ].join("\n");
+  const useProgressive = seed % 3 === 0 && question.prompt.length > 40;
+
+  if (useProgressive) {
+    return {
+      thinkingContext: "analyzing-shared",
+      progressiveReply: [softenTransition(seed), question.prompt],
+      reply: "",
+      profileUpdates: mergeProfile(profile, {
+        pendingQuestionId: question.id,
+        discoveryPhase: "learning",
+      }),
+    };
+  }
+
+  return {
+    reply: `${prefix}${question.prompt}`,
+    profileUpdates: mergeProfile(profile, {
+      pendingQuestionId: question.id,
+      discoveryPhase: "learning",
+    }),
+  };
 }
 
 export function processDiscoveryMessage(
@@ -153,103 +245,135 @@ export function processDiscoveryMessage(
   const text = rawMessage.trim().toLowerCase();
   const messageCount = (profile.userMessageCount ?? 0) + 1;
   let nextProfile = mergeProfile(profile, { userMessageCount: messageCount });
-
-  const passiveIndustry = extractIndustry(text);
-  const passiveEmployees = extractEmployeeCount(text);
   const extractedUrl = extractWebsiteUrl(rawMessage);
 
-  if (passiveIndustry) nextProfile = mergeProfile(nextProfile, { industry: passiveIndustry });
-  if (passiveEmployees) nextProfile = mergeProfile(nextProfile, { employeeCount: passiveEmployees });
-
-  const channels = new Set(nextProfile.communicationChannels ?? []);
-  if (includesAny(text, ["whatsapp"])) channels.add("WhatsApp");
-  if (includesAny(text, ["phone", "call us", "by phone"])) channels.add("Phone");
-  if (includesAny(text, ["email", "gmail"])) channels.add("Email");
-  if (channels.size > 0) {
-    nextProfile = mergeProfile(nextProfile, {
-      communicationChannels: Array.from(channels),
-    });
+  if (nextProfile.pendingQuestionId) {
+    nextProfile = recordAnswer(nextProfile, nextProfile.pendingQuestionId, rawMessage.trim());
   }
 
-  if (text.length > 20) {
-    nextProfile = mergeProfile(nextProfile, {
-      notes: [...(nextProfile.notes ?? []), rawMessage.trim()],
-    });
-  }
+  nextProfile = extractPassiveSignals(text, rawMessage, nextProfile);
 
-  if (
-    nextProfile.discoveryPhase !== "recommendations" &&
-    nextProfile.insightDelivered !== true &&
-    isSalesPressure(text)
-  ) {
-    return {
-      reply: blockSalesDuringDiscovery(),
-      profileUpdates: nextProfile,
-    };
-  }
-
-  if (hasWebsiteNegation(text)) {
-    nextProfile = mergeProfile(nextProfile, {
-      websiteAsked: true,
-      discoveryPhase: "learning",
-    });
-    return { reply: websiteDeclinedReply(), profileUpdates: nextProfile };
-  }
-
-  const websiteConfirmed =
-    extractedUrl || (hasWebsiteAffirmation(text) && nextProfile.websiteAsked);
-
-  if (websiteConfirmed) {
-    const url = extractedUrl ?? nextProfile.website;
-    if (url) {
-      nextProfile = mergeProfile(nextProfile, {
-        website: url,
-        websiteAsked: true,
-        websiteAnalysisPending: true,
-        discoveryPhase: "website_analyzing",
-      });
-
-      const followUp = buildLearningReply(nextProfile, text);
+  const relationshipAck = buildRelationshipAcknowledgment(nextProfile, rawMessage);
+  if (relationshipAck) {
+    const nextQuestion = askNextQuestion(nextProfile);
+    if (nextQuestion) {
       return {
-        reply: [websiteAcknowledgement(), "", followUp].join("\n"),
-        profileUpdates: nextProfile,
-        triggerWebsiteAnalysis: url,
+        reply: `${relationshipAck}\n\n${nextQuestion.reply}`,
+        profileUpdates: nextQuestion.profileUpdates,
       };
     }
-
     return {
-      reply: "What's the web address? I can review the public site while we keep talking.",
-      profileUpdates: mergeProfile(nextProfile, { websiteAsked: true }),
-    };
-  }
-
-  if (shouldAskForWebsite(nextProfile)) {
-    const learning = buildLearningReply(nextProfile, text);
-    nextProfile = mergeProfile(nextProfile, {
-      websiteAsked: true,
-      discoveryPhase: "website_prompted",
-    });
-    return {
-      reply: [learning, "", websiteAskMessage()].join("\n"),
+      reply: relationshipAck,
       profileUpdates: nextProfile,
     };
   }
 
-  if (nextProfile.discoveryPhase === "insight_delivered" || nextProfile.insightDelivered) {
+  if (nextProfile.discoveryPhase !== "recommendations" && isSalesPressure(text)) {
     return {
       reply: [
-        "I'm still listening.",
+        "I want to understand your business properly before we talk about solutions.",
         "",
-        "Based on what you've shared, I have a clearer picture of how your business runs.",
+        "Help me with one more operational detail — what part of the week feels most repetitive for your team?",
+      ].join("\n"),
+      profileUpdates: nextProfile,
+    };
+  }
+
+  if (extractedUrl && (nextProfile.websitePermissionGranted || nextProfile.websitePermissionAsked)) {
+    nextProfile = mergeProfile(nextProfile, {
+      website: extractedUrl,
+      websitePermissionGranted: true,
+      websiteAnalysisPending: true,
+      discoveryPhase: "website_analyzing",
+    });
+
+    const followUp = getNextIndustryQuestion(nextProfile);
+    const continueLine = followUp
+      ? `\n\nWhile that runs, ${followUp.prompt.charAt(0).toLowerCase()}${followUp.prompt.slice(1)}`
+      : "\n\nWhile that runs, tell me more about how customers usually find you.";
+
+    return {
+      reply: `Perfect — I'll review your public site while we keep talking.${continueLine}`,
+      profileUpdates: mergeProfile(nextProfile, { pendingQuestionId: followUp?.id }),
+      triggerWebsiteAnalysis: extractedUrl,
+      showWebsiteAnalyzing: true,
+    };
+  }
+
+  if (nextProfile.websitePermissionGranted && !nextProfile.website && isAffirmative(text)) {
+    return {
+      reply: "Great — paste your website URL whenever you're ready, and I'll review it while we keep talking.",
+      profileUpdates: nextProfile,
+    };
+  }
+
+  if (nextProfile.websitePermissionAsked && isNegative(text) && !extractedUrl) {
+    nextProfile = mergeProfile(nextProfile, {
+      websitePermissionGranted: false,
+      discoveryPhase: "learning",
+    });
+
+    const nextQuestion = askNextQuestion(nextProfile);
+    if (nextQuestion) return nextQuestion;
+
+    return {
+      reply: [
+        "No problem — we can keep learning from the conversation.",
         "",
-        "Is there a specific operational challenge you'd like me to think through with you?",
+        "What does a typical customer journey look like from first contact to completed service?",
+      ].join("\n"),
+      profileUpdates: nextProfile,
+    };
+  }
+
+  if (shouldAskWebsitePermission(nextProfile) && !nextProfile.websitePermissionAsked) {
+    nextProfile = mergeProfile(nextProfile, { websitePermissionAsked: true });
+    const seed = nextProfile.userMessageCount ?? 0;
+    return {
+      thinkingContext: "reviewing-business",
+      progressiveReply: [
+        pickAcknowledgment(seed),
+        websitePermissionPrompt(),
+      ],
+      reply: "",
+      profileUpdates: nextProfile,
+    };
+  }
+
+  if (nextProfile.websitePermissionAsked && !nextProfile.websitePermissionGranted && isAffirmative(text)) {
+    nextProfile = mergeProfile(nextProfile, { websitePermissionGranted: true });
+    return {
+      reply: "Great — paste your website URL whenever you're ready, and I'll review it while we keep talking.",
+      profileUpdates: nextProfile,
+    };
+  }
+
+  if (shouldOfferRecommendation(nextProfile)) {
+    return buildRecommendationReply(nextProfile);
+  }
+
+  const nextQuestion = askNextQuestion(nextProfile);
+  if (nextQuestion) return nextQuestion;
+
+  if (!nextProfile.industry) {
+    return {
+      thinkingContext: "analyzing-shared",
+      reply: [
+        pickAcknowledgment(messageCount),
+        "",
+        "What kind of business is it, and roughly how many people are involved in day-to-day operations?",
       ].join("\n"),
       profileUpdates: nextProfile,
     };
   }
 
   return {
-    reply: buildLearningReply(nextProfile, text),
+    thinkingContext: "reviewing-business",
+    progressiveReply: [
+      "I appreciate you walking me through that.",
+      "What tends to create the most friction in a typical week — scheduling, follow-ups, staffing, or something else?",
+    ],
+    reply: "",
     profileUpdates: nextProfile,
   };
 }

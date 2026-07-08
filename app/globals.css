@@ -65,6 +65,21 @@
     animation: cat-fade-in 0.4s ease-out both;
   }
 
+  .animate-nordi-card {
+    animation: nordi-card-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes nordi-card-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   .cat-caret {
     display: inline-block;
     width: 2px;
@@ -92,6 +107,7 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-slide-up,
   .animate-fade-in,
+  .animate-nordi-card,
   .cat-caret,
   .cat-typing-dot {
     animation: none !important;
