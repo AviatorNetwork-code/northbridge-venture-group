@@ -35,7 +35,7 @@ export default function Header() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sm font-semibold tracking-wide text-silver hover:text-white transition-colors"
+                  className="inline-flex min-h-11 items-center text-sm font-semibold tracking-wide text-silver hover:text-white transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -46,7 +46,7 @@ export default function Header() {
           {/* Mobile menu button (sm-) */}
           <button
             type="button"
-            className="md:hidden inline-flex items-center justify-center h-10 w-10 border border-white/10 bg-black/50 hover:border-white/20 hover:bg-white/5 transition-colors"
+            className="md:hidden inline-flex min-h-11 min-w-11 items-center justify-center border border-white/10 bg-black/50 hover:border-white/20 hover:bg-white/5 transition-colors"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((v) => !v)}

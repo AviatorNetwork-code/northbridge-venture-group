@@ -24,7 +24,7 @@ export default function CommandBar({
           <button
             type="button"
             aria-label="Open navigation"
-            className="rounded-md p-2 text-silver hover:bg-white/5 hover:text-white lg:hidden"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-silver hover:bg-white/5 hover:text-white lg:hidden"
             onClick={onOpenNav}
           >
             <IconMenu className="h-5 w-5" />
@@ -45,14 +45,14 @@ export default function CommandBar({
           </div>
         </div>
 
-        <div className="flex justify-center">
+        <div className="hidden justify-center lg:flex">
           <button
             type="button"
             onClick={toggleCat}
             aria-label="Open CAT Workforce Advisor"
             aria-pressed={catOpen}
             className={[
-              "group inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold text-white transition-colors focus:outline-none focus:ring-2 focus:ring-red/40 sm:px-5",
+              "group inline-flex min-h-11 items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold text-white transition-colors focus:outline-none focus:ring-2 focus:ring-red/40 sm:px-5",
               catOpen
                 ? "border-red bg-red/25 ring-2 ring-red/30"
                 : "border-red/40 bg-red/10 hover:border-red hover:bg-red/20",
@@ -73,7 +73,7 @@ export default function CommandBar({
           <button
             type="button"
             aria-label="Notifications"
-            className="relative rounded-md p-2 text-silver hover:bg-white/5 hover:text-white"
+            className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-silver hover:bg-white/5 hover:text-white"
           >
             <IconBell className="h-5 w-5" />
             <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red" />
@@ -84,7 +84,7 @@ export default function CommandBar({
             aria-label={activityOpen ? "Hide activity panel" : "Show activity panel"}
             aria-pressed={activityOpen}
             className={[
-              "rounded-md p-2 transition-colors",
+              "inline-flex min-h-11 min-w-11 items-center justify-center rounded-md transition-colors",
               activityOpen
                 ? "bg-red/15 text-white"
                 : "text-silver hover:bg-white/5 hover:text-white",

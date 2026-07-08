@@ -30,15 +30,15 @@ export default function SettingsPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <SectionPanel title="Organization" subtitle={settingsOrganization.name}>
           <dl className="space-y-3 text-sm">
-            <div className="flex justify-between rounded-lg border border-white/10 bg-black/30 px-3 py-2.5">
+            <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/30 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
               <dt className="text-silver">Workspace</dt>
-              <dd className="font-medium text-white">{settingsOrganization.workspace}</dd>
+              <dd className="break-words font-medium text-white">{settingsOrganization.workspace}</dd>
             </div>
-            <div className="flex justify-between rounded-lg border border-white/10 bg-black/30 px-3 py-2.5">
+            <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/30 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
               <dt className="text-silver">Timezone</dt>
               <dd className="font-medium text-white">{settingsOrganization.timezone}</dd>
             </div>
-            <div className="flex justify-between rounded-lg border border-white/10 bg-black/30 px-3 py-2.5">
+            <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/30 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
               <dt className="text-silver">Plan</dt>
               <dd className="font-medium text-white">{settingsOrganization.plan}</dd>
             </div>
@@ -77,7 +77,7 @@ export default function SettingsPage() {
             {catPreferences.map((pref) => (
               <li
                 key={pref.id}
-                className="flex items-center justify-between rounded-lg border border-white/10 bg-black/30 px-3 py-2.5"
+                className="flex min-h-11 items-center justify-between gap-3 rounded-lg border border-white/10 bg-black/30 px-3 py-2.5"
               >
                 <span className="text-sm text-silver">{pref.label}</span>
                 <StatusPill

@@ -55,16 +55,16 @@ export default function ConnectorCenter() {
         description="One-click connections for the services your workforce needs. Click Connect, sign in, approve — done. No API configuration required."
       />
 
-      <div className="mb-6 flex flex-wrap gap-2">
+      <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <Link
           href="/operations/onboarding"
-          className="rounded-lg border border-white/15 px-4 py-2 text-sm text-silver hover:text-white"
+          className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/15 px-4 py-2 text-sm text-silver hover:text-white"
         >
           View Onboarding
         </Link>
         <Link
           href="/operations/hire"
-          className="rounded-lg border border-white/15 px-4 py-2 text-sm text-silver hover:text-white"
+          className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/15 px-4 py-2 text-sm text-silver hover:text-white"
         >
           Hire Workforce
         </Link>
@@ -148,7 +148,7 @@ function CategoryButton({
       type="button"
       onClick={onClick}
       className={[
-        "shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+        "inline-flex min-h-11 shrink-0 items-center rounded-full px-4 py-2.5 text-xs font-medium transition-colors",
         active
           ? "bg-red/20 text-white ring-1 ring-red/30"
           : "border border-white/15 text-silver hover:text-white",

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import ContactForm from "@/components/contact/ContactForm";
+import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 
 export const metadata: Metadata = {
   title: "Contact | Northbridge Venture Group",
@@ -13,19 +15,21 @@ export default function ContactPage() {
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white mb-4">
           Contact
         </h1>
-        <p className="text-base sm:text-lg text-silver mb-10 sm:mb-14 leading-relaxed">
+        <p className="text-base sm:text-lg text-silver mb-8 sm:mb-10 leading-relaxed">
           We welcome inquiries regarding partnerships, strategic business
-          conversations, and website and digital infrastructure projects. For
-          general contact, you can reach{" "}
-          <a
-            href="mailto:contact@northbridgeventuregroup.com"
-            className="underline underline-offset-4 hover:text-red transition-colors"
-          >
-            contact@northbridgeventuregroup.com
-          </a>
-          , or use the addresses below.
+          conversations, and website and digital infrastructure projects.
         </p>
-        <div className="space-y-8">
+
+        <MarketingPrimaryCta
+          href="/partner"
+          label="Explore Partnerships"
+          secondaryHref="/services"
+          secondaryLabel="View Services"
+        />
+
+        <ContactForm />
+
+        <div className="mt-10 space-y-8 border-t border-white/10 pt-10">
           <div>
             <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-2">
               Partnerships
@@ -33,7 +37,7 @@ export default function ContactPage() {
             <p className="text-white">
               <a
                 href="mailto:partnerships@northbridgeventuregroup.com"
-                className="hover:text-red transition-colors text-sm sm:text-base"
+                className="inline-flex min-h-11 items-center hover:text-red transition-colors text-sm sm:text-base"
               >
                 partnerships@northbridgeventuregroup.com
               </a>
@@ -46,7 +50,7 @@ export default function ContactPage() {
             <p className="text-white">
               <a
                 href="mailto:info@northbridgeventuregroup.com"
-                className="hover:text-red transition-colors text-sm sm:text-base"
+                className="inline-flex min-h-11 items-center hover:text-red transition-colors text-sm sm:text-base"
               >
                 info@northbridgeventuregroup.com
               </a>

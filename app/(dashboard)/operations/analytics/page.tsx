@@ -35,7 +35,32 @@ export default function AnalyticsPage() {
       </div>
 
       <SectionPanel title="Team Breakdown" subtitle="Tasks, utilization & response time">
-        <div className="overflow-x-auto">
+        <div className="space-y-3 md:hidden">
+          {analyticsBreakdown.map((row) => (
+            <article
+              key={row.id}
+              className="rounded-xl border border-white/10 bg-black/20 p-4"
+            >
+              <p className="text-sm font-semibold text-white">{row.team}</p>
+              <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <dt className="text-xs uppercase tracking-wider text-stone">Tasks</dt>
+                  <dd className="mt-1 text-silver">{row.tasks}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase tracking-wider text-stone">Response</dt>
+                  <dd className="mt-1 text-silver">{row.response}</dd>
+                </div>
+              </dl>
+              <div className="mt-3">
+                <p className="mb-1 text-xs uppercase tracking-wider text-stone">Utilization</p>
+                <ProgressBar value={row.utilization} />
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[540px] text-left text-sm">
             <thead>
               <tr className="border-b border-white/10 text-xs uppercase tracking-wider text-stone">

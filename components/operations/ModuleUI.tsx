@@ -7,7 +7,7 @@ type ModuleContainerProps = {
 export function ModuleContainer({ children }: ModuleContainerProps) {
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <div className="mx-auto max-w-6xl">{children}</div>
+      <div className="mx-auto max-w-6xl min-w-0">{children}</div>
     </div>
   );
 }
@@ -47,10 +47,12 @@ const trendStyles = {
 
 export function MetricCard({ label, value, detail, trend = "neutral" }: MetricCardProps) {
   return (
-    <article className="rounded-xl border border-white/10 bg-slate/60 p-5">
+    <article className="min-w-0 rounded-xl border border-white/10 bg-slate/60 p-5">
       <p className="text-xs font-semibold uppercase tracking-wider text-stone">{label}</p>
-      <p className="mt-2 text-3xl font-semibold text-white">{value}</p>
-      {detail ? <p className={`mt-1 text-xs ${trendStyles[trend]}`}>{detail}</p> : null}
+      <p className="mt-2 break-words text-2xl font-semibold text-white sm:text-3xl">{value}</p>
+      {detail ? (
+        <p className={`mt-1 break-words text-xs ${trendStyles[trend]}`}>{detail}</p>
+      ) : null}
     </article>
   );
 }
@@ -114,14 +116,14 @@ export function DataRow({
   statusVariant = "neutral",
 }: DataRowProps) {
   return (
-    <div className="flex items-start justify-between gap-3 rounded-lg border border-white/10 bg-black/30 px-3 py-3 sm:px-4">
-      <div className="min-w-0">
+    <div className="flex flex-col gap-2 rounded-lg border border-white/10 bg-black/30 px-3 py-3 sm:flex-row sm:items-start sm:justify-between sm:gap-3 sm:px-4">
+      <div className="min-w-0 flex-1">
         <p className="text-sm font-medium text-white">{primary}</p>
         {secondary ? (
-          <p className="mt-0.5 text-xs leading-relaxed text-silver">{secondary}</p>
+          <p className="mt-0.5 break-words text-xs leading-relaxed text-silver">{secondary}</p>
         ) : null}
       </div>
-      <div className="flex shrink-0 flex-col items-end gap-1">
+      <div className="flex shrink-0 flex-row items-center gap-2 sm:flex-col sm:items-end">
         {status ? <StatusPill status={status} variant={statusVariant} /> : null}
         {meta ? <span className="text-[11px] text-stone">{meta}</span> : null}
       </div>

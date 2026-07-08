@@ -51,23 +51,29 @@ export default function ConnectorAuthModal() {
         role="dialog"
         aria-modal="true"
         aria-label={`Connect ${connector.name}`}
-        className="fixed inset-x-4 top-1/2 z-[70] mx-auto max-w-md -translate-y-1/2 rounded-2xl border border-white/10 bg-charcoal p-5 shadow-2xl sm:p-6"
+        className="fixed inset-x-0 bottom-0 z-[70] flex max-h-[90dvh] flex-col rounded-t-2xl border border-white/10 bg-charcoal p-5 shadow-2xl sm:inset-x-4 sm:top-1/2 sm:bottom-auto sm:mx-auto sm:max-w-md sm:-translate-y-1/2 sm:rounded-2xl sm:p-6"
+        style={{ paddingBottom: "max(1.25rem, env(safe-area-inset-bottom, 0px))" }}
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <span
-              className="flex h-12 w-12 items-center justify-center rounded-xl text-sm font-bold text-white"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-sm font-bold text-white"
               style={{ backgroundColor: connector.logoColor }}
             >
               {connector.logoInitials}
             </span>
-            <div>
+            <div className="min-w-0">
               <p className="text-xs font-semibold uppercase tracking-wider text-red">Connect</p>
               <h2 className="text-lg font-semibold text-white">{connector.name}</h2>
               <p className="text-xs text-silver">via {connector.provider}</p>
             </div>
           </div>
-          <button type="button" onClick={close} className="rounded-md p-2 text-silver hover:text-white">
+          <button
+            type="button"
+            onClick={close}
+            aria-label="Close authorization"
+            className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-md text-silver hover:bg-white/5 hover:text-white"
+          >
             <IconClose className="h-5 w-5" />
           </button>
         </div>
@@ -81,7 +87,7 @@ export default function ConnectorAuthModal() {
               <button
                 type="button"
                 onClick={() => setStep("permissions")}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-medium text-white hover:bg-white/10"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-medium text-white hover:bg-white/10"
               >
                 Sign in with {connector.provider}
               </button>
@@ -105,14 +111,14 @@ export default function ConnectorAuthModal() {
                 <button
                   type="button"
                   onClick={handleApprove}
-                  className="flex-1 rounded-xl bg-red px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-hover"
+                  className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl bg-red px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-hover"
                 >
                   Approve
                 </button>
                 <button
                   type="button"
                   onClick={close}
-                  className="rounded-xl border border-white/15 px-4 py-2.5 text-sm text-silver hover:text-white"
+                  className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/15 px-4 py-2.5 text-sm text-silver hover:text-white"
                 >
                   Cancel
                 </button>
@@ -138,7 +144,7 @@ export default function ConnectorAuthModal() {
               <button
                 type="button"
                 onClick={close}
-                className="mt-4 w-full rounded-xl bg-red px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-hover"
+                className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-hover"
               >
                 Done
               </button>

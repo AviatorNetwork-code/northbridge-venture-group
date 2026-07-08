@@ -39,15 +39,15 @@ export default function BillingPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <SectionPanel title="Subscription" subtitle={billingPlan.name}>
           <dl className="space-y-3 text-sm">
-            <div className="flex justify-between rounded-lg border border-white/10 bg-black/30 px-3 py-2.5">
+            <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/30 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
               <dt className="text-silver">Price</dt>
               <dd className="font-medium text-white">{billingPlan.price} {billingPlan.cycle}</dd>
             </div>
-            <div className="flex justify-between rounded-lg border border-white/10 bg-black/30 px-3 py-2.5">
+            <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/30 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
               <dt className="text-silver">Renewal Date</dt>
               <dd className="font-medium text-white">{billingPlan.renewal}</dd>
             </div>
-            <div className="flex justify-between rounded-lg border border-white/10 bg-black/30 px-3 py-2.5">
+            <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/30 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
               <dt className="text-silver">Included Seats</dt>
               <dd className="font-medium text-white">{billingPlan.seats}</dd>
             </div>

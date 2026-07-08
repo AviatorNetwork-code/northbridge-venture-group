@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 
 export const metadata: Metadata = {
   title: "Partner With Us | Northbridge Venture Group",
@@ -24,6 +25,11 @@ export default function PartnerPage() {
             a digital platform. Northbridge collaborates with selected founders
             to help transform those ideas into real systems.
           </p>
+          <MarketingPrimaryCta
+            label="Discuss a Partnership"
+            secondaryHref="/portfolio"
+            secondaryLabel="View Ventures"
+          />
         </section>
 
         {/* The Problem */}

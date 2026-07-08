@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 
 export const metadata: Metadata = {
   title: "Ventures | Northbridge Venture Group",
@@ -42,10 +43,16 @@ export default function VenturesPage() {
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white mb-4">
           Ventures
         </h1>
-        <p className="text-base sm:text-lg text-silver mb-10 sm:mb-14 max-w-2xl leading-relaxed">
+        <p className="text-base sm:text-lg text-silver mb-8 sm:mb-10 max-w-2xl leading-relaxed">
           Ventures and service lines developed within the Northbridge ecosystem
           across aviation and financial services.
         </p>
+
+        <MarketingPrimaryCta
+          label="Discuss a Venture"
+          secondaryHref="/partner"
+          secondaryLabel="Partner With Us"
+        />
 
         <section>
           <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-6 sm:mb-8">

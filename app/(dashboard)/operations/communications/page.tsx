@@ -52,7 +52,7 @@ export default function CommunicationsPage() {
             {["WhatsApp", "Email", "SMS", "Instagram"].map((channel) => (
               <li
                 key={channel}
-                className="flex items-center justify-between rounded-lg border border-white/10 bg-black/30 px-3 py-2.5"
+                className="flex min-h-11 items-center justify-between rounded-lg border border-white/10 bg-black/30 px-3 py-2.5"
               >
                 <span className="text-sm text-white">{channel}</span>
                 <StatusPill status="Mock" variant="info" />
@@ -68,7 +68,7 @@ export default function CommunicationsPage() {
                 key={message.id}
                 type="button"
                 className={[
-                  "w-full rounded-lg border px-4 py-3 text-left transition-colors",
+                  "w-full min-h-11 rounded-lg border px-4 py-3 text-left transition-colors",
                   message.unread
                     ? "border-red/20 bg-red/5 hover:border-red/30"
                     : "border-white/10 bg-black/30 hover:border-white/20",

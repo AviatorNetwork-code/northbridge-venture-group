@@ -43,7 +43,7 @@ export default function ActivityPanel({ isOpen, onClose }: ActivityPanelProps) {
           <button
             type="button"
             aria-label="Close activity panel"
-            className="rounded-md p-2 text-silver hover:bg-white/5 hover:text-white xl:hidden"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-silver hover:bg-white/5 hover:text-white xl:hidden"
             onClick={onClose}
           >
             <IconClose className="h-5 w-5" />
@@ -84,7 +84,7 @@ export default function ActivityPanel({ isOpen, onClose }: ActivityPanelProps) {
         <div className="border-t border-white/10 p-4">
           <button
             type="button"
-            className="w-full rounded-lg border border-white/15 bg-black/40 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:border-white/30 hover:bg-white/5"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-white/15 bg-black/40 px-4 text-sm font-medium text-white transition-colors hover:border-white/30 hover:bg-white/5"
           >
             View All Activity
           </button>

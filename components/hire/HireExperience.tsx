@@ -12,6 +12,7 @@ import {
   SectionPanel,
   StatusPill,
 } from "@/components/operations/ModuleUI";
+import StickyPrimaryAction from "@/components/operations/StickyPrimaryAction";
 import {
   getManagerById,
   getSpecialistById,
@@ -160,7 +161,7 @@ export default function HireExperience() {
               <button
                 type="button"
                 onClick={() => setStep("discovery")}
-                className="rounded-xl bg-red px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-hover"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-hover sm:w-auto"
               >
                 Hire Workforce
               </button>
@@ -186,7 +187,7 @@ export default function HireExperience() {
                       setLocalProfile((current) => ({ ...current, ...preset.profile }));
                       void sendMessage(preset.label);
                     }}
-                    className="rounded-full border border-white/15 bg-black/30 px-3 py-1.5 text-xs text-silver hover:border-red/30 hover:text-white"
+                    className="inline-flex min-h-11 items-center rounded-full border border-white/15 bg-black/30 px-4 py-2.5 text-sm text-silver hover:border-red/30 hover:text-white"
                   >
                     {preset.label}
                   </button>
@@ -201,7 +202,7 @@ export default function HireExperience() {
                       setLocalProfile((current) => ({ ...current, industry: event.target.value }))
                     }
                     placeholder="e.g. dental"
-                    className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-white"
+                    className="w-full min-h-11 rounded-lg border border-white/10 bg-black/40 px-3 py-3 text-base text-white"
                   />
                 </label>
                 <label className="block">
@@ -217,7 +218,7 @@ export default function HireExperience() {
                       }))
                     }
                     placeholder="e.g. 8"
-                    className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-white"
+                    className="w-full min-h-11 rounded-lg border border-white/10 bg-black/40 px-3 py-3 text-base text-white"
                   />
                 </label>
               </div>
@@ -225,14 +226,14 @@ export default function HireExperience() {
                 <button
                   type="button"
                   onClick={openCat}
-                  className="rounded-lg border border-white/15 px-4 py-2 text-sm text-silver hover:border-white/30 hover:text-white"
+                  className="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2.5 text-sm text-silver hover:border-white/30 hover:text-white"
                 >
                   Chat with CAT
                 </button>
                 <button
                   type="button"
                   onClick={() => setStep("recommend")}
-                  className="rounded-lg bg-red px-4 py-2 text-sm font-semibold text-white hover:bg-red-hover"
+                  className="inline-flex min-h-11 items-center rounded-lg bg-red px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-hover"
                 >
                   See Recommendations
                 </button>
@@ -279,14 +280,14 @@ export default function HireExperience() {
               <button
                 type="button"
                 onClick={applyRecommendations}
-                className="rounded-lg bg-red px-4 py-2 text-sm font-semibold text-white hover:bg-red-hover"
+                className="inline-flex min-h-11 items-center rounded-lg bg-red px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-hover"
               >
                 Review Team
               </button>
               <button
                 type="button"
                 onClick={() => setStep("customize")}
-                className="rounded-lg border border-white/15 px-4 py-2 text-sm text-silver hover:text-white"
+                className="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2.5 text-sm text-silver hover:text-white"
               >
                 Customize
               </button>
@@ -336,7 +337,7 @@ export default function HireExperience() {
                         type="button"
                         onClick={() => toggleSpecialist(specialist.id)}
                         className={[
-                          "rounded-full px-3 py-1 text-xs font-medium",
+                          "inline-flex min-h-11 items-center rounded-full px-4 py-2 text-xs font-medium",
                           isSelected
                             ? "bg-red text-white"
                             : "border border-white/15 text-silver hover:text-white",
@@ -354,7 +355,7 @@ export default function HireExperience() {
                             type="button"
                             onClick={() => setSpecialistTier(specialist.id, tier)}
                             className={[
-                              "rounded-full px-2.5 py-1 text-[11px] font-medium",
+                              "inline-flex min-h-11 items-center rounded-full px-3 py-2 text-[11px] font-medium",
                               selected.tier === tier
                                 ? "bg-red/20 text-white ring-1 ring-red/40"
                                 : "border border-white/10 text-stone hover:text-white",
@@ -410,7 +411,7 @@ export default function HireExperience() {
                               : [...current, team.id],
                           )
                         }
-                        className="rounded-full border border-white/15 px-3 py-1 text-xs text-silver hover:text-white"
+                        className="inline-flex min-h-11 items-center rounded-full border border-white/15 px-4 py-2 text-xs text-silver hover:text-white"
                       >
                         {isSelected ? "Remove" : "Add"}
                       </button>
@@ -460,7 +461,7 @@ export default function HireExperience() {
                               : [...current, manager.id],
                           )
                         }
-                        className="mt-3 rounded-full border border-white/15 px-3 py-1 text-xs text-silver hover:text-white"
+                        className="mt-3 inline-flex min-h-11 items-center rounded-full border border-white/15 px-4 py-2 text-xs text-silver hover:text-white"
                       >
                         {isSelected ? "Remove" : "Add"}
                       </button>
@@ -475,7 +476,7 @@ export default function HireExperience() {
                 type="button"
                 onClick={() => setStep("pricing")}
                 disabled={selectedSpecialists.length === 0}
-                className="rounded-lg bg-red px-4 py-2 text-sm font-semibold text-white hover:bg-red-hover disabled:opacity-50"
+                className="inline-flex min-h-11 items-center rounded-lg bg-red px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-hover disabled:opacity-50"
               >
                 View Pricing
               </button>
@@ -483,7 +484,7 @@ export default function HireExperience() {
                 <button
                   type="button"
                   onClick={() => setStep("customize")}
-                  className="rounded-lg border border-white/15 px-4 py-2 text-sm text-silver hover:text-white"
+                  className="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2.5 text-sm text-silver hover:text-white"
                 >
                   Customize
                 </button>
@@ -493,7 +494,38 @@ export default function HireExperience() {
 
           {step === "customize" ? (
             <SectionPanel title="Comparison" subtitle="Specialist tiers at a glance">
-              <div className="overflow-x-auto">
+              <div className="space-y-3 md:hidden">
+                {specialistCatalog.map((specialist) => (
+                  <article
+                    key={specialist.id}
+                    className="rounded-xl border border-white/10 bg-black/20 p-4"
+                  >
+                    <p className="text-sm font-semibold text-white">{specialist.name}</p>
+                    <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <dt className="text-xs uppercase tracking-wider text-stone">Essential</dt>
+                        <dd className="mt-1 text-silver">{formatCurrency(specialist.essentialPrice)}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-xs uppercase tracking-wider text-stone">Pro</dt>
+                        <dd className="mt-1 text-silver">{formatCurrency(specialist.proPrice)}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-xs uppercase tracking-wider text-stone">Elite</dt>
+                        <dd className="mt-1 text-silver">{formatCurrency(specialist.elitePrice)}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-xs uppercase tracking-wider text-stone">Team Tasks</dt>
+                        <dd className="mt-1 text-silver">
+                          {specialist.essentialTasks} / {specialist.proTasks} / {specialist.eliteTasks}
+                        </dd>
+                      </div>
+                    </dl>
+                  </article>
+                ))}
+              </div>
+
+              <div className="hidden overflow-x-auto md:block">
                 <table className="w-full min-w-[640px] text-left text-sm">
                   <thead>
                     <tr className="border-b border-white/10 text-xs uppercase tracking-wider text-stone">
@@ -570,19 +602,19 @@ export default function HireExperience() {
               </ul>
             </div>
 
-            <div className="mt-6 flex flex-wrap gap-2">
+            <div className="mt-6 hidden flex-wrap gap-2 sm:flex">
               <button
                 type="button"
                 onClick={handleStartOnboarding}
                 disabled={isDeploying || selectedSpecialists.length === 0}
-                className="rounded-lg bg-red px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-hover disabled:opacity-50"
+                className="inline-flex min-h-11 items-center rounded-lg bg-red px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-hover disabled:opacity-50"
               >
                 {isDeploying ? "Preparing..." : "Start Onboarding"}
               </button>
               <button
                 type="button"
                 onClick={() => setStep("customize")}
-                className="rounded-lg border border-white/15 px-4 py-2 text-sm text-silver hover:text-white"
+                className="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2.5 text-sm text-silver hover:text-white"
               >
                 Back to Customize
               </button>
@@ -596,7 +628,7 @@ export default function HireExperience() {
       ) : null}
 
       {step !== "landing" ? (
-        <div className="mt-6 flex flex-wrap gap-2">
+        <div className="mt-6 flex flex-wrap gap-2 pb-20 lg:pb-0">
           <button
             type="button"
             onClick={() => {
@@ -604,14 +636,42 @@ export default function HireExperience() {
               const index = order.indexOf(step);
               if (index > 0) setStep(order[index - 1]);
             }}
-            className="text-sm text-stone hover:text-white"
+            className="inline-flex min-h-11 items-center text-sm text-stone hover:text-white"
           >
             ← Back
           </button>
-          <Link href="/operations/workforce" className="text-sm text-stone hover:text-white">
+          <Link
+            href="/operations/workforce"
+            className="inline-flex min-h-11 items-center text-sm text-stone hover:text-white"
+          >
             View Current Workforce
           </Link>
         </div>
+      ) : null}
+
+      {step === "landing" ? (
+        <StickyPrimaryAction>
+          <button
+            type="button"
+            onClick={() => setStep("discovery")}
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-hover"
+          >
+            Hire Workforce
+          </button>
+        </StickyPrimaryAction>
+      ) : null}
+
+      {step === "pricing" ? (
+        <StickyPrimaryAction>
+          <button
+            type="button"
+            onClick={handleStartOnboarding}
+            disabled={isDeploying || selectedSpecialists.length === 0}
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-hover disabled:opacity-50"
+          >
+            {isDeploying ? "Preparing..." : "Start Onboarding"}
+          </button>
+        </StickyPrimaryAction>
       ) : null}
     </ModuleContainer>
   );

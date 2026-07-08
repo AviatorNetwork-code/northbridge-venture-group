@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 
 export const metadata: Metadata = {
   title: "Clients | Northbridge Venture Group",
@@ -24,6 +25,7 @@ export default function ClientsPage() {
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white mb-4">
           Clients
         </h1>
+        <MarketingPrimaryCta label="Become a Client" />
 
         <p className="text-base sm:text-lg text-silver mb-10 sm:mb-14 max-w-2xl leading-relaxed">
           Organizations we support with digital infrastructure, brand

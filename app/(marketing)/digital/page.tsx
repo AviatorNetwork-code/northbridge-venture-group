@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 
 export const metadata: Metadata = {
   title: "Northbridge Digital | Northbridge Venture Group",
@@ -25,10 +26,16 @@ export default function DigitalPage() {
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white mb-4">
           Northbridge Digital
         </h1>
-        <p className="text-base sm:text-lg text-silver mb-12 sm:mb-16 leading-relaxed">
+        <p className="text-base sm:text-lg text-silver mb-8 sm:mb-10 leading-relaxed">
           Professional digital systems, lead generation infrastructure, and brand
           development services designed to help businesses grow.
         </p>
+
+        <MarketingPrimaryCta
+          label="Discuss Your Project"
+          secondaryHref="/services"
+          secondaryLabel="View Services"
+        />
 
         {/* Overview */}
         <section className="mb-12 sm:mb-16">
@@ -109,7 +116,7 @@ export default function DigitalPage() {
           </p>
           <Link
             href="/contact"
-            className="inline-flex w-full sm:w-auto items-center justify-center px-8 py-3.5 text-sm font-medium bg-red text-white hover:bg-red-hover transition-colors"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover sm:w-auto"
           >
             Contact Us
           </Link>

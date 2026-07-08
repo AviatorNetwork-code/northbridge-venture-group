@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 
 export const metadata: Metadata = {
   title: "About | Northbridge Venture Group",
@@ -13,6 +14,11 @@ export default function AboutPage() {
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white mb-6 sm:mb-8">
           About Northbridge
         </h1>
+
+        <MarketingPrimaryCta
+          secondaryHref="/partner"
+          secondaryLabel="Partner With Us"
+        />
 
         {/* Our Story */}
         <section className="mb-10 sm:mb-12">

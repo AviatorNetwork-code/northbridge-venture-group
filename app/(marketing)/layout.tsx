@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import CatFloatingButton from "@/components/cat/CatFloatingButton";
 
 export default function MarketingLayout({
   children,
@@ -11,6 +12,7 @@ export default function MarketingLayout({
       <Header />
       {children}
       <Footer />
+      <CatFloatingButton />
     </>
   );
 }

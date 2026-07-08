@@ -31,7 +31,7 @@ export default function OnboardingPage() {
       <div className="mb-6">
         <Link
           href="/operations/launch"
-          className="inline-flex rounded-xl bg-red px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-hover"
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-hover sm:w-auto"
         >
           Open Launch Command Center
         </Link>

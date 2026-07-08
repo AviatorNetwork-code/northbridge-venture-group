@@ -66,7 +66,8 @@ export default function CatPanel() {
         role="dialog"
         aria-label="CAT Workforce Advisor"
         aria-modal="true"
-        className="fixed inset-x-0 bottom-0 z-50 flex max-h-[92vh] flex-col rounded-t-2xl border border-white/10 bg-charcoal shadow-2xl sm:inset-x-auto sm:bottom-4 sm:right-4 sm:left-auto sm:w-full sm:max-w-md sm:rounded-2xl lg:max-w-lg"
+        className="fixed inset-x-0 bottom-0 z-50 flex max-h-[92dvh] flex-col rounded-t-2xl border border-white/10 bg-charcoal shadow-2xl sm:inset-x-auto sm:bottom-4 sm:right-4 sm:left-auto sm:w-full sm:max-w-md sm:rounded-2xl sm:max-h-[85vh] lg:max-w-lg"
+        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       >
         <header className="flex items-start justify-between gap-3 border-b border-white/10 px-4 py-4 sm:px-5">
           <div className="flex items-start gap-3">
@@ -87,7 +88,7 @@ export default function CatPanel() {
             <button
               type="button"
               onClick={clearConversation}
-              className="rounded-md px-2 py-1 text-[11px] text-stone hover:bg-white/5 hover:text-white"
+              className="inline-flex min-h-11 items-center rounded-md px-3 text-xs text-stone hover:bg-white/5 hover:text-white"
             >
               Clear
             </button>
@@ -95,7 +96,7 @@ export default function CatPanel() {
               type="button"
               aria-label="Close CAT panel"
               onClick={closeCat}
-              className="rounded-md p-2 text-silver hover:bg-white/5 hover:text-white"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-silver hover:bg-white/5 hover:text-white"
             >
               <IconClose className="h-5 w-5" />
             </button>
@@ -157,7 +158,7 @@ export default function CatPanel() {
                   key={`${action.type}-${action.label}`}
                   type="button"
                   onClick={() => handleAction(action.href)}
-                  className="rounded-full border border-red/30 bg-red/10 px-3 py-1.5 text-xs font-medium text-white hover:bg-red/20"
+                  className="rounded-full border border-red/30 bg-red/10 px-4 py-2.5 text-xs font-medium text-white hover:bg-red/20 min-h-11"
                 >
                   {action.label}
                 </button>
@@ -178,7 +179,7 @@ export default function CatPanel() {
                   type="button"
                   onClick={() => handleQuickReply(reply)}
                   disabled={isThinking}
-                  className="shrink-0 rounded-full border border-white/15 bg-black/30 px-3 py-1.5 text-xs text-silver transition-colors hover:border-white/30 hover:text-white disabled:opacity-50"
+                  className="shrink-0 rounded-full border border-white/15 bg-black/30 px-4 py-2.5 text-xs text-silver transition-colors hover:border-white/30 hover:text-white disabled:opacity-50 min-h-11"
                 >
                   {reply}
                 </button>
@@ -206,13 +207,13 @@ export default function CatPanel() {
                 }}
                 rows={2}
                 placeholder="Ask CAT about your business, onboarding, or the Operations Center..."
-                className="w-full resize-none rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 text-sm text-white placeholder:text-stone focus:border-red/50 focus:outline-none focus:ring-1 focus:ring-red/30"
+                className="w-full resize-none rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-base text-white placeholder:text-stone focus:border-red/50 focus:outline-none focus:ring-1 focus:ring-red/30"
               />
             </label>
             <button
               type="submit"
               disabled={!input.trim() || isThinking}
-              className="shrink-0 rounded-xl bg-red px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-red px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover disabled:cursor-not-allowed disabled:opacity-50"
             >
               Send
             </button>

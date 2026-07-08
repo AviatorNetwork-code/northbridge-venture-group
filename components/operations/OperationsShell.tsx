@@ -2,14 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useCat } from "@/components/cat/CatProvider";
 import ActivityPanel from "@/components/operations/ActivityPanel";
 import CommandBar from "@/components/operations/CommandBar";
+import OperationsBottomNav from "@/components/operations/OperationsBottomNav";
 import SidebarNav from "@/components/operations/SidebarNav";
 import { navigationItems } from "@/components/operations/mock-data";
-import { CatProvider } from "@/components/cat/CatProvider";
-import CatPanel from "@/components/cat/CatPanel";
 import { ConnectorProvider } from "@/components/connectors/ConnectorProvider";
-import { NeoProvider } from "@/components/neo/NeoProvider";
 
 type OperationsShellProps = {
   children: React.ReactNode;
@@ -29,6 +28,7 @@ function getActiveNavId(pathname: string): string {
 
 export default function OperationsShell({ children }: OperationsShellProps) {
   const pathname = usePathname();
+  const { openCat } = useCat();
   const activeNavId = getActiveNavId(pathname);
   const [navOpen, setNavOpen] = useState(false);
   const [activityOpen, setActivityOpen] = useState(false);
@@ -53,10 +53,8 @@ export default function OperationsShell({ children }: OperationsShellProps) {
   }, [navOpen]);
 
   return (
-    <NeoProvider>
-    <CatProvider>
-      <ConnectorProvider>
-        <div className="flex min-h-screen bg-black text-white">
+    <ConnectorProvider>
+      <div className="flex min-h-[100dvh] overflow-x-hidden bg-black text-white">
         <SidebarNav
           activeId={activeNavId}
           isOpen={navOpen}
@@ -71,15 +69,15 @@ export default function OperationsShell({ children }: OperationsShellProps) {
           />
 
           <div className="flex min-h-0 flex-1">
-            <main className="min-w-0 flex-1 overflow-y-auto">{children}</main>
+            <main className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] lg:pb-0">
+              {children}
+            </main>
             <ActivityPanel isOpen={activityOpen} onClose={() => setActivityOpen(false)} />
           </div>
         </div>
 
-        <CatPanel />
+        <OperationsBottomNav onOpenNav={() => setNavOpen(true)} onOpenCat={openCat} />
       </div>
-      </ConnectorProvider>
-    </CatProvider>
-    </NeoProvider>
+    </ConnectorProvider>
   );
 }

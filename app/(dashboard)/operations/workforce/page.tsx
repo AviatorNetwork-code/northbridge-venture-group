@@ -44,7 +44,7 @@ export default function WorkforcePage() {
       <div className="mb-6">
         <Link
           href="/operations/hire"
-          className="inline-flex rounded-xl bg-red px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover"
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover sm:w-auto"
         >
           Hire Workforce
         </Link>

@@ -69,14 +69,14 @@ export default function ConnectorCard({ connector }: ConnectorCardProps) {
             <button
               type="button"
               onClick={() => setActiveConnectorId(connector.id)}
-              className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-silver hover:text-white"
+              className="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2.5 text-xs text-silver hover:text-white"
             >
               Details
             </button>
             <button
               type="button"
               onClick={() => disconnect(connector.id)}
-              className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-stone hover:text-red"
+              className="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2.5 text-xs text-stone hover:text-red"
             >
               Disconnect
             </button>
@@ -85,7 +85,7 @@ export default function ConnectorCard({ connector }: ConnectorCardProps) {
           <button
             type="button"
             onClick={() => connect(connector.id)}
-            className="rounded-lg bg-red px-4 py-1.5 text-xs font-semibold text-white hover:bg-red-hover"
+            className="inline-flex min-h-11 items-center rounded-lg bg-red px-4 py-2.5 text-xs font-semibold text-white hover:bg-red-hover"
           >
             Connect
           </button>
@@ -93,7 +93,7 @@ export default function ConnectorCard({ connector }: ConnectorCardProps) {
         <button
           type="button"
           onClick={() => setActiveConnectorId(connector.id)}
-          className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-silver hover:text-white"
+          className="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-4 py-2.5 text-xs text-silver hover:text-white"
         >
           Learn More
         </button>

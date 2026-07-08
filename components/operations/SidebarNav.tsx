@@ -36,7 +36,7 @@ export default function SidebarNav({ activeId, isOpen, onClose }: SidebarNavProp
           <button
             type="button"
             aria-label="Close navigation"
-            className="rounded-md p-2 text-silver hover:bg-white/5 hover:text-white lg:hidden"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-silver hover:bg-white/5 hover:text-white lg:hidden"
             onClick={onClose}
           >
             <IconClose className="h-5 w-5" />
@@ -59,7 +59,7 @@ export default function SidebarNav({ activeId, isOpen, onClose }: SidebarNavProp
                     href={item.href}
                     onClick={onClose}
                     className={[
-                      "group flex items-start gap-3 rounded-lg px-3 py-2.5 transition-colors",
+                      "group flex min-h-11 items-start gap-3 rounded-lg px-3 py-2.5 transition-colors",
                       isActive
                         ? "bg-red/15 text-white ring-1 ring-red/30"
                         : "text-silver hover:bg-white/5 hover:text-white",

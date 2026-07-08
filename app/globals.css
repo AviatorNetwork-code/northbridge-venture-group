@@ -5,8 +5,98 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
   body {
-    @apply antialiased;
+    @apply antialiased overflow-x-hidden;
+  }
+}
+
+@layer utilities {
+  @keyframes cat-fade-slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes cat-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes cat-caret-blink {
+    0%,
+    49% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes cat-dot {
+    0%,
+    60%,
+    100% {
+      opacity: 0.25;
+      transform: translateY(0);
+    }
+    30% {
+      opacity: 1;
+      transform: translateY(-3px);
+    }
+  }
+
+  .animate-fade-slide-up {
+    animation: cat-fade-slide-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .animate-fade-in {
+    animation: cat-fade-in 0.4s ease-out both;
+  }
+
+  .cat-caret {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    margin-left: 3px;
+    vertical-align: -2px;
+    background-color: #b11226;
+    animation: cat-caret-blink 1s steps(1) infinite;
+  }
+
+  .cat-typing-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background-color: #a3a3a3;
+    animation: cat-dot 1.3s ease-in-out infinite;
+  }
+
+  .ops-mobile-spacer {
+    height: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-slide-up,
+  .animate-fade-in,
+  .cat-caret,
+  .cat-typing-dot {
+    animation: none !important;
+  }
+  html {
+    scroll-behavior: auto;
   }
 }

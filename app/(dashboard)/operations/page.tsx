@@ -16,7 +16,7 @@ const trendStyles = {
 export default function OperationsPage() {
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-6xl min-w-0">
         <header className="mb-6 sm:mb-8">
           <p className="text-xs font-semibold uppercase tracking-wider text-red">Dashboard</p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
@@ -26,18 +26,20 @@ export default function OperationsPage() {
             Operational overview for your digital workforce, workflows, and connected
             systems. NEO connects when available and falls back to mock data gracefully.
           </p>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Link
             href="/operations/hire"
-            className="mt-4 inline-flex rounded-xl bg-red px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover sm:w-auto"
           >
             Hire Workforce
           </Link>
           <Link
             href="/operations/launch"
-            className="ml-3 mt-4 inline-flex rounded-xl border border-red/40 bg-red/10 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red/20"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-red/40 bg-red/10 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red/20 sm:w-auto"
           >
             Launch Readiness
           </Link>
+          </div>
         </header>
 
         <LaunchStatusBanner />
@@ -82,7 +84,7 @@ export default function OperationsPage() {
                 <button
                   key={action.id}
                   type="button"
-                  className="rounded-lg border border-white/10 bg-black/30 p-4 text-left transition-colors hover:border-red/30 hover:bg-red/5"
+                  className="rounded-lg border border-white/10 bg-black/30 p-4 text-left transition-colors hover:border-red/30 hover:bg-red/5 min-h-11"
                 >
                   <p className="text-sm font-medium text-white">{action.label}</p>
                   <p className="mt-1 text-xs leading-relaxed text-silver">

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 
 export const metadata: Metadata = {
   title: "Services | Northbridge Venture Group",
@@ -22,6 +23,7 @@ export default function ServicesPage() {
             delivered as structured development engagements rather than automated
             purchases.
           </p>
+          <MarketingPrimaryCta label="Request a Quote" />
         </section>
 
         {/* Website Development */}

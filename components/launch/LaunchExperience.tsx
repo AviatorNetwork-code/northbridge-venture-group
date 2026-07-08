@@ -12,6 +12,7 @@ import {
   SectionPanel,
   StatusPill,
 } from "@/components/operations/ModuleUI";
+import StickyPrimaryAction from "@/components/operations/StickyPrimaryAction";
 import {
   buildLaunchAssessment,
   getCoverageMap,
@@ -260,44 +261,55 @@ export default function LaunchExperience() {
         </ul>
       </SectionPanel>
 
-      <div className="mt-8 flex flex-wrap gap-3">
+      <div className="mt-8 hidden flex-wrap gap-3 pb-4 lg:flex">
         <button
           type="button"
           onClick={handleLaunch}
           disabled={isLaunching || assessment.status === "blocked"}
-          className="rounded-xl bg-red px-6 py-3 text-sm font-semibold text-white hover:bg-red-hover disabled:opacity-50"
+          className="inline-flex min-h-11 items-center rounded-xl bg-red px-6 py-3 text-sm font-semibold text-white hover:bg-red-hover disabled:opacity-50"
         >
           {isLaunching ? "Launching..." : "Launch Workforce"}
         </button>
         <Link
           href="/operations/connectors"
-          className="rounded-xl border border-white/15 px-5 py-3 text-sm text-silver hover:text-white"
+          className="inline-flex min-h-11 items-center rounded-xl border border-white/15 px-5 py-3 text-sm text-silver hover:text-white"
         >
           Continue Setup
         </Link>
         <button
           type="button"
           onClick={handleSave}
-          className="rounded-xl border border-white/15 px-5 py-3 text-sm text-silver hover:text-white"
+          className="inline-flex min-h-11 items-center rounded-xl border border-white/15 px-5 py-3 text-sm text-silver hover:text-white"
         >
           Save Progress
         </button>
         <Link
           href="/operations"
-          className="rounded-xl border border-white/15 px-5 py-3 text-sm text-silver hover:text-white"
+          className="inline-flex min-h-11 items-center rounded-xl border border-white/15 px-5 py-3 text-sm text-silver hover:text-white"
         >
           View Operations Center
         </Link>
       </div>
+
+      <StickyPrimaryAction>
+        <button
+          type="button"
+          onClick={handleLaunch}
+          disabled={isLaunching || assessment.status === "blocked"}
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-6 py-3 text-sm font-semibold text-white hover:bg-red-hover disabled:opacity-50"
+        >
+          {isLaunching ? "Launching..." : "Launch Workforce"}
+        </button>
+      </StickyPrimaryAction>
     </ModuleContainer>
   );
 }
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between gap-3 rounded-lg border border-white/10 bg-black/30 px-3 py-2">
+    <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/30 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
       <dt className="text-stone">{label}</dt>
-      <dd className="font-medium text-white">{value}</dd>
+      <dd className="break-words font-medium text-white sm:text-right">{value}</dd>
     </div>
   );
 }
