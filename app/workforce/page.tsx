@@ -49,6 +49,14 @@ export default function WorkforcePage() {
               Explore Workforce
             </a>
           </div>
+          <div className="mt-3">
+            <Link
+              href="/workforce/hire"
+              className="text-sm font-medium text-white underline underline-offset-4 decoration-red hover:text-red transition-colors"
+            >
+              Or start setup now →
+            </Link>
+          </div>
           <p className="mt-5 text-xs text-silver/70">
             CAT is your Workforce Advisor — it recommends the smallest useful
             solution and never oversells.
@@ -247,9 +255,15 @@ export default function WorkforcePage() {
               </div>
             ))}
           </div>
-          <div className="mt-8">
-            <CatButton className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-sm font-medium bg-red text-white hover:bg-red-hover transition-colors">
-              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-black/25 text-[10px] font-semibold">
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <Link
+              href="/workforce/hire"
+              className="inline-flex items-center justify-center px-8 py-3.5 text-sm font-medium bg-red text-white hover:bg-red-hover transition-colors"
+            >
+              Start setup
+            </Link>
+            <CatButton className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-sm font-medium border border-white/25 text-white hover:border-white/50 transition-colors">
+              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red text-[10px] font-semibold">
                 CAT
               </span>
               Ask CAT what fits my budget
