@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://northbridgeventuregroup.com/schemas/neos/aee/executive-recommendation/1.0.0",
+  "title": "AEE Executive Recommendation",
+  "description": "Executive-facing experience recommendation with scoring dimensions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "area",
+    "title",
+    "recommendation",
+    "reason",
+    "experienceScore",
+    "businessImpactScore",
+    "customerValueScore",
+    "engineeringEffort",
+    "confidence",
+    "evidence",
+    "expectedRoi",
+    "opportunityCost",
+    "strategicAlignment",
+    "requiresFounderApproval"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "area": { "type": "string" },
+    "title": { "type": "string" },
+    "recommendation": { "type": "string" },
+    "reason": { "type": "string" },
+    "experienceScore": { "type": "number", "minimum": 0, "maximum": 1 },
+    "businessImpactScore": { "type": "number", "minimum": 0, "maximum": 1 },
+    "customerValueScore": { "type": "number", "minimum": 0, "maximum": 1 },
+    "engineeringEffort": { "type": "string", "enum": ["low", "medium", "high"] },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "evidence": { "type": "array" },
+    "expectedRoi": { "type": "number" },
+    "opportunityCost": { "type": "string" },
+    "strategicAlignment": { "type": "number", "minimum": 0, "maximum": 1 },
+    "requiresFounderApproval": { "type": "boolean", "const": true }
+  }
+}

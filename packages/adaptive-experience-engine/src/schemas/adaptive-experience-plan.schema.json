@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://northbridgeventuregroup.com/schemas/neos/aee/adaptive-experience-plan/1.0.0",
+  "title": "Adaptive Experience Plan",
+  "description": "Read-only adaptive experience recommendations for a Northbridge product.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "productId",
+    "generatedAt",
+    "recommendations",
+    "personalizationConfidence",
+    "expectedBusinessImpact",
+    "expectedCustomerImpact",
+    "executiveSummary",
+    "riskAssessment",
+    "evidenceQuality",
+    "dependencies",
+    "requiredFounderApproval"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "productId": { "type": "string" },
+    "generatedAt": { "type": "number" },
+    "recommendations": { "type": "array" },
+    "personalizationConfidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "expectedBusinessImpact": { "type": "object" },
+    "expectedCustomerImpact": { "type": "object" },
+    "executiveSummary": { "type": "string" },
+    "riskAssessment": { "type": "object" },
+    "evidenceQuality": { "type": "number", "minimum": 0, "maximum": 1 },
+    "dependencies": { "type": "array", "items": { "type": "string" } },
+    "requiredFounderApproval": { "type": "boolean", "const": true }
+  }
+}

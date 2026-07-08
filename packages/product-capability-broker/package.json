@@ -1,0 +1,30 @@
+{
+  "name": "@neos/product-capability-broker",
+  "version": "1.0.0",
+  "description": "Product Capability Broker (PCB) — federated product intelligence protocol for consultative assistants.",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "tsx --test tests/**/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "neos",
+    "product-capability-broker",
+    "cat",
+    "federated-intelligence"
+  ],
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.4.5"
+  }
+}

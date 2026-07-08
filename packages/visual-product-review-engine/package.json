@@ -1,0 +1,30 @@
+{
+  "name": "@neos/visual-product-review-engine",
+  "version": "1.0.0",
+  "description": "Visual Product Review Engine (VPRE) — executive UX evaluation from rendered interfaces and screenshots.",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "tsx --test tests/**/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "neos",
+    "visual-product-review",
+    "ux",
+    "executive-intelligence"
+  ],
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.4.5"
+  }
+}
