@@ -40,6 +40,35 @@ export const workforceTiers: WorkforceTier[] = [
   },
 ];
 
+// Workforce catalog — concrete Specialists, Teams, and Managers a customer can
+// hire. These are examples within the single workforce model above (tiers);
+// this is NOT a separate model. In NEO this maps to the Workforce Specialists
+// package catalog (see docs/DIGITAL-WORKFORCE-HIRING-MVP.md).
+export type WorkforceLevel = "Specialist" | "Team" | "Manager" | "Regional Manager";
+
+export type CatalogItem = {
+  name: string;
+  tier: WorkforceLevel;
+  role: string;
+};
+
+export const workforceCatalog: CatalogItem[] = [
+  // Specialists
+  { name: "Appointment Specialist", tier: "Specialist", role: "Books, confirms, and reschedules appointments." },
+  { name: "Reservations & Orders Specialist", tier: "Specialist", role: "Takes reservations and orders, handles changes." },
+  { name: "Billing Specialist", tier: "Specialist", role: "Prepares and reviews invoices and payments." },
+  { name: "Support Specialist", tier: "Specialist", role: "Answers customer questions across channels." },
+  { name: "Lead Response Specialist", tier: "Specialist", role: "Responds to new leads fast and qualifies them." },
+  { name: "Dispatch Specialist", tier: "Specialist", role: "Coordinates jobs, routes, and schedules." },
+  // Teams
+  { name: "Front-of-House Team", tier: "Team", role: "Team Leader + reservations, orders, and reviews Specialists." },
+  { name: "Patient Team", tier: "Team", role: "Team Leader + appointments, billing, and recalls Specialists." },
+  { name: "Client Team", tier: "Team", role: "Team Leader + intake, scheduling, and follow-up Specialists." },
+  // Managers
+  { name: "Location Manager", tier: "Manager", role: "Supervises the Teams for one location or department." },
+  { name: "Regional Manager", tier: "Regional Manager", role: "Coordinates Managers across multiple locations." },
+];
+
 export type Industry = {
   name: string;
   starter: string;
