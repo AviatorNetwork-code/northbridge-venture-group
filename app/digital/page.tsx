@@ -25,10 +25,31 @@ export default function DigitalPage() {
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white mb-4">
           Northbridge Digital
         </h1>
-        <p className="text-base sm:text-lg text-silver mb-12 sm:mb-16 leading-relaxed">
+        <p className="text-base sm:text-lg text-silver mb-8 leading-relaxed">
           Professional digital systems, lead generation infrastructure, and brand
           development services designed to help businesses grow.
         </p>
+
+        {/* Digital Workforce highlight */}
+        <Link
+          href="/workforce"
+          className="group flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 justify-between p-5 sm:p-6 mb-12 sm:mb-16 border border-red/40 bg-red/[0.06] hover:border-red/70 transition-colors"
+        >
+          <div>
+            <p className="text-[11px] uppercase tracking-wider text-red font-semibold mb-1">
+              New — Digital Workforce
+            </p>
+            <p className="text-white font-semibold text-lg">
+              Hire your digital workforce
+            </p>
+            <p className="text-silver text-sm mt-1">
+              Start with one Specialist. Talk to CAT, your Workforce Advisor.
+            </p>
+          </div>
+          <span className="text-red group-hover:text-red-hover font-medium text-sm shrink-0">
+            Explore Workforce →
+          </span>
+        </Link>
 
         {/* Overview */}
         <section className="mb-12 sm:mb-16">
