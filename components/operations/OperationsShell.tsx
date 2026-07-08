@@ -9,6 +9,7 @@ import { navigationItems } from "@/components/operations/mock-data";
 import { CatProvider } from "@/components/cat/CatProvider";
 import CatPanel from "@/components/cat/CatPanel";
 import { ConnectorProvider } from "@/components/connectors/ConnectorProvider";
+import { NeoProvider } from "@/components/neo/NeoProvider";
 
 type OperationsShellProps = {
   children: React.ReactNode;
@@ -52,6 +53,7 @@ export default function OperationsShell({ children }: OperationsShellProps) {
   }, [navOpen]);
 
   return (
+    <NeoProvider>
     <CatProvider>
       <ConnectorProvider>
         <div className="flex min-h-screen bg-black text-white">
@@ -78,5 +80,6 @@ export default function OperationsShell({ children }: OperationsShellProps) {
       </div>
       </ConnectorProvider>
     </CatProvider>
+    </NeoProvider>
   );
 }

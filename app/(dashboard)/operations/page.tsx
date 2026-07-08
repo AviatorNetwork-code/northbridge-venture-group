@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ConnectorDashboardSummary from "@/components/connectors/ConnectorDashboardSummary";
 import LaunchStatusBanner from "@/components/launch/LaunchStatusBanner";
+import NeoSystemStatus from "@/components/neo/NeoSystemStatus";
 import {
   dashboardMetrics,
   quickActions,
@@ -23,7 +24,7 @@ export default function OperationsPage() {
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-silver sm:text-base">
             Operational overview for your digital workforce, workflows, and connected
-            systems. This shell uses mock data and is ready for future NEO integration.
+            systems. NEO connects when available and falls back to mock data gracefully.
           </p>
           <Link
             href="/operations/hire"
@@ -92,35 +93,7 @@ export default function OperationsPage() {
             </div>
           </section>
 
-          <section
-            aria-labelledby="system-status-heading"
-            className="rounded-xl border border-white/10 bg-slate/40 p-5 sm:p-6"
-          >
-            <h2
-              id="system-status-heading"
-              className="text-xs font-semibold uppercase tracking-wider text-red"
-            >
-              System Status
-            </h2>
-            <p className="mt-1 text-lg font-semibold text-white">All systems nominal</p>
-
-            <ul className="mt-5 space-y-3">
-              {[
-                { label: "NEO Gateway", status: "Standby" },
-                { label: "Agent Runtime", status: "Online" },
-                { label: "Workflow Engine", status: "Online" },
-                { label: "Connector Mesh", status: "Online" },
-              ].map((item) => (
-                <li
-                  key={item.label}
-                  className="flex items-center justify-between rounded-lg border border-white/10 bg-black/30 px-3 py-2.5"
-                >
-                  <span className="text-sm text-silver">{item.label}</span>
-                  <span className="text-xs font-medium text-emerald-400">{item.status}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
+          <NeoSystemStatus />
         </div>
 
         <section

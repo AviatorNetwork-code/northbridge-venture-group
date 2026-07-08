@@ -2,6 +2,7 @@
 
 import { IconBell, IconCat, IconMenu, IconPanel, IconSearch } from "@/components/operations/icons";
 import { useCat } from "@/components/cat/CatProvider";
+import NeoHealthIndicator from "@/components/neo/NeoHealthIndicator";
 
 type CommandBarProps = {
   onOpenNav: () => void;
@@ -68,6 +69,7 @@ export default function CommandBar({
         </div>
 
         <div className="flex items-center justify-end gap-1 sm:gap-2">
+          <NeoHealthIndicator />
           <button
             type="button"
             aria-label="Notifications"

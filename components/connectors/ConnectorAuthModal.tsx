@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { getConnectorById } from "@/lib/connectors/connector-catalog";
-import { mockNeoConnectorApi } from "@/lib/neo/connector-api";
 import { useConnectors } from "@/components/connectors/ConnectorProvider";
+import { useNeo } from "@/components/neo/NeoProvider";
 import { IconClose } from "@/components/operations/icons";
 
 type AuthStep = "sign-in" | "permissions" | "health-check" | "connected";
 
 export default function ConnectorAuthModal() {
+  const { client: neoClient } = useNeo();
   const { authConnectorId, setAuthConnectorId, refresh } = useConnectors();
   const [step, setStep] = useState<AuthStep>("sign-in");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -32,7 +33,7 @@ export default function ConnectorAuthModal() {
   const handleApprove = async () => {
     setIsProcessing(true);
     setStep("health-check");
-    await mockNeoConnectorApi.completeAuthorization(authConnectorId);
+    await neoClient.connectors.completeAuthorization(authConnectorId);
     refresh();
     setStep("connected");
     setIsProcessing(false);

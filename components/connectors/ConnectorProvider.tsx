@@ -12,7 +12,7 @@ import {
 import type { ConnectorInstance } from "@/lib/connectors/connector-types";
 import { mergeConnectorInstances, summarizeConnectorHealth } from "@/lib/connectors/connector-health";
 import { loadConnectorState } from "@/lib/connectors/connector-storage";
-import { mockNeoConnectorApi } from "@/lib/neo/connector-api";
+import { useNeo } from "@/components/neo/NeoProvider";
 
 type ConnectorContextValue = {
   instances: ConnectorInstance[];
@@ -29,6 +29,7 @@ type ConnectorContextValue = {
 const ConnectorContext = createContext<ConnectorContextValue | null>(null);
 
 export function ConnectorProvider({ children }: { children: ReactNode }) {
+  const { client: neoClient } = useNeo();
   const [runtime, setRuntime] = useState<Record<string, import("@/lib/connectors/connector-types").ConnectorRuntimeState>>({});
   const [hydrated, setHydrated] = useState(false);
   const [activeConnectorId, setActiveConnectorId] = useState<string | null>(null);
@@ -48,14 +49,14 @@ export function ConnectorProvider({ children }: { children: ReactNode }) {
 
   const connect = useCallback(async (connectorId: string) => {
     setAuthConnectorId(connectorId);
-    await mockNeoConnectorApi.authorize(connectorId);
+    await neoClient.connectors.authorize(connectorId);
     refresh();
-  }, [refresh]);
+  }, [neoClient, refresh]);
 
   const disconnect = useCallback(async (connectorId: string) => {
-    await mockNeoConnectorApi.disconnect(connectorId);
+    await neoClient.connectors.disconnect(connectorId);
     refresh();
-  }, [refresh]);
+  }, [neoClient, refresh]);
 
   const value = useMemo<ConnectorContextValue>(
     () => ({

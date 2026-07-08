@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { mockNeoClient } from "@/lib/neo/mock-client";
+import { useNeo } from "@/components/neo/NeoProvider";
 import {
   CAT_INITIAL_QUICK_REPLIES,
   CAT_STORAGE_KEY,
@@ -91,6 +91,7 @@ function loadSession(): CatSession {
 }
 
 export function CatProvider({ children }: { children: ReactNode }) {
+  const { client: neoClient } = useNeo();
   const router = useRouter();
   const pathname = usePathname();
   const currentModule = getActiveModuleId(pathname);
@@ -156,14 +157,16 @@ export function CatProvider({ children }: { children: ReactNode }) {
       const isNavigation = /take me|open|show|go to|navigate/i.test(trimmed);
 
       try {
-        const neoResponse = await mockNeoClient.send(
+        const operationsSnapshot = await neoClient.getOperationsSnapshot(currentModule);
+
+        const neoResponse = await neoClient.cat.send(
           {
             sessionId: session.id,
             message: trimmed,
             context: {
               currentModule,
               businessProfile: session.businessProfile,
-              operationsSnapshot: {},
+              operationsSnapshot,
             },
           },
           {
@@ -202,7 +205,7 @@ export function CatProvider({ children }: { children: ReactNode }) {
         setIsThinking(false);
       }
     },
-    [currentModule, handleActions, session],
+    [currentModule, handleActions, neoClient, session],
   );
 
   const clearConversation = useCallback(() => {

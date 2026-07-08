@@ -21,7 +21,7 @@ import { loadLaunchState, saveLaunchProgress } from "@/lib/launch/launch-storage
 import { statusColor } from "@/lib/launch/launch-score";
 import { LAUNCH_STATUS_LABELS } from "@/lib/launch/launch-types";
 import type { LaunchStatus } from "@/lib/launch/launch-types";
-import { mockNeoLaunchApi } from "@/lib/neo/launch-api";
+import { useNeo } from "@/components/neo/NeoProvider";
 import { loadHireSelection } from "@/lib/workforce/storage";
 
 function statusVariant(status: LaunchStatus) {
@@ -32,6 +32,7 @@ function statusVariant(status: LaunchStatus) {
 }
 
 export default function LaunchExperience() {
+  const { client: neoClient } = useNeo();
   const { businessProfile } = useCat();
   const { instances, refresh: refreshConnectors } = useConnectors();
   const [launchState, setLaunchState] = useState(loadLaunchState);
@@ -61,7 +62,7 @@ export default function LaunchExperience() {
   const handleLaunch = async () => {
     setIsLaunching(true);
     try {
-      const result = await mockNeoLaunchApi.launchWorkforce({
+      const result = await neoClient.launch.launchWorkforce({
         profile: businessProfile,
         hireSelection,
         connectorInstances: instances,

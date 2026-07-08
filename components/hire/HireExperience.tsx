@@ -32,7 +32,7 @@ import {
   recommendationsToSelection,
 } from "@/lib/workforce/recommendations";
 import { saveHireSelection } from "@/lib/workforce/storage";
-import { mockNeoWorkforceApi } from "@/lib/neo/workforce-api";
+import { useNeo } from "@/components/neo/NeoProvider";
 import type { BusinessProfile } from "@/lib/cat/types";
 import type { GrowthStage, SelectedSpecialist, WorkforceTier } from "@/lib/workforce/types";
 import { TIER_LABELS, TIER_ORDER } from "@/lib/workforce/types";
@@ -48,6 +48,7 @@ const discoveryPresets = [
 
 export default function HireExperience() {
   const router = useRouter();
+  const { client: neoClient } = useNeo();
   const { businessProfile, sendMessage, openCat } = useCat();
 
   const [step, setStep] = useState<HireStep>("landing");
@@ -119,7 +120,7 @@ export default function HireExperience() {
         businessProfile: mergedProfile,
       });
 
-      await mockNeoWorkforceApi.deployWorkforce({
+      await neoClient.workforce.deployWorkforce({
         selection,
         businessProfile: mergedProfile,
       });
