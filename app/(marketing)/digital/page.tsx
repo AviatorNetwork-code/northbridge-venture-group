@@ -101,6 +101,19 @@ export default function DigitalPage() {
         {/* Contact CTA */}
         <section className="pt-10 sm:pt-12 border-t border-white/10">
           <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4">
+            AI Operations Center
+          </h2>
+          <p className="text-silver mb-6 sm:mb-8 text-sm sm:text-base">
+            Customers manage their digital workforce, connectors, and workflows
+            from the Operations Center command shell.
+          </p>
+          <Link
+            href="/operations"
+            className="inline-flex w-full sm:w-auto items-center justify-center px-8 py-3.5 text-sm font-medium border border-white/20 text-white hover:border-red hover:text-red transition-colors mb-8"
+          >
+            Open Operations Center
+          </Link>
+          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4">
             Get in Touch
           </h2>
           <p className="text-silver mb-6 sm:mb-8 text-sm sm:text-base">
