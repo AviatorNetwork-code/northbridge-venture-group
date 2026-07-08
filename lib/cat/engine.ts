@@ -381,6 +381,32 @@ export function processCatMessage(
 
   if (
     includesAny(text, [
+      "launch",
+      "launch readiness",
+      "go live",
+      "go-live",
+      "begin working",
+      "ready to launch",
+      "launch score",
+    ])
+  ) {
+    return {
+      reply: [
+        "Your **Launch Command Center** combines workforce, connectors, and business discovery into one readiness score.",
+        "",
+        "I can explain:",
+        "• Why your launch score is what it is",
+        "• What is blocking launch vs what can wait",
+        "• Whether a Manager is recommended (usually not yet)",
+        "• What to connect first",
+      ].join("\n"),
+      quickReplies: ["Show onboarding status", "Take me to Launch", "What do I need?"],
+      actions: [{ type: "navigate", label: "Open Launch Center", href: "/operations/launch" }],
+    };
+  }
+
+  if (
+    includesAny(text, [
       "connector",
       "connectors",
       "gmail connected",

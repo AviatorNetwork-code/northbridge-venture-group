@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import OnboardingHireTransfer from "@/components/hire/OnboardingHireTransfer";
 import OnboardingConnectorChecklist from "@/components/connectors/OnboardingConnectorChecklist";
@@ -26,6 +27,15 @@ export default function OnboardingPage() {
       />
 
       <OnboardingMetrics />
+
+      <div className="mb-6">
+        <Link
+          href="/operations/launch"
+          className="inline-flex rounded-xl bg-red px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-hover"
+        >
+          Open Launch Command Center
+        </Link>
+      </div>
 
       <Suspense fallback={null}>
         <div className="mb-8">

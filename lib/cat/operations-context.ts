@@ -46,8 +46,9 @@ const moduleLabels: Record<string, string> = {
   onboarding: "Onboarding",
   analytics: "Analytics",
   billing: "Billing",
-  settings: "Settings",
   hire: "Hire Workforce",
+  launch: "Launch Readiness",
+  settings: "Settings",
 };
 
 export function getModuleLabel(moduleId: string): string {
@@ -163,6 +164,15 @@ export const moduleKnowledge: Record<
     ],
     href: "/operations/onboarding",
   },
+  launch: {
+    summary: "Launch command center — answers whether your AI Workforce can begin working today.",
+    catCanHelp: [
+      "Explain launch score and blockers",
+      "Advise what can wait vs what is critical",
+      "Guide launch decisions without overselling",
+    ],
+    href: "/operations/launch",
+  },
   analytics: {
     summary: "Team tasks, time saved, utilization, and response time across your digital workforce.",
     catCanHelp: [
@@ -210,6 +220,8 @@ export const navigationAliases: Record<string, string> = {
   connector: "connectors",
   integrations: "connectors",
   onboarding: "onboarding",
+  launch: "launch",
+  "launch readiness": "launch",
   analytics: "analytics",
   billing: "billing",
   pricing: "billing",

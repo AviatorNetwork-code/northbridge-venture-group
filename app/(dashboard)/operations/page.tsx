@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ConnectorDashboardSummary from "@/components/connectors/ConnectorDashboardSummary";
+import LaunchStatusBanner from "@/components/launch/LaunchStatusBanner";
 import {
   dashboardMetrics,
   quickActions,
@@ -30,9 +31,17 @@ export default function OperationsPage() {
           >
             Hire Workforce
           </Link>
+          <Link
+            href="/operations/launch"
+            className="ml-3 mt-4 inline-flex rounded-xl border border-red/40 bg-red/10 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red/20"
+          >
+            Launch Readiness
+          </Link>
         </header>
 
-        <section aria-labelledby="metrics-heading" className="mb-8">
+        <LaunchStatusBanner />
+
+        <section aria-labelledby="metrics-heading" className="mb-8 mt-8">
           <h2 id="metrics-heading" className="sr-only">
             Key metrics
           </h2>
