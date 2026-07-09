@@ -142,6 +142,18 @@ const envelope = await communicationRouter.handleRequest({ request: customerRequ
 | `TeamExecutionHandler` | `TeamOrchestratorExecutionHandler` with roster/runtime |
 | `ResponseCoordinator` | Custom metadata / presenter hooks |
 
+When a team owns work:
+
+```text
+Communication Router → Workforce Router → Team Orchestrator
+                                              ├─ Specialist A (internal)
+                                              ├─ Specialist B (internal)
+                                              └─ Team Lead synthesis
+         → ResponseCoordinator → Customer (one reply)
+```
+
+Multi-agent execution is **controlled** — specialists do not chat with each other or the customer directly. See `@northbridge/team-orchestrator` `tests/multi-agent.test.ts`.
+
 ## Launch scope
 
 Supported:

@@ -30,7 +30,7 @@ export type {
   DelegationOutcome,
 } from "./types/delegation.js";
 
-export type { TeamLeadPolicy, TeamOrchestratorHooks } from "./types/policy.js";
+export type { TeamLeadPolicy, TeamOrchestratorHooks, DelegationExecutionMode } from "./types/policy.js";
 export { DEFAULT_TEAM_LEAD_POLICY } from "./types/policy.js";
 
 export type {
@@ -98,6 +98,7 @@ export {
   createTeamOrchestrator,
   DefaultTeamOrchestrator,
   InMemorySpecialistRoster,
+  IsolatedSpecialistRuntimeFactory,
   SharedSpecialistRuntimeFactory,
   type TeamOrchestratorDependencies,
 } from "./runtime/team-orchestrator.js";

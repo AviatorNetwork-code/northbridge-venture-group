@@ -18,6 +18,45 @@ Coordinates how a Team Lead:
 
 Specialists remain **internal** at launch — customer-facing voice is always the Team Lead.
 
+## Controlled multi-agent model
+
+One customer request with team ownership triggers **coordinated specialist execution inside the team**:
+
+```text
+Customer → Team Lead (single owner)
+              ├─ Specialist A (internal Task)
+              ├─ Specialist B (internal Task)
+              └─ Specialist C (internal Task)
+           Team Lead synthesis → one customer response
+```
+
+Rules enforced by the orchestrator:
+
+| Rule | Mechanism |
+|------|-----------|
+| No specialist-to-customer messaging | Results collected internally; `TeamSynthesizer` produces one summary |
+| No free-form agent-to-agent chat | Specialists execute isolated tasks via `specialist-runtime` only |
+| Single external team voice | `customerFacingViaTeamLeadOnly` policy (default `true`) |
+| Single request owner | One `RequestOwner` per team session |
+| Multi-agent coordination | `SpecialistSelector` + `ExecutionPlanBuilder` delegate N tasks |
+| Conflict control | `ConflictDetector` → escalate or synthesize per policy |
+| Execution mode | `delegationExecutionMode`: `sequential` (default) or `parallel` |
+| Parallel runtimes | Use `IsolatedSpecialistRuntimeFactory` — one runtime instance per delegation |
+
+```typescript
+const orchestrator = createTeamOrchestrator({
+  runtimeFactory: new IsolatedSpecialistRuntimeFactory(runtimeDeps),
+  policy: {
+    delegationExecutionMode: "parallel",
+    maxConcurrentDelegations: 8,
+    escalateOnConflict: true,
+    customerFacingViaTeamLeadOnly: true,
+  },
+});
+```
+
+See `tests/multi-agent.test.ts` for generic multi-specialist scenarios.
+
 ## Lifecycle
 
 ```mermaid

@@ -1,3 +1,4 @@
+import { createSpecialistRuntime } from "@northbridge/specialist-runtime";
 import { TeamOrchestratorError } from "./errors.js";
 import { assertTeamTransition, isTeamTerminalState, } from "./state-machine.js";
 import { assignTeamRequestOwner, assertSingleOwner } from "./owner.js";
@@ -9,6 +10,7 @@ export class DefaultTeamOrchestrator {
         this.deps = {
             policy: dependencies.policy ?? {
                 maxConcurrentDelegations: 8,
+                delegationExecutionMode: "sequential",
                 synthesizeOnPartialFailure: true,
                 escalateOnConflict: true,
                 requireAllSpecialistsComplete: false,
@@ -167,76 +169,83 @@ export class DefaultTeamOrchestrator {
         }
     }
     async executeDelegations(delegations) {
+        const mode = this.deps.policy.delegationExecutionMode ?? "sequential";
+        if (mode === "parallel") {
+            return Promise.all(delegations.map((delegation) => this.executeDelegation(delegation)));
+        }
         const results = [];
         for (const delegation of delegations) {
-            delegation.status = "delegated";
-            await this.deps.hooks?.onBeforeDelegation?.({
-                sessionId: this.session.sessionId,
-                delegationId: delegation.delegationId,
-                specialistId: delegation.specialist.id,
-            });
-            const runtime = this.deps.runtimeFactory.forSpecialist(delegation.specialist);
-            const runResult = await runtime.runTask({
-                task: delegation.task,
-                specialist: delegation.specialist,
-                sessionId: `${this.session.sessionId}:${delegation.delegationId}`,
-                capabilityId: delegation.task.context.capabilityId,
-                escalationTarget: {
-                    role: "team_lead",
-                    id: this.session.request.teamLeadId,
-                },
-            });
-            const completedAt = this.deps.now();
-            let delegationResult;
-            if (runResult.outcome === "complete") {
-                delegation.status = "complete";
-                delegationResult = {
-                    delegationId: delegation.delegationId,
-                    planTaskId: delegation.planTaskId,
-                    specialistId: delegation.specialist.id,
-                    outcome: "complete",
-                    result: runResult.result,
-                    confidence: runResult.confidence,
-                    completedAt,
-                };
-            }
-            else if (runResult.outcome === "escalated") {
-                delegation.status = "escalated";
-                const escalation = {
-                    requestId: this.session.request.id,
-                    orgId: this.session.request.orgId,
-                    teamId: this.session.request.teamId,
-                    teamLeadId: this.session.request.teamLeadId,
-                    reason: runResult.escalation.reason,
-                    target: "team_lead_review",
-                    sourceDelegationId: delegation.delegationId,
-                    requestedAt: completedAt,
-                };
-                delegationResult = {
-                    delegationId: delegation.delegationId,
-                    planTaskId: delegation.planTaskId,
-                    specialistId: delegation.specialist.id,
-                    outcome: "escalated",
-                    escalation,
-                    completedAt,
-                };
-                await this.deps.hooks?.onEscalation?.(escalation);
-            }
-            else {
-                delegation.status = "failed";
-                delegationResult = {
-                    delegationId: delegation.delegationId,
-                    planTaskId: delegation.planTaskId,
-                    specialistId: delegation.specialist.id,
-                    outcome: "failed",
-                    error: runResult.error.message,
-                    completedAt,
-                };
-            }
-            results.push(delegationResult);
-            await this.deps.hooks?.onAfterDelegation?.(delegationResult);
+            results.push(await this.executeDelegation(delegation));
         }
         return results;
+    }
+    async executeDelegation(delegation) {
+        delegation.status = "delegated";
+        await this.deps.hooks?.onBeforeDelegation?.({
+            sessionId: this.session.sessionId,
+            delegationId: delegation.delegationId,
+            specialistId: delegation.specialist.id,
+        });
+        const runtime = this.deps.runtimeFactory.forSpecialist(delegation.specialist);
+        const runResult = await runtime.runTask({
+            task: delegation.task,
+            specialist: delegation.specialist,
+            sessionId: `${this.session.sessionId}:${delegation.delegationId}`,
+            capabilityId: delegation.task.context.capabilityId,
+            escalationTarget: {
+                role: "team_lead",
+                id: this.session.request.teamLeadId,
+            },
+        });
+        const completedAt = this.deps.now();
+        let delegationResult;
+        if (runResult.outcome === "complete") {
+            delegation.status = "complete";
+            delegationResult = {
+                delegationId: delegation.delegationId,
+                planTaskId: delegation.planTaskId,
+                specialistId: delegation.specialist.id,
+                outcome: "complete",
+                result: runResult.result,
+                confidence: runResult.confidence,
+                completedAt,
+            };
+        }
+        else if (runResult.outcome === "escalated") {
+            delegation.status = "escalated";
+            const escalation = {
+                requestId: this.session.request.id,
+                orgId: this.session.request.orgId,
+                teamId: this.session.request.teamId,
+                teamLeadId: this.session.request.teamLeadId,
+                reason: runResult.escalation.reason,
+                target: "team_lead_review",
+                sourceDelegationId: delegation.delegationId,
+                requestedAt: completedAt,
+            };
+            delegationResult = {
+                delegationId: delegation.delegationId,
+                planTaskId: delegation.planTaskId,
+                specialistId: delegation.specialist.id,
+                outcome: "escalated",
+                escalation,
+                completedAt,
+            };
+            await this.deps.hooks?.onEscalation?.(escalation);
+        }
+        else {
+            delegation.status = "failed";
+            delegationResult = {
+                delegationId: delegation.delegationId,
+                planTaskId: delegation.planTaskId,
+                specialistId: delegation.specialist.id,
+                outcome: "failed",
+                error: runResult.error.message,
+                completedAt,
+            };
+        }
+        await this.deps.hooks?.onAfterDelegation?.(delegationResult);
+        return delegationResult;
     }
     async escalate(reason, target, context) {
         if (!this.session) {
@@ -333,5 +342,15 @@ export class SharedSpecialistRuntimeFactory {
     }
     forSpecialist(_specialist) {
         return this.runtime;
+    }
+}
+/** Creates an isolated specialist runtime per delegation — required for parallel execution mode. */
+export class IsolatedSpecialistRuntimeFactory {
+    deps;
+    constructor(deps) {
+        this.deps = deps;
+    }
+    forSpecialist(_specialist) {
+        return createSpecialistRuntime(this.deps);
     }
 }

@@ -78,6 +78,7 @@ function buildOrchestrator(options: {
     progressReporter: new InMemoryTeamProgressReporter(),
     policy: {
       maxConcurrentDelegations: 8,
+      delegationExecutionMode: "sequential",
       synthesizeOnPartialFailure: true,
       escalateOnConflict: true,
       requireAllSpecialistsComplete: false,
@@ -235,6 +236,7 @@ describe("team-orchestrator", () => {
       conflictDetector: new DefaultConflictDetector(),
       policy: {
         maxConcurrentDelegations: 8,
+        delegationExecutionMode: "sequential",
         synthesizeOnPartialFailure: false,
         escalateOnConflict: false,
         requireAllSpecialistsComplete: true,

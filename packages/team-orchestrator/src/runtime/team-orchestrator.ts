@@ -1,5 +1,6 @@
 import type { Specialist } from "@northbridge/workforce-contracts";
-import type { SpecialistRuntime } from "@northbridge/specialist-runtime";
+import type { SpecialistRuntime, SpecialistRuntimeDependencies } from "@northbridge/specialist-runtime";
+import { createSpecialistRuntime } from "@northbridge/specialist-runtime";
 import type { ConflictDetector } from "../types/conflict.js";
 import type { CrossTeamCollaborationAdapter } from "../types/collaboration.js";
 import type {
@@ -59,6 +60,7 @@ export class DefaultTeamOrchestrator implements TeamOrchestrator {
     this.deps = {
       policy: dependencies.policy ?? {
         maxConcurrentDelegations: 8,
+        delegationExecutionMode: "sequential",
         synthesizeOnPartialFailure: true,
         escalateOnConflict: true,
         requireAllSpecialistsComplete: false,
@@ -286,9 +288,24 @@ export class DefaultTeamOrchestrator implements TeamOrchestrator {
   private async executeDelegations(
     delegations: DelegatedTask[],
   ): Promise<DelegationResult[]> {
-    const results: DelegationResult[] = [];
+    const mode = this.deps.policy!.delegationExecutionMode ?? "sequential";
 
+    if (mode === "parallel") {
+      return Promise.all(
+        delegations.map((delegation) => this.executeDelegation(delegation)),
+      );
+    }
+
+    const results: DelegationResult[] = [];
     for (const delegation of delegations) {
+      results.push(await this.executeDelegation(delegation));
+    }
+    return results;
+  }
+
+  private async executeDelegation(
+    delegation: DelegatedTask,
+  ): Promise<DelegationResult> {
       delegation.status = "delegated";
       await this.deps.hooks?.onBeforeDelegation?.({
         sessionId: this.session!.sessionId,
@@ -355,11 +372,8 @@ export class DefaultTeamOrchestrator implements TeamOrchestrator {
         };
       }
 
-      results.push(delegationResult);
       await this.deps.hooks?.onAfterDelegation?.(delegationResult);
-    }
-
-    return results;
+    return delegationResult;
   }
 
   private async escalate(
@@ -485,5 +499,14 @@ export class SharedSpecialistRuntimeFactory implements SpecialistRuntimeFactory 
 
   forSpecialist(_specialist: Specialist): SpecialistRuntime {
     return this.runtime;
+  }
+}
+
+/** Creates an isolated specialist runtime per delegation — required for parallel execution mode. */
+export class IsolatedSpecialistRuntimeFactory implements SpecialistRuntimeFactory {
+  constructor(private readonly deps: SpecialistRuntimeDependencies) {}
+
+  forSpecialist(_specialist: Specialist): SpecialistRuntime {
+    return createSpecialistRuntime(this.deps);
   }
 }

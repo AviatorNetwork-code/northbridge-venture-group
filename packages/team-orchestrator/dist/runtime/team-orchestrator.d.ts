@@ -1,5 +1,5 @@
 import type { Specialist } from "@northbridge/workforce-contracts";
-import type { SpecialistRuntime } from "@northbridge/specialist-runtime";
+import type { SpecialistRuntime, SpecialistRuntimeDependencies } from "@northbridge/specialist-runtime";
 import type { ConflictDetector } from "../types/conflict.js";
 import type { CrossTeamCollaborationAdapter } from "../types/collaboration.js";
 import type { TeamLifecycleEvents } from "../types/lifecycle.js";
@@ -39,6 +39,7 @@ export declare class DefaultTeamOrchestrator implements TeamOrchestrator {
     reset(): void;
     orchestrate(input: OrchestrateTeamInput): Promise<OrchestrateTeamResult>;
     private executeDelegations;
+    private executeDelegation;
     private escalate;
     private transition;
     private emit;
@@ -54,5 +55,11 @@ export declare class InMemorySpecialistRoster implements SpecialistRoster {
 export declare class SharedSpecialistRuntimeFactory implements SpecialistRuntimeFactory {
     private readonly runtime;
     constructor(runtime: SpecialistRuntime);
+    forSpecialist(_specialist: Specialist): SpecialistRuntime;
+}
+/** Creates an isolated specialist runtime per delegation — required for parallel execution mode. */
+export declare class IsolatedSpecialistRuntimeFactory implements SpecialistRuntimeFactory {
+    private readonly deps;
+    constructor(deps: SpecialistRuntimeDependencies);
     forSpecialist(_specialist: Specialist): SpecialistRuntime;
 }

@@ -1,5 +1,8 @@
+export type DelegationExecutionMode = "sequential" | "parallel";
 export interface TeamLeadPolicy {
     maxConcurrentDelegations: number;
+    /** Execute specialist delegations in plan order or concurrently. */
+    delegationExecutionMode: DelegationExecutionMode;
     /** When true, synthesize from successful delegations even if some failed. */
     synthesizeOnPartialFailure: boolean;
     /** Escalate instead of synthesizing when conflicts detected. */

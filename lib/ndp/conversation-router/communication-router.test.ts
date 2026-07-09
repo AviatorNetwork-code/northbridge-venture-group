@@ -6,6 +6,21 @@ import {
   type RouteRuleSet,
 } from "@northbridge/workforce-router";
 import {
+  InMemoryCapabilityRegistry,
+} from "@northbridge/specialist-runtime";
+import {
+  createTeamOrchestrator,
+  DefaultConflictDetector,
+  DefaultExecutionPlanBuilder,
+  DefaultTeamReportBuilder,
+  DefaultTeamSynthesizer,
+  InMemorySpecialistRoster,
+  IsolatedSpecialistRuntimeFactory,
+  PassthroughSpecialistSelector,
+  SharedSpecialistRuntimeFactory,
+} from "@northbridge/team-orchestrator";
+import { TeamOrchestratorExecutionHandler } from "@/lib/ndp/conversation-router/adapters/team-orchestrator-handler";
+import {
   CommunicationRouterError,
   createCommunicationRouter,
   createTestOrganization,
@@ -343,5 +358,117 @@ describe("NDP Communication Router", () => {
         }),
       }),
     ).rejects.toBeInstanceOf(CommunicationRouterError);
+  });
+
+  it("returns one coordinated team response from multi-specialist orchestration", async () => {
+    const specialists = ["sp-alpha", "sp-beta"].map((id) => ({
+      id,
+      orgId: ORG,
+      teamId: "team-scheduling",
+      specialistDefinitionId: `def-${id}`,
+      role: "specialist" as const,
+      permissions: { canDo: ["execute_task"], cannotDo: [] },
+      status: "active" as const,
+    }));
+
+    const registry = new InMemoryCapabilityRegistry();
+    for (const id of ["sp-alpha", "sp-beta"]) {
+      registry.register(`def-${id}`, [
+        { id: "execute_task", requiredPermission: "execute_task" },
+      ]);
+    }
+
+    const runtimeDeps = {
+      capabilityRegistry: registry,
+      taskExecutor: {
+        execute: async ({ session }) => ({
+          summary: `Specialist ${session.specialist.id} completed work`,
+          confidence: { level: "high" },
+        }),
+      },
+    };
+
+    const orchestrator = createTeamOrchestrator({
+      roster: new InMemorySpecialistRoster(specialists),
+      runtimeFactory: new IsolatedSpecialistRuntimeFactory(runtimeDeps),
+      specialistSelector: new PassthroughSpecialistSelector(
+        specialists.map((entry) => ({
+          specialistId: entry.id,
+          specialistDefinitionId: entry.specialistDefinitionId,
+          capabilityId: "execute_task",
+        })),
+      ),
+      planBuilder: new DefaultExecutionPlanBuilder(),
+      synthesizer: new DefaultTeamSynthesizer(),
+      reportBuilder: new DefaultTeamReportBuilder(),
+      conflictDetector: new DefaultConflictDetector(),
+      policy: {
+        maxConcurrentDelegations: 8,
+        delegationExecutionMode: "parallel",
+        synthesizeOnPartialFailure: true,
+        escalateOnConflict: true,
+        requireAllSpecialistsComplete: false,
+        customerFacingViaTeamLeadOnly: true,
+      },
+    });
+
+    const communicationRouter = createCommunicationRouter({
+      organizationLoader: new InMemoryOrganizationContextLoader(
+        new Map([
+          [
+            ORG,
+            {
+              organization: createTestOrganization(ORG),
+              permissions: ["conversation:read", "conversation:write"],
+            },
+          ],
+        ]),
+      ),
+      subscriptionResolver: new InMemorySubscriptionResolver(
+        new Map([
+          [
+            `${ORG}:${CUSTOMER}`,
+            {
+              orgId: ORG,
+              customerId: CUSTOMER,
+              status: "active",
+              entitledTeamIds: ["team-scheduling"],
+            },
+          ],
+        ]),
+      ),
+      teamResolver: new InMemoryTeamResolver(
+        new Map([
+          [
+            `${ORG}:${CUSTOMER}`,
+            {
+              hiredTeamIds: ["team-scheduling"],
+              activeConversations: [],
+            },
+          ],
+        ]),
+      ),
+      ownershipDecision: new DefaultOwnershipDecisionService(
+        createWorkforceRouter({ resolver: createDefaultCompositeResolver() }),
+      ),
+      resolveRouteRules: async () => sampleRules(),
+      teamHandler: new TeamOrchestratorExecutionHandler({
+        orchestrator,
+        resolveTeamLeadId: async () => "tl-scheduling",
+      }),
+    });
+
+    const response = await communicationRouter.handleRequest({
+      request: baseRequest({
+        channel: "team-thread",
+        teamId: "team-scheduling",
+        message: "Coordinate multi-specialist work",
+      }),
+    });
+
+    expect(response.owner.type).toBe("team");
+    expect(response.reply).toContain("sp-alpha");
+    expect(response.reply).toContain("sp-beta");
+    expect(response.metadata?.escalated).not.toBe(true);
   });
 });

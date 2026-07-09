@@ -6,7 +6,7 @@ export { DefaultTeamReportBuilder } from "./types/report.js";
 export { TeamOrchestratorError, } from "./runtime/errors.js";
 export { assertTeamTransition, canTeamTransition, isTeamTerminalState, } from "./runtime/state-machine.js";
 export { assignTeamRequestOwner, assertSingleOwner, formatOwner, } from "./runtime/owner.js";
-export { createTeamOrchestrator, DefaultTeamOrchestrator, InMemorySpecialistRoster, SharedSpecialistRuntimeFactory, } from "./runtime/team-orchestrator.js";
+export { createTeamOrchestrator, DefaultTeamOrchestrator, InMemorySpecialistRoster, IsolatedSpecialistRuntimeFactory, SharedSpecialistRuntimeFactory, } from "./runtime/team-orchestrator.js";
 export { DefaultExecutionPlanBuilder, PassthroughSpecialistSelector, } from "./planning/defaults.js";
 export { DefaultConflictDetector } from "./conflicts/default-detector.js";
 export { buildDelegatedTask } from "./delegation/build-task.js";
