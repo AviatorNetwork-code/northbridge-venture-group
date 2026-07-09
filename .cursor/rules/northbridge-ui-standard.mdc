@@ -1,0 +1,36 @@
+---
+description: Northbridge UI completion gate — no feature is done until all 10 checks pass
+alwaysApply: true
+---
+
+# Northbridge UI Standard
+
+A feature is **not complete** unless it passes all of the following:
+
+## Responsive review
+
+1. **Desktop review** — layout, typography, spacing, and interactions verified at desktop breakpoints.
+2. **Mobile review** — verified on small screens (≤640px); no clipped content or broken navigation.
+3. **Tablet review** — verified at tablet breakpoints (md/lg); no awkward reflows or orphaned elements.
+4. **No horizontal scroll** — no `overflow-x` on any customer-facing screen; test with long words, tables, and forms.
+
+## Touch & navigation
+
+5. **Large tap targets** — interactive elements ≥44×44px (buttons, links, menu items, form controls).
+6. **CAT reachable** — CAT is accessible from every customer-facing screen without dead ends.
+
+## Mobile UX
+
+7. **Primary CTA visible on mobile** — the main call-to-action is visible above the fold or immediately obvious without excessive scrolling.
+8. **Forms usable on mobile** — inputs are full-width, labels visible, keyboard types correct, submit reachable.
+9. **Dashboards readable on mobile** — data tables/cards stack or scroll intentionally; no unreadable micro-text.
+
+## Build quality
+
+10. **Build + lint pass** — `npm run build` and `npm run lint` succeed with zero errors before marking done.
+
+## Before finishing UI work
+
+- Manually spot-check desktop, tablet, and mobile viewports.
+- Confirm Header nav and primary CTA paths work on all breakpoints.
+- Run build and lint; fix all failures before reporting the feature complete.
