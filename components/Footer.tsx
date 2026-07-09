@@ -1,15 +1,8 @@
 import Link from "next/link";
 import NorthbridgeLogo from "@/components/NorthbridgeLogo";
+import { primaryPublicNavLinks, secondaryPublicNavLinks } from "@/lib/public-navigation";
 
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/services", label: "Digital Solutions" },
-  { href: "/clients", label: "Clients" },
-  { href: "/help", label: "Help" },
-  { href: "/contact", label: "Contact" },
-  { href: "/privacy", label: "Privacy" },
-];
+const footerNavLinks = [...primaryPublicNavLinks, ...secondaryPublicNavLinks];
 
 export default function Footer() {
   return (
@@ -41,7 +34,7 @@ export default function Footer() {
                   Navigation
                 </h4>
                 <ul className="space-y-2.5">
-                  {navLinks.map((link) => (
+                  {footerNavLinks.map((link) => (
                     <li key={link.href}>
                       <Link
                         href={link.href}

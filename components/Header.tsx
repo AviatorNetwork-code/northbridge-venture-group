@@ -2,17 +2,12 @@
 
 import Link from "next/link";
 import NorthbridgeLogo from "@/components/NorthbridgeLogo";
+import PublicNavLinks from "@/components/PublicNavLinks";
 import { useState } from "react";
-
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/services", label: "Digital Solutions" },
-  { href: "/clients", label: "Clients" },
-  { href: "/help", label: "Help" },
-  { href: "/contact", label: "Contact" },
-  { href: "/privacy", label: "Privacy" },
-];
+import {
+  primaryPublicNavLinks,
+  publicWebsiteMenuLinks,
+} from "@/lib/public-navigation";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -20,7 +15,7 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/98 backdrop-blur-sm border-b border-white/5">
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 min-h-[52px] sm:min-h-[56px]">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
           <Link
             href="/"
             className="flex items-center shrink-0 transition-opacity hover:opacity-90"
@@ -29,21 +24,12 @@ export default function Header() {
             <NorthbridgeLogo className="h-10 sm:h-12" />
           </Link>
 
-          {/* Desktop nav (md+) */}
-          <ul className="hidden md:flex items-center gap-8 shrink-0">
-            {navLinks.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold tracking-wide text-silver hover:text-white transition-colors"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <PublicNavLinks
+            links={primaryPublicNavLinks}
+            className="hidden md:block"
+            linkClassName="inline-flex min-h-11 items-center text-sm font-semibold tracking-wide text-silver hover:text-white transition-colors"
+          />
 
-          {/* Mobile menu button (sm-) */}
           <button
             type="button"
             className="md:hidden inline-flex min-h-11 min-w-11 items-center justify-center border border-white/10 bg-black/50 hover:border-white/20 hover:bg-white/5 transition-colors"
@@ -87,11 +73,10 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Mobile dropdown */}
-        {mobileOpen && (
+        {mobileOpen ? (
           <div className="md:hidden mt-3 border border-white/10 bg-black/95">
             <ul className="flex flex-col">
-              {navLinks.map((link) => (
+              {publicWebsiteMenuLinks.map((link) => (
                 <li key={link.href} className="border-t border-white/10 first:border-t-0">
                   <Link
                     href={link.href}
@@ -104,7 +89,7 @@ export default function Header() {
               ))}
             </ul>
           </div>
-        )}
+        ) : null}
       </nav>
     </header>
   );

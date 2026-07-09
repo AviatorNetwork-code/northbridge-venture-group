@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 
 export const metadata: Metadata = {
-  title: "Background | Northbridge Digital",
+  title: "Ventures | Northbridge Digital",
   description:
     "Northbridge Digital builds and operates serious digital platforms. Nordi is the product that brings that experience to business owners.",
 };

@@ -3,16 +3,12 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import NorthbridgeLogo from "@/components/NorthbridgeLogo";
+import PublicNavLinks from "@/components/PublicNavLinks";
 import { IconClose } from "@/components/operations/icons";
-
-const menuItems = [
-  { label: "About Northbridge", href: "/about" },
-  { label: "Business Dashboard", href: "/operations" },
-  { label: "Connected Services", href: "/operations/connectors" },
-  { label: "Help", href: "/help" },
-  { label: "Contact", href: "/contact" },
-  { label: "Privacy", href: "/privacy" },
-];
+import {
+  primaryPublicNavLinks,
+  publicWebsiteMenuLinks,
+} from "@/lib/public-navigation";
 
 export default function NordiHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -35,18 +31,24 @@ export default function NordiHeader() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-black/90 backdrop-blur-md">
-      <div className="grid h-14 grid-cols-[auto_1fr_auto] items-center gap-3 px-3 sm:h-16 sm:px-4">
+      <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-3 sm:h-16 sm:px-4 lg:gap-6">
         <Link
-          href="/about"
+          href="/"
           className="flex shrink-0 items-center transition-opacity hover:opacity-90"
-          aria-label="Northbridge Venture Group"
+          aria-label="Northbridge Venture Group home"
         >
           <NorthbridgeLogo className="h-8 sm:h-9" />
         </Link>
 
+        <PublicNavLinks
+          links={primaryPublicNavLinks}
+          className="hidden min-w-0 flex-1 lg:block"
+          linkClassName="inline-flex min-h-11 items-center whitespace-nowrap text-sm font-medium text-silver transition-colors hover:text-white"
+        />
+
         <Link
           href="/"
-          className="justify-self-center text-lg font-semibold uppercase tracking-[0.35em] text-white transition-opacity hover:opacity-80 sm:text-xl"
+          className="ml-auto text-base font-semibold uppercase tracking-[0.3em] text-white transition-opacity hover:opacity-80 sm:text-lg lg:ml-0 lg:justify-self-center lg:tracking-[0.35em]"
           aria-label="Nordi home"
         >
           NORDI
@@ -55,9 +57,9 @@ export default function NordiHeader() {
         <button
           type="button"
           onClick={() => setMenuOpen(true)}
-          aria-label="Open menu"
+          aria-label="Open website menu"
           aria-expanded={menuOpen}
-          className="inline-flex min-h-11 min-w-11 items-center justify-center justify-self-end rounded-md text-silver transition-colors hover:bg-white/5 hover:text-white"
+          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-silver transition-colors hover:bg-white/5 hover:text-white lg:hidden"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
             <path
@@ -71,7 +73,7 @@ export default function NordiHeader() {
       </div>
 
       {menuOpen ? (
-        <div className="fixed inset-0 z-[70]" role="dialog" aria-modal="true" aria-label="Menu">
+        <div className="fixed inset-0 z-[70] lg:hidden" role="dialog" aria-modal="true" aria-label="Website menu">
           <button
             type="button"
             aria-label="Close menu"
@@ -82,7 +84,7 @@ export default function NordiHeader() {
           <nav className="absolute right-0 top-0 flex h-full w-full max-w-xs flex-col border-l border-white/10 bg-charcoal shadow-2xl animate-fade-slide-up">
             <div className="flex h-14 items-center justify-between border-b border-white/10 px-4 sm:h-16">
               <span className="text-sm font-semibold uppercase tracking-[0.3em] text-white">
-                NORDI
+                Northbridge
               </span>
               <button
                 type="button"
@@ -95,7 +97,7 @@ export default function NordiHeader() {
             </div>
 
             <ul className="flex flex-col px-2 py-3">
-              {menuItems.map((item) => (
+              {publicWebsiteMenuLinks.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
@@ -110,7 +112,7 @@ export default function NordiHeader() {
 
             <div className="mt-auto border-t border-white/10 px-5 py-4">
               <p className="text-xs leading-relaxed text-stone">
-                Nordi is your business advisor from Northbridge Digital.
+                Nordi is your homepage advisor. Operations dashboard links are not shown here while that product is in development.
               </p>
             </div>
           </nav>

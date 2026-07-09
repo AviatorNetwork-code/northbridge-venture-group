@@ -46,7 +46,7 @@ export default function ServicesPage() {
           <MarketingPrimaryCta />
         </section>
 
-        <section className="mb-12 sm:mb-14">
+        <section id="products" className="mb-12 sm:mb-14 scroll-mt-28">
           <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-2">
             Flagship Platform
           </h2>

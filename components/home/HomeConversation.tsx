@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useNeo } from "@/components/neo/NeoProvider";
 import NordiMessageBubble from "@/components/home/NordiMessageBubble";
 import NordiThinkingIndicator from "@/components/home/NordiThinkingIndicator";
-import AboutPanel from "@/components/home/AboutPanel";
+import PublicWebsiteMenu from "@/components/home/PublicWebsiteMenu";
 import SaveConversationCard from "@/components/home/SaveConversationCard";
 import BusinessSummaryCard from "@/components/home/BusinessSummaryCard";
 import RequestCallCard, { type CallRequest } from "@/components/home/RequestCallCard";
@@ -77,7 +77,7 @@ export default function HomeConversation() {
   const [showButtons, setShowButtons] = useState(false);
   const [showInput, setShowInput] = useState(false);
   const [introReady, setIntroReady] = useState(false);
-  const [aboutOpen, setAboutOpen] = useState(false);
+  const [websiteMenuOpen, setWebsiteMenuOpen] = useState(false);
   const [saveActive, setSaveActive] = useState(false);
   const [savePromptShown, setSavePromptShown] = useState(false);
   const [callActive, setCallActive] = useState(false);
@@ -463,10 +463,10 @@ export default function HomeConversation() {
           <div className="mb-3 flex flex-wrap items-center gap-2 animate-fade-slide-up">
             <button
               type="button"
-              onClick={() => setAboutOpen(true)}
+              onClick={() => setWebsiteMenuOpen(true)}
               className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/15 bg-black/40 px-5 text-sm font-medium text-white backdrop-blur transition-colors hover:border-white/30 hover:bg-white/5"
             >
-              About Northbridge
+              Explore Northbridge
             </button>
             <button
               type="button"
@@ -574,7 +574,7 @@ export default function HomeConversation() {
         ) : null}
       </div>
 
-      <AboutPanel open={aboutOpen} onClose={() => setAboutOpen(false)} />
+      <PublicWebsiteMenu open={websiteMenuOpen} onClose={() => setWebsiteMenuOpen(false)} />
     </section>
   );
 }

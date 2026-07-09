@@ -15,6 +15,11 @@ const nextConfig = {
         destination: "/",
         permanent: true,
       },
+      {
+        source: "/ventures",
+        destination: "/portfolio",
+        permanent: false,
+      },
     ];
   },
 };

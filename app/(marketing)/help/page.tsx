@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Help | Northbridge Digital",
   description:
-    "Get help using Nordi and the Northbridge Operations Center, or reach our team directly.",
+    "Get help using Nordi, or reach our team directly.",
 };
 
 const topics = [
@@ -21,8 +21,8 @@ const topics = [
     body: "Prefer to speak with a person? Use “Request a Call” inside the chat and share your name and preferred contact method. Someone from Northbridge will reach out.",
   },
   {
-    title: "Your Business Dashboard",
-    body: "Once you're set up, the Operations Center is where you manage your digital workforce, connected services, and launch readiness.",
+    title: "Operations support",
+    body: "When Nordi recommends operational support, our team helps you configure the right next steps. Reach out through the chat or contact page if you want a person involved.",
   },
 ];
 
