@@ -84,6 +84,11 @@ export const COMMUNICATION_PACKAGES = [
     role: "Reusable specialist task lifecycle and execution runtime",
     wired: "deferred",
   },
+  {
+    id: "@northbridge/team-orchestrator",
+    role: "Team Lead orchestration, delegation, synthesis, and reports",
+    wired: "deferred",
+  },
 ] as const;
 
 export type CommunicationPackageId = (typeof COMMUNICATION_PACKAGES)[number]["id"];
