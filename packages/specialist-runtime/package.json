@@ -1,0 +1,24 @@
+{
+  "name": "@northbridge/specialist-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reusable digital specialist execution runtime (NEO Phase 2)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@northbridge/workforce-contracts": "file:../workforce-contracts",
+    "@northbridge/workforce-core": "file:../workforce-core"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}

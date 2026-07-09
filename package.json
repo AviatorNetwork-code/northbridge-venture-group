@@ -28,6 +28,7 @@
     "@northbridge/progressive-forms": "file:./packages/progressive-forms",
     "@northbridge/workforce-contracts": "file:./packages/workforce-contracts",
     "@northbridge/workforce-core": "file:./packages/workforce-core",
+    "@northbridge/specialist-runtime": "file:./packages/specialist-runtime",
     "next": "14.2.18",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

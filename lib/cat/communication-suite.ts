@@ -79,6 +79,11 @@ export const COMMUNICATION_PACKAGES = [
     role: "Workforce platform core model, hierarchy, permissions, validation",
     wired: "deferred",
   },
+  {
+    id: "@northbridge/specialist-runtime",
+    role: "Reusable specialist task lifecycle and execution runtime",
+    wired: "deferred",
+  },
 ] as const;
 
 export type CommunicationPackageId = (typeof COMMUNICATION_PACKAGES)[number]["id"];
