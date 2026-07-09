@@ -6,10 +6,12 @@ import { useNordiActivity } from "@/components/home/NordiActivityContext";
 import NordiMessageBubble from "@/components/home/NordiMessageBubble";
 import NordiThinkingIndicator from "@/components/home/NordiThinkingIndicator";
 import PublicWebsiteMenu from "@/components/home/PublicWebsiteMenu";
+import ConversationLearningConsentCard from "@/components/home/ConversationLearningConsentCard";
 import SaveConversationCard from "@/components/home/SaveConversationCard";
 import BusinessSummaryCard from "@/components/home/BusinessSummaryCard";
 import RequestCallCard, { type CallRequest } from "@/components/home/RequestCallCard";
 import type { DiscoveryEngineResult, DiscoveryProfile, WebsiteAnalysisResult } from "@/lib/cat/discovery-types";
+import { submitConversationForLearning } from "@/lib/cat/conversation-learning-bridge";
 import { mergeProfile as mergeDiscoveryProfile } from "@/lib/cat/discovery-profile-state";
 import type { NordiMessageCard } from "@/lib/nordi/cards";
 import {
@@ -34,6 +36,19 @@ import {
   shouldOfferSavePrompt,
   shouldShowSaveButton,
 } from "@/lib/nordi/home-conversation-flow";
+import {
+  appendConsentAudit,
+  createDefaultFounderLearningSettings,
+  isFounderIdentity,
+  markConsentPromptShown,
+  acceptLearningConsent,
+  declineLearningConsent,
+  resolveLearningEligible,
+  shouldAskForConsent,
+  type ConversationLearningConsent,
+  type ConsentAuditEntry,
+  type FounderLearningSettings,
+} from "@/lib/nordi/conversation-learning-consent";
 import type { NordiIdentity } from "@/lib/nordi/identity";
 import {
   buildResumeMessage,
@@ -79,6 +94,15 @@ export default function HomeConversation() {
   const [callRequested, setCallRequested] = useState(false);
   const [identity, setIdentity] = useState<NordiIdentity | null>(null);
   const [isReturning, setIsReturning] = useState(false);
+  const [showConsentCard, setShowConsentCard] = useState(false);
+  const [conversationLearningConsent, setConversationLearningConsent] =
+    useState<ConversationLearningConsent | null>(null);
+  const [learningEligible, setLearningEligible] = useState(false);
+  const [founderSession, setFounderSession] = useState(false);
+  const [founderLearningSettings, setFounderLearningSettings] =
+    useState<FounderLearningSettings | null>(null);
+  const [consentAuditLog, setConsentAuditLog] = useState<ConsentAuditEntry[]>([]);
+  const [learningSubmitted, setLearningSubmitted] = useState(false);
 
   const sessionIdRef = useRef<string>(createId("home"));
   const messageIndexRef = useRef(0);
@@ -87,6 +111,7 @@ export default function HomeConversation() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const analysisInFlightRef = useRef<string | null>(null);
   const welcomeBackShownRef = useRef(false);
+  const consentPromptShownRef = useRef(false);
   const pendingDoneRef = useRef<Map<string, () => void>>(new Map());
   const deliveryLockRef = useRef(false);
 
@@ -133,6 +158,64 @@ export default function HomeConversation() {
     },
     [appendCatMessage],
   );
+
+  const maybeSubmitForLearning = useCallback(
+    (memory: ReturnType<typeof touchMemory>) => {
+      if (learningSubmitted) return;
+      const result = submitConversationForLearning(memory);
+      if (result.submitted) {
+        setLearningSubmitted(true);
+      }
+    },
+    [learningSubmitted],
+  );
+
+  const applyConsentUpdate = useCallback(
+    (
+      nextConsent: ConversationLearningConsent,
+      audit: ConsentAuditEntry | null,
+      nextFounderSettings?: FounderLearningSettings | null,
+    ) => {
+      setConversationLearningConsent(nextConsent);
+      const settings = nextFounderSettings ?? founderLearningSettings;
+      setLearningEligible(resolveLearningEligible(nextConsent, settings));
+      if (audit) {
+        setConsentAuditLog((prev) => appendConsentAudit(prev, audit));
+      }
+      setShowConsentCard(false);
+    },
+    [founderLearningSettings],
+  );
+
+  const handleAllowLearning = useCallback(() => {
+    const { consent, audit } = acceptLearningConsent(
+      conversationLearningConsent,
+      "conversation_prompt",
+    );
+    const nextFounderSettings = founderSession
+      ? founderLearningSettings ?? createDefaultFounderLearningSettings()
+      : founderLearningSettings;
+    applyConsentUpdate(consent, audit, nextFounderSettings);
+  }, [applyConsentUpdate, conversationLearningConsent, founderLearningSettings, founderSession]);
+
+  const handleDeclineLearning = useCallback(() => {
+    const { consent, audit } = declineLearningConsent(
+      conversationLearningConsent,
+      "conversation_prompt",
+    );
+    applyConsentUpdate(consent, audit);
+  }, [applyConsentUpdate, conversationLearningConsent]);
+
+  const showLearningConsentIfNeeded = useCallback(() => {
+    if (consentPromptShownRef.current) return;
+    if (!shouldAskForConsent(conversationLearningConsent)) return;
+
+    consentPromptShownRef.current = true;
+    const { consent } = markConsentPromptShown(conversationLearningConsent);
+    setConversationLearningConsent(consent);
+    setShowConsentCard(true);
+    window.setTimeout(scrollToBottom, 60);
+  }, [conversationLearningConsent, scrollToBottom]);
 
   const maybeOfferSavePrompt = useCallback(
     async (profile: DiscoveryProfile) => {
@@ -205,6 +288,18 @@ export default function HomeConversation() {
       setCallRequested(Boolean(stored.callRequested));
       setKnownSince(stored.knownSince);
       setLastUpdated(stored.lastUpdated);
+      setConversationLearningConsent(stored.conversationLearningConsent ?? null);
+      setLearningEligible(
+        resolveLearningEligible(
+          stored.conversationLearningConsent,
+          stored.founderLearningSettings,
+        ),
+      );
+      setFounderSession(Boolean(stored.founderSession));
+      setFounderLearningSettings(stored.founderLearningSettings ?? null);
+      setConsentAuditLog(stored.consentAuditLog ?? []);
+      setLearningSubmitted(Boolean(stored.learningSubmitted));
+      consentPromptShownRef.current = Boolean(stored.conversationLearningConsent?.askedAt);
       setIsReturning(true);
       setShowExploreButton(true);
       setShowInput(true);
@@ -277,10 +372,17 @@ export default function HomeConversation() {
       knownSince,
       lastUpdated: new Date().toISOString(),
       welcomeBackShown: welcomeBackShownRef.current,
+      conversationLearningConsent,
+      learningEligible,
+      consentAuditLog,
+      founderSession,
+      founderLearningSettings,
+      learningSubmitted,
     });
 
     storage.save(memory);
     setLastUpdated(memory.lastUpdated);
+    maybeSubmitForLearning(memory);
   }, [
     introReady,
     messages,
@@ -291,6 +393,13 @@ export default function HomeConversation() {
     isReturning,
     knownSince,
     storage,
+    conversationLearningConsent,
+    learningEligible,
+    consentAuditLog,
+    founderSession,
+    founderLearningSettings,
+    learningSubmitted,
+    maybeSubmitForLearning,
   ]);
 
   useEffect(() => {
@@ -304,6 +413,7 @@ export default function HomeConversation() {
     showInput,
     saveActive,
     callActive,
+    showConsentCard,
     isDelivering,
     scrollToBottom,
   ]);
@@ -335,10 +445,11 @@ export default function HomeConversation() {
         setShowExploreButton(true);
         setShowInput(true);
         setIntroReady(true);
+        showLearningConsentIfNeeded();
         inputRef.current?.focus();
       }, 500);
     }
-  }, []);
+  }, [showLearningConsentIfNeeded]);
 
   const sendMessage = useCallback(
     async (raw: string) => {
@@ -484,6 +595,16 @@ export default function HomeConversation() {
     setIdentity(savedIdentity);
     setSaved(true);
     setSaveActive(false);
+
+    const founder = isFounderIdentity(savedIdentity);
+    if (founder) {
+      setFounderSession(true);
+      setFounderLearningSettings((prev) => prev ?? createDefaultFounderLearningSettings());
+      setLearningEligible((current) =>
+        current || resolveLearningEligible(conversationLearningConsent, createDefaultFounderLearningSettings()),
+      );
+    }
+
     void appendCatMessage(buildSaveConfirmation(savedIdentity));
   };
 
@@ -590,6 +711,13 @@ export default function HomeConversation() {
             )}
 
             {thinkingLabel ? <NordiThinkingIndicator label={thinkingLabel} /> : null}
+
+            {showConsentCard ? (
+              <ConversationLearningConsentCard
+                onAllow={handleAllowLearning}
+                onDecline={handleDeclineLearning}
+              />
+            ) : null}
 
             {saveActive && !saved ? (
               <SaveConversationCard onComplete={handleSaved} onCancel={() => setSaveActive(false)} />

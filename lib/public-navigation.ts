@@ -14,6 +14,7 @@ export const primaryPublicNavLinks: PublicNavLink[] = [
 
 export const secondaryPublicNavLinks: PublicNavLink[] = [
   { href: "/privacy", label: "Privacy" },
+  { href: "/privacy/settings", label: "Privacy Settings" },
   { href: "/help", label: "Help" },
 ];
 

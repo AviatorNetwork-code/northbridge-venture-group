@@ -22,7 +22,7 @@ const sections = [
   },
   {
     title: "Your control",
-    body: "You can save a conversation to your identity or discard it entirely at any time. Sensitive actions always require your explicit authorization.",
+    body: "You can save a conversation to your identity or discard it entirely at any time. Sensitive actions always require your explicit authorization. You can also manage conversation learning in Privacy Settings.",
   },
   {
     title: "Security",

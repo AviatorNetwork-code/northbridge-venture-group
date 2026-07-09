@@ -17,6 +17,10 @@ const topics = [
     body: "Use “Save Conversation” inside the chat to keep your discussion and pick up later. You can recognize yourself by phone, email, or both, and optionally protect it with a verification code.",
   },
   {
+    title: "Conversation learning",
+    body: "You can choose whether Northbridge analyzes your conversations to improve Nordi. Manage this anytime in Privacy Settings — declining does not affect your ability to use Nordi.",
+  },
+  {
     title: "Requesting a call",
     body: "Prefer to speak with a person? Use “Request a Call” inside the chat and share your name and preferred contact method. Someone from Northbridge will reach out.",
   },

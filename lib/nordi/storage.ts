@@ -46,6 +46,12 @@ function parseMemory(raw: string): NordiConversationMemory | null {
       knownSince: parsed.knownSince ?? now,
       lastUpdated: parsed.lastUpdated ?? now,
       welcomeBackShown: parsed.welcomeBackShown,
+      conversationLearningConsent: parsed.conversationLearningConsent ?? null,
+      learningEligible: parsed.learningEligible ?? false,
+      consentAuditLog: parsed.consentAuditLog ?? [],
+      founderSession: parsed.founderSession ?? false,
+      founderLearningSettings: parsed.founderLearningSettings ?? null,
+      learningSubmitted: parsed.learningSubmitted ?? false,
     };
   } catch {
     return null;

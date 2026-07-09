@@ -1,6 +1,11 @@
 import type { DiscoveryProfile } from "@/lib/cat/discovery-types";
-import type { NordiIdentity } from "@/lib/nordi/identity";
 import type { NordiMessageCard } from "@/lib/nordi/cards";
+import type {
+  ConsentAuditEntry,
+  ConversationLearningConsent,
+  FounderLearningSettings,
+} from "@/lib/nordi/conversation-learning-consent";
+import type { NordiIdentity } from "@/lib/nordi/identity";
 
 export const NORDI_MEMORY_VERSION = 1;
 
@@ -32,6 +37,12 @@ export type NordiConversationMemory = {
   knownSince: string;
   lastUpdated: string;
   welcomeBackShown?: boolean;
+  conversationLearningConsent?: ConversationLearningConsent | null;
+  learningEligible?: boolean;
+  consentAuditLog?: ConsentAuditEntry[];
+  founderSession?: boolean;
+  founderLearningSettings?: FounderLearningSettings | null;
+  learningSubmitted?: boolean;
 };
 
 export function createEmptyMemory(sessionId: string): NordiConversationMemory {
