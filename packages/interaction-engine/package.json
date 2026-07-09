@@ -1,0 +1,25 @@
+{
+  "name": "@northbridge/interaction-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Interaction Engine — selects message, card, form, timeline, confirmation, and other modalities — vendored for northbridge-venture-group Vercel builds (source: NEOS @northbridge/interaction-engine)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@northbridge/adaptive-cards": "file:../adaptive-cards",
+    "@northbridge/context-actions": "file:../context-actions",
+    "@northbridge/conversation-engine": "file:../conversation-engine",
+    "@northbridge/conversation-state": "file:../conversation-state",
+    "@northbridge/interaction-standards": "file:../interaction-standards",
+    "@northbridge/presentation-policy": "file:../presentation-policy",
+    "@northbridge/progressive-forms": "file:../progressive-forms"
+  }
+}

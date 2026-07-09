@@ -1,0 +1,19 @@
+{
+  "name": "@northbridge/conversation-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Conversation Engine — decides answer, ask, confirm, execute, wait, or finish — vendored for northbridge-venture-group Vercel builds (source: NEOS @northbridge/conversation-engine)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@northbridge/conversation-state": "file:../conversation-state"
+  }
+}

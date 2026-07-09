@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://northbridge.dev/schemas/neo-bridge.schema.json",
+  "title": "NEO Bridge Config",
+  "description": "Product repository bridge configuration for @northbridge/neo-bridge",
+  "type": "object",
+  "required": [
+    "productCode",
+    "productName",
+    "repositoryName",
+    "sessionReportPath",
+    "neoPath",
+    "supportsLearning",
+    "supportsStatus",
+    "supportsWarRoom"
+  ],
+  "properties": {
+    "productCode": {
+      "type": "string",
+      "pattern": "^[A-Z0-9]{2,8}$",
+      "description": "Short product identifier (e.g. AVN, QDX)"
+    },
+    "productName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repositoryName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sessionReportPath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Relative path to session report directory"
+    },
+    "neoPath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Relative or absolute path to local NEOS repository"
+    },
+    "supportsLearning": {
+      "type": "boolean"
+    },
+    "supportsStatus": {
+      "type": "boolean"
+    },
+    "supportsWarRoom": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

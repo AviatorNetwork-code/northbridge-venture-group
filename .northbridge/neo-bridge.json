@@ -1,0 +1,10 @@
+{
+  "productCode": "NRD",
+  "productName": "Northbridge Digital (Nordi)",
+  "repositoryName": "northbridge-venture-group",
+  "sessionReportPath": ".northbridge/session-reports",
+  "neoPath": "../../NEOS - Northbridge Engineering Operating System",
+  "supportsLearning": true,
+  "supportsStatus": true,
+  "supportsWarRoom": false
+}

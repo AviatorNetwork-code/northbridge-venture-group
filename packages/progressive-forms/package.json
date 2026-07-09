@@ -1,0 +1,19 @@
+{
+  "name": "@northbridge/progressive-forms",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Progressive Form Engine — one question at a time with validation and resume — vendored for northbridge-venture-group Vercel builds (source: NEOS @northbridge/progressive-forms)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@northbridge/conversation-state": "file:../conversation-state"
+  }
+}

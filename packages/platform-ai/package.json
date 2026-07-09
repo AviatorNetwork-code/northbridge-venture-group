@@ -1,0 +1,16 @@
+{
+  "name": "@northbridge/platform-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Provider-agnostic AI platform — ports, budgets, cost, usage, redaction, and fault-tolerant AI Gateway — vendored for northbridge-venture-group Vercel builds (source: NEOS @northbridge/platform-ai)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts",
+    "build": "tsc -p tsconfig.json"
+  }
+}

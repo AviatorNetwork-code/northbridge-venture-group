@@ -1,5 +1,6 @@
 import type { DiscoveryEngineResult, DiscoveryProfile } from "@/lib/cat/discovery-types";
 import { getIndustryLabel, getNextIndustryQuestion, getIndustryQuestionsAnsweredCount } from "@/lib/cat/industry-questions";
+import { discoveryTurnWantsQuestion } from "@/lib/cat/platform-turn-policy";
 import { buildRelationshipAcknowledgment } from "@/lib/nordi/relationship";
 import {
   noticedLeadIn,
@@ -242,6 +243,8 @@ function shouldOfferRecommendation(profile: DiscoveryProfile): boolean {
 }
 
 function askNextQuestion(profile: DiscoveryProfile): DiscoveryEngineResult | null {
+  if (!discoveryTurnWantsQuestion(profile)) return null;
+
   const question = getNextIndustryQuestion(profile);
   if (!question) return null;
 

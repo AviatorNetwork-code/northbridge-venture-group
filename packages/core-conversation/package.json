@@ -1,0 +1,19 @@
+{
+  "name": "@northbridge/core-conversation",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Deterministic conversation layer — message classification, budget enforcement, payload redaction, AI translation shells — vendored for northbridge-venture-group Vercel builds (source: NEOS @northbridge/core-conversation)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@northbridge/platform-ai": "file:../platform-ai"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts",
+    "build": "tsc -p tsconfig.json"
+  }
+}

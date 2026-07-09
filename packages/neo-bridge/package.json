@@ -1,0 +1,21 @@
+{
+  "name": "@northbridge/neo-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Installable NEO communication bridge — session reports and learning pipeline from any Northbridge product — vendored for northbridge-venture-group Vercel builds (source: NEOS @northbridge/neo-bridge)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "bin": {
+    "northbridge-send-neo": "./bin/northbridge-send-neo.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -3,12 +3,13 @@ import { INDUSTRY_QUESTION_BANK } from "@/lib/cat/industry-questions";
 import {
   createEmptyFactMemory,
   mergeExtractedFacts,
-  selectNextQuestion,
+  processConversationTurn,
   syncMissingFields,
   type AccumulatedFact,
   type ConversationFactMemory,
   type ConversationFieldDefinition,
   type ExtractedFactInput,
+  type ProcessConversationTurnResult,
 } from "@northbridge/conversation-state";
 
 export type DiscoveryField =
@@ -171,8 +172,22 @@ export function profileToFactMemory(profile: DiscoveryProfile): ConversationFact
   };
 }
 
+/** Shared planner turn — code owns missing fields and next question selection. */
+export function runNordiDiscoveryPlanner(
+  profile: DiscoveryProfile,
+  extractedFacts: readonly ExtractedFactInput[] = [],
+  debugContext = "nordi-discovery",
+): ProcessConversationTurnResult {
+  return processConversationTurn({
+    memory: profileToFactMemory(profile),
+    extractedFacts,
+    fieldDefinitions: buildNordiFieldDefinitions(profile),
+    debugContext,
+  });
+}
+
 export function getMissingDiscoveryFields(profile: DiscoveryProfile): DiscoveryField[] {
-  const memory = profileToFactMemory(profile);
+  const { memory } = runNordiDiscoveryPlanner(profile);
   const missing: DiscoveryField[] = [];
 
   if (memory.missingFields.includes("industry")) missing.push("industry");
@@ -196,9 +211,7 @@ export function getMissingDiscoveryFields(profile: DiscoveryProfile): DiscoveryF
 }
 
 export function selectNextNordiQuestion(profile: DiscoveryProfile): ConversationFieldDefinition | null {
-  const memory = profileToFactMemory(profile);
-  const fieldDefinitions = buildNordiFieldDefinitions(profile);
-  return selectNextQuestion(memory, fieldDefinitions).question;
+  return runNordiDiscoveryPlanner(profile).selectedQuestion;
 }
 
 export type DiscoveryDecisionLog = {
@@ -212,17 +225,15 @@ export type DiscoveryDecisionLog = {
 export function logDiscoveryDecision(log: DiscoveryDecisionLog): void {
   if (process.env.NORDI_DEBUG !== "1" && process.env.NODE_ENV === "production") return;
 
-  const memory = profileToFactMemory(log.accumulatedProfile);
-  const fieldDefinitions = buildNordiFieldDefinitions(log.accumulatedProfile);
-  const { skippedRepeatedQuestions } = selectNextQuestion(memory, fieldDefinitions);
+  const planner = runNordiDiscoveryPlanner(log.accumulatedProfile);
 
   console.info("[Nordi Discovery]", {
     message: log.message,
     extractedFields: log.extractedFields,
-    accumulatedFacts: memory.accumulatedFacts,
-    answeredFields: memory.answeredFields,
+    accumulatedFacts: planner.memory.accumulatedFacts,
+    answeredFields: planner.memory.answeredFields,
     missingFields: log.missingFields,
     nextSelectedQuestion: log.nextSelectedQuestion,
-    skippedRepeatedQuestions,
+    skippedRepeatedQuestions: planner.skippedRepeatedQuestions,
   });
 }

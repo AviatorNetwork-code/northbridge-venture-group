@@ -1,6 +1,5 @@
 import type { DiscoveryProfile } from "@/lib/cat/discovery-types";
-import { profileToFactMemory, buildNordiFieldDefinitions } from "@/lib/cat/fact-memory-bridge";
-import { selectNextQuestion } from "@northbridge/conversation-state";
+import { selectNextNordiQuestion } from "@/lib/cat/fact-memory-bridge";
 
 export type IndustryQuestion = {
   id: string;
@@ -121,9 +120,7 @@ export const INDUSTRY_QUESTION_BANK: IndustryQuestion[] = [
 ];
 
 export function getNextIndustryQuestion(profile: DiscoveryProfile): IndustryQuestion | null {
-  const memory = profileToFactMemory(profile);
-  const fieldDefinitions = buildNordiFieldDefinitions(profile);
-  const { question } = selectNextQuestion(memory, fieldDefinitions);
+  const question = selectNextNordiQuestion(profile);
   if (!question) return null;
 
   const match = INDUSTRY_QUESTION_BANK.find((entry) => entry.id === question.fieldId);

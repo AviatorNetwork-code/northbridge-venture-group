@@ -8,10 +8,24 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "send-neo": "northbridge-send-neo",
+    "validate-neo-bridge": "northbridge-send-neo --dry-run --level 1"
   },
   "dependencies": {
+    "@northbridge/adaptive-cards": "file:./packages/adaptive-cards",
+    "@northbridge/assistant-cards": "file:./packages/assistant-cards",
+    "@northbridge/assistant-contracts": "file:./packages/assistant-contracts",
+    "@northbridge/context-actions": "file:./packages/context-actions",
+    "@northbridge/conversation-engine": "file:./packages/conversation-engine",
     "@northbridge/conversation-state": "file:./packages/conversation-state",
+    "@northbridge/core-conversation": "file:./packages/core-conversation",
+    "@northbridge/interaction-engine": "file:./packages/interaction-engine",
+    "@northbridge/interaction-standards": "file:./packages/interaction-standards",
+    "@northbridge/neo-bridge": "file:./packages/neo-bridge",
+    "@northbridge/platform-ai": "file:./packages/platform-ai",
+    "@northbridge/presentation-policy": "file:./packages/presentation-policy",
+    "@northbridge/progressive-forms": "file:./packages/progressive-forms",
     "next": "14.2.18",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -25,6 +39,7 @@
     "eslint-config-next": "14.2.18",
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.4",
+    "tsx": "^4.22.4",
     "typescript": "^5.4.5",
     "vitest": "^3.2.4"
   }

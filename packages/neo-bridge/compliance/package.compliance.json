@@ -1,0 +1,61 @@
+{
+  "manifest_version": "1.0",
+  "feature_id": "neo-bridge",
+  "feature_name": "Neo Bridge",
+  "package": "@northbridge/neo-bridge",
+  "owner": "neo-platform",
+  "description": "Package-level compliance manifest for @northbridge/neo-bridge. Update before production readiness.",
+  "data_categories": [
+    "system_metadata"
+  ],
+  "regions_supported": [
+    "us",
+    "ca",
+    "eu"
+  ],
+  "compliance_frameworks": [
+    "soc2",
+    "iso27001",
+    "iso27017",
+    "iso27018",
+    "iso27701",
+    "nist_csf",
+    "ccpa_cpra",
+    "pipeda",
+    "gdpr"
+  ],
+  "required_controls": [
+    "NGCF-SOC2-CC6",
+    "NGCF-SOC2-CC8",
+    "NGCF-SOC2-C1",
+    "NGCF-ISO27001-A8.15",
+    "NGCF-ISO27001-A8.24",
+    "NGCF-ISO27701-ROPA",
+    "NGCF-SDLC-MANIFEST"
+  ],
+  "audit_events": [
+    "package.initialized",
+    "config.changed",
+    "data.accessed"
+  ],
+  "data_retention": {
+    "duration_days": 365,
+    "policy": "Package-scaffold default — update per DATA_GOVERNANCE_STANDARD before production",
+    "legal_hold_supported": true,
+    "deletion_method": "hard_delete"
+  },
+  "deletion_supported": true,
+  "export_supported": true,
+  "ai_enabled": false,
+  "payment_related": false,
+  "healthcare_related": false,
+  "government_related": false,
+  "risk_level": "low",
+  "approval_required": false,
+  "lawful_basis": [
+    "contract",
+    "legitimate_interests"
+  ],
+  "last_reviewed": "2026-07-08",
+  "reviewed_by": "neo-compliance-engine"
+}
