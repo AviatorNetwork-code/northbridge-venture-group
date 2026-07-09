@@ -28,6 +28,12 @@ export type ConsultantVoiceCopy = {
   questionReasons: Record<string, string>;
   trustSummaryHeader: string;
   trustSummaryFooter: string;
+  trustSummaryProse: (industry: string, friction: string, channels: string) => string;
+  trustSummaryBulleted: (
+    parts: string[],
+    channels: string | undefined,
+    friction: string | undefined,
+  ) => string;
   soloOperatorLabel: string;
   employeeCountLabel: (count: number) => string;
   customersViaLabel: (channels: string) => string;

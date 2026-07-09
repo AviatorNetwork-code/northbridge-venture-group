@@ -1,5 +1,5 @@
 import type { DiscoveryProfile } from "@/lib/cat/discovery-types";
-import { hasMinimumBusinessContext } from "@/lib/cat/discovery-profile-state";
+import { hasMeaningfulContextForSave } from "@/lib/nordi/consultant-voice/consultant-cadence";
 
 export const INTRO_MESSAGE = [
   "Hello.",
@@ -62,11 +62,8 @@ export function detectHumanAssistanceRequest(text: string): boolean {
 export function shouldOfferSavePrompt(profile: DiscoveryProfile): boolean {
   const userMessages = profile.userMessageCount ?? 0;
 
-  if (userMessages >= 5) return true;
-  if (userMessages >= 3 && hasMinimumBusinessContext(profile)) return true;
-
-  const answeredCount = profile.answeredQuestions?.length ?? 0;
-  if (userMessages >= 3 && answeredCount >= 2) return true;
+  if (userMessages >= 6) return true;
+  if (hasMeaningfulContextForSave(profile)) return true;
 
   return false;
 }

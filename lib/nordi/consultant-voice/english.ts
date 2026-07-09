@@ -1,11 +1,8 @@
 import type { ConsultantVoiceCopy } from "@/lib/nordi/consultant-voice/types";
 
 export const ENGLISH_COPY: ConsultantVoiceCopy = {
-  soloOperatorReasoning: [
+  soloOperatorReasoning:
     "Running everything yourself usually means every interruption affects the entire business.",
-    "",
-    "That helps me understand where operational improvements could have the biggest impact.",
-  ].join("\n"),
   smallTeamReasoning: [
     "With a small team, coordination often lives in a few people's heads.",
     "",
@@ -35,14 +32,12 @@ export const ENGLISH_COPY: ConsultantVoiceCopy = {
     ].join("\n"),
   ],
   schedulingContactConnection:
-    "Given the scheduling pressure you mentioned, I want to understand how customers usually initiate contact today.",
+    "Given the scheduling pressure you mentioned, how do customers usually initiate contact today?",
   soloFrictionConnection:
     "As a solo operator, the friction you feel usually maps directly to how much context-switching you do in a day.",
   questionReasons: {
-    "general-team-size":
-      "Scale changes where bottlenecks show up — I want to understand that before we go deeper.",
-    "general-customer-contact":
-      "How customers reach you tells me where follow-ups are most likely to get lost.",
+    "general-team-size": "Team size shapes where operational pressure shows up first.",
+    "general-customer-contact": "Customer contact paths often reveal where follow-ups slip.",
     "general-friction":
       "I want to focus on the operational bottleneck that actually costs you time each week.",
     "dental-online-booking":
@@ -56,6 +51,22 @@ export const ENGLISH_COPY: ConsultantVoiceCopy = {
   },
   trustSummaryHeader: "So far, here is what I am seeing:",
   trustSummaryFooter: "That gives me a much clearer picture.",
+  trustSummaryProse: (industry, friction, channels) => {
+    const frictionSnippet = friction.length > 48 ? `${friction.slice(0, 45)}...` : friction;
+    return `So far, I'm seeing a small ${industry} business where ${frictionSnippet.toLowerCase()} may matter more than how customers reach you via ${channels}.`;
+  },
+  trustSummaryBulleted: (parts, channels, friction) => {
+    const bullets = [...parts];
+    if (channels) bullets.push(`Customers reach you via ${channels}`);
+    if (friction) {
+      bullets.push(friction.length > 72 ? `${friction.slice(0, 69)}...` : friction);
+    }
+    return [
+      "So far, here is what I am seeing:",
+      "",
+      ...bullets.map((item) => `• ${item.charAt(0).toUpperCase()}${item.slice(1)}`),
+    ].join("\n");
+  },
   soloOperatorLabel: "Solo operator",
   employeeCountLabel: (count) => `About ${count} people involved day to day`,
   customersViaLabel: (channels) => `Customers reach you via ${channels}`,
@@ -77,8 +88,7 @@ export const ENGLISH_COPY: ConsultantVoiceCopy = {
   hvacEmergencyObs:
     "emergency service is prominent, which usually means after-hours coordination matters",
   schedulingAlignment: "That lines up with what you have been describing about scheduling.",
-  websiteFrictionConnection:
-    "It may explain part of the friction you described — we can keep connecting the dots as we talk.",
+  websiteFrictionConnection: "",
   industryOpening: (label) => {
     const options = [
       `A ${label.toLowerCase()} — that gives me a useful starting point.`,

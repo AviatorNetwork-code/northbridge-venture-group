@@ -3,6 +3,7 @@ import {
   detectHumanAssistanceRequest,
   shouldOfferSavePrompt,
 } from "@/lib/nordi/home-conversation-flow";
+import { hasMeaningfulContextForSave } from "@/lib/nordi/consultant-voice/consultant-cadence";
 
 describe("home conversation flow", () => {
   it("detects human assistance requests", () => {
@@ -18,15 +19,51 @@ describe("home conversation flow", () => {
     expect(detectHumanAssistanceRequest("Too many messages on paper")).toBe(false);
   });
 
-  it("offers save after enough messages or business context", () => {
+  it("requires meaningful context before offering save early", () => {
+    expect(
+      hasMeaningfulContextForSave({
+        industry: "professional-services",
+        employeeCount: 2,
+      }),
+    ).toBe(false);
+
+    expect(
+      hasMeaningfulContextForSave({
+        industry: "professional-services",
+        employeeCount: 2,
+        communicationChannels: ["phone"],
+      }),
+    ).toBe(true);
+
+    expect(
+      hasMeaningfulContextForSave({
+        industry: "professional-services",
+        employeeCount: 2,
+        discoveryAnswers: { "general-friction": "Follow-ups slip" },
+      }),
+    ).toBe(true);
+  });
+
+  it("delays save prompt until meaningful context or six messages", () => {
     expect(shouldOfferSavePrompt({ userMessageCount: 4 })).toBe(false);
-    expect(shouldOfferSavePrompt({ userMessageCount: 5 })).toBe(true);
+    expect(shouldOfferSavePrompt({ userMessageCount: 5 })).toBe(false);
+    expect(shouldOfferSavePrompt({ userMessageCount: 6 })).toBe(true);
+
+    expect(
+      shouldOfferSavePrompt({
+        userMessageCount: 3,
+        industry: "dental",
+        employeeCount: 2,
+        communicationChannels: ["phone"],
+      }),
+    ).toBe(true);
+
     expect(
       shouldOfferSavePrompt({
         userMessageCount: 3,
         industry: "dental",
         answeredQuestions: ["dental-online-booking"],
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 });

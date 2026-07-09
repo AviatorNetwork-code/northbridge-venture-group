@@ -1,6 +1,12 @@
 import type { DiscoveryProfile } from "@/lib/cat/discovery-types";
 import type { WebsiteAnalysisResult } from "@/lib/cat/discovery-types";
 import { getLocalizedIndustryLabel } from "@/lib/nordi/localized-content";
+import {
+  decideConsultantCadence,
+  isSoloOperatorProfile,
+  shouldIncludeCadenceContent,
+  shouldShowTrustSummary,
+} from "@/lib/nordi/consultant-voice/consultant-cadence";
 import { ENGLISH_COPY } from "@/lib/nordi/consultant-voice/english";
 import { SPANISH_COPY } from "@/lib/nordi/consultant-voice/spanish";
 import type {
@@ -31,29 +37,19 @@ function buildAnswerReasoning(
 ): string | null {
   const text = input.userMessage.toLowerCase();
   const { answeredQuestionId, profile } = input;
-  const seed = profile.userMessageCount ?? 0;
 
-  if (
-    answeredQuestionId === "general-team-size" ||
-    (profile.employeeCount === 1 &&
-      includesAny(text, [
-        "just me",
-        "solo",
-        "only me",
-        "one person",
-        "solo yo",
-        "sólo yo",
-        "unicamente yo",
-        "únicamente yo",
-      ]))
-  ) {
-    return copy.soloOperatorReasoning;
-  }
-
-  if (profile.employeeCount != null && profile.employeeCount > 1 && profile.employeeCount <= 8) {
-    if (answeredQuestionId === "general-team-size") {
+  if (answeredQuestionId === "general-team-size") {
+    if (profile.employeeCount === 1 && isSoloOperatorProfile(profile, input.userMessage)) {
+      return copy.soloOperatorReasoning;
+    }
+    if (
+      profile.employeeCount != null &&
+      profile.employeeCount > 1 &&
+      profile.employeeCount <= 8
+    ) {
       return copy.smallTeamReasoning;
     }
+    return null;
   }
 
   if (answeredQuestionId === "general-customer-contact") {
@@ -61,10 +57,13 @@ function buildAnswerReasoning(
     if (channelCount > 1) {
       return copy.multiChannelReasoning;
     }
-    return copy.singleChannelReasoning;
+    if (text.length > 24) {
+      return copy.singleChannelReasoning;
+    }
+    return null;
   }
 
-  if (answeredQuestionId === "general-friction") {
+  if (answeredQuestionId === "general-friction" && text.length > 30) {
     return copy.frictionReasoning;
   }
 
@@ -84,7 +83,8 @@ function buildAnswerReasoning(
     return copy.referralReasoning;
   }
 
-  if (seed % 5 === 0 && profile.industry) {
+  const seed = profile.userMessageCount ?? 0;
+  if (seed % 8 === 0 && profile.industry && text.length > 40) {
     const label = getLocalizedIndustryLabel(profile.industry, language);
     return copy.industryDetailReasoning(label);
   }
@@ -143,8 +143,6 @@ function buildFactConnection(
 function buildQuestionReason(copy: ConsultantVoiceCopy, input: ConsultantTurnInput): string | null {
   const reason = copy.questionReasons[input.nextQuestionId];
   if (!reason) return null;
-
-  if ((input.profile.userMessageCount ?? 0) % 3 === 1) return null;
   return reason;
 }
 
@@ -153,35 +151,30 @@ function buildTrustSummary(
   language: NordiLanguage,
   profile: DiscoveryProfile,
 ): string | null {
-  const bullets: string[] = [];
-  const seed = profile.userMessageCount ?? 0;
+  if (!shouldShowTrustSummary(profile)) return null;
 
-  if (seed < 6 || seed % 6 !== 0) return null;
+  const parts: string[] = [];
 
   if (profile.industry) {
-    bullets.push(getLocalizedIndustryLabel(profile.industry, language));
+    parts.push(getLocalizedIndustryLabel(profile.industry, language).toLowerCase());
   }
 
   if (profile.employeeCount === 1) {
-    bullets.push(copy.soloOperatorLabel);
+    parts.push(copy.soloOperatorLabel.toLowerCase());
   } else if (profile.employeeCount) {
-    bullets.push(copy.employeeCountLabel(profile.employeeCount));
-  }
-
-  if ((profile.communicationChannels?.length ?? 0) > 0) {
-    bullets.push(copy.customersViaLabel(profile.communicationChannels?.join(", ") ?? ""));
+    parts.push(`about ${profile.employeeCount} people day to day`);
   }
 
   const friction = profile.discoveryAnswers?.["general-friction"];
-  if (friction) {
-    bullets.push(friction.length > 72 ? `${friction.slice(0, 69)}...` : friction);
+  const channels = profile.communicationChannels?.join(", ");
+
+  if (friction && channels) {
+    return copy.trustSummaryProse(parts[0] ?? "your business", friction, channels);
   }
 
-  if (bullets.length < 3) return null;
+  if (parts.length < 2) return null;
 
-  return [copy.trustSummaryHeader, "", ...bullets.map((item) => `• ${item}`), "", copy.trustSummaryFooter].join(
-    "\n",
-  );
+  return copy.trustSummaryBulleted(parts, channels, friction);
 }
 
 function createConsultantQuestionTurn(
@@ -189,21 +182,28 @@ function createConsultantQuestionTurn(
   language: NordiLanguage,
   input: ConsultantTurnInput,
 ): ConsultantTurnOutput {
+  const cadenceMode = decideConsultantCadence(input);
   const segments: string[] = [];
 
-  const summary = buildTrustSummary(copy, language, input.profile);
-  if (summary) segments.push(summary);
+  if (shouldIncludeCadenceContent(cadenceMode, "trust_summary", input)) {
+    const summary = buildTrustSummary(copy, language, input.profile);
+    if (summary) segments.push(summary);
+  }
 
   const reasoning = buildAnswerReasoning(copy, language, input);
-  if (reasoning) segments.push(reasoning);
+  if (reasoning && shouldIncludeCadenceContent(cadenceMode, "answer_reasoning", input)) {
+    segments.push(reasoning);
+  }
 
   const connection = buildFactConnection(copy, input);
-  if (connection && (input.profile.userMessageCount ?? 0) % 2 === 0) {
+  if (connection && shouldIncludeCadenceContent(cadenceMode, "fact_connection", input)) {
     segments.push(connection);
   }
 
   const questionReason = buildQuestionReason(copy, input);
-  if (questionReason) segments.push(questionReason);
+  if (questionReason && shouldIncludeCadenceContent(cadenceMode, "question_reason", input)) {
+    segments.push(questionReason);
+  }
 
   const question = input.nextQuestionPrompt;
 
@@ -301,8 +301,8 @@ function createWebsiteInsightNarrative(
         ? observations[0]
         : `${observations.slice(0, -1).join(", ")}, and ${observations[observations.length - 1]}`;
     const prefix = copy.websiteFinishedReview.includes("Terminé")
-      ? "Una cosa que noté es que "
-      : "One thing I noticed is that ";
+      ? "Una cosa que noté: "
+      : "One thing I noticed: ";
     paragraphs.push(`${prefix}${joined}.`);
   }
 
@@ -312,8 +312,6 @@ function createWebsiteInsightNarrative(
     !analysis.hasAppointmentSystem
   ) {
     paragraphs.push(copy.schedulingAlignment);
-  } else if (observations.length > 0) {
-    paragraphs.push(copy.websiteFrictionConnection);
   }
 
   return paragraphs;
@@ -331,12 +329,10 @@ function createConsultantIndustryOpening(
       ? [
           `Un negocio de ${label.toLowerCase()} — eso me da un buen punto de partida.`,
           `${label} — ese contexto me ayuda a hacer mejores preguntas.`,
-          `Entendido — los negocios de ${label.toLowerCase()} suelen compartir presiones operativas similares.`,
         ]
       : [
-          `A ${label.toLowerCase()} — that gives me a useful starting point.`,
+          `A ${label.toLowerCase()} business — that gives me a useful starting point.`,
           `${label} — that context helps me ask better questions.`,
-          `Understood — ${label.toLowerCase()} businesses often share similar operational pressure points.`,
         ];
   return options[Math.abs(seed) % options.length];
 }
