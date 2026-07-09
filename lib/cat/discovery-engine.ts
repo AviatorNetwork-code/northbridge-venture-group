@@ -3,12 +3,12 @@ import { getIndustryLabel, getNextIndustryQuestion, getIndustryQuestionsAnswered
 import { discoveryTurnWantsQuestion } from "@/lib/cat/platform-turn-policy";
 import { buildRelationshipAcknowledgment } from "@/lib/nordi/relationship";
 import {
-  noticedLeadIn,
-  pickAcknowledgment,
-  pickIndustryAcknowledgment,
-  pickReturningPrefix,
-  softenTransition,
-} from "@/lib/nordi/human-language";
+  buildConsultantIndustryOpening,
+  buildConsultantQuestionTurn,
+  buildConsultantRecommendationReply,
+  buildConsultantWebsitePermissionLead,
+  buildConsultantWebsiteUrlAck,
+} from "@/lib/nordi/consultant-voice";
 import { extractWebsiteUrl } from "@/lib/cat/website-analysis";
 import {
   buildMissingFieldPrompt,
@@ -165,8 +165,13 @@ function extractPassiveSignals(text: string, rawMessage: string, profile: Discov
 
 function acknowledgeIndustry(profile: DiscoveryProfile): string {
   const label = getIndustryLabel(profile.industry);
-  return pickIndustryAcknowledgment(label, profile.userMessageCount ?? 0);
+  return buildConsultantIndustryOpening(label, profile.userMessageCount ?? 0);
 }
+
+type DiscoveryTurnContext = {
+  userMessage: string;
+  answeredQuestionId?: string;
+};
 
 function shouldAskWebsitePermission(profile: DiscoveryProfile): boolean {
   if (profile.websitePermissionAsked || profile.website) return false;
@@ -211,22 +216,12 @@ function buildSupportAreas(profile: DiscoveryProfile): string[] {
 
 function buildRecommendationReply(profile: DiscoveryProfile): DiscoveryEngineResult {
   const areas = buildSupportAreas(profile);
-  const seed = profile.userMessageCount ?? 0;
+  const presentation = buildConsultantRecommendationReply(profile, areas);
 
   return {
     thinkingContext: "preparing",
-    progressiveReply: [
-      noticedLeadIn(seed),
-      "Based on what you've shared, a few areas stand out where extra operational support may matter.",
-      [
-        ...areas.map((area) => `• ${area.charAt(0).toUpperCase()}${area.slice(1)}`),
-        "",
-        "I'm not recommending products yet — just noting what I'm seeing.",
-        "",
-        "Tell me more about how your team handles these today.",
-      ].join("\n"),
-    ],
-    reply: "",
+    progressiveReply: presentation.progressiveReply,
+    reply: presentation.reply,
     profileUpdates: mergeProfile(profile, {
       discoveryPhase: "recommendations",
       areasForSupport: areas,
@@ -242,27 +237,42 @@ function shouldOfferRecommendation(profile: DiscoveryProfile): boolean {
   );
 }
 
-function askNextQuestion(profile: DiscoveryProfile): DiscoveryEngineResult | null {
+function askNextQuestion(
+  profile: DiscoveryProfile,
+  turnContext?: DiscoveryTurnContext,
+): DiscoveryEngineResult | null {
   if (!discoveryTurnWantsQuestion(profile)) return null;
 
   const question = getNextIndustryQuestion(profile);
   if (!question) return null;
 
   const seed = profile.userMessageCount ?? 0;
-  let prefix = `${pickAcknowledgment(seed)}\n\n`;
+  const presentation = buildConsultantQuestionTurn({
+    profile,
+    userMessage: turnContext?.userMessage ?? "",
+    answeredQuestionId: turnContext?.answeredQuestionId,
+    nextQuestionId: question.id,
+    nextQuestionPrompt: question.prompt,
+  });
 
-  if (profile.isReturningVisitor && profile.industry) {
-    prefix = `${pickReturningPrefix(seed)}\n\n`;
-  } else if (profile.userMessageCount === 1 && profile.industry) {
-    prefix = `${acknowledgeIndustry(profile)}\n\n`;
+  let progressiveReply = presentation.progressiveReply;
+  let reply = presentation.reply;
+
+  if (profile.userMessageCount === 1 && profile.industry && !turnContext?.answeredQuestionId) {
+    const opening = acknowledgeIndustry(profile);
+    progressiveReply = progressiveReply
+      ? [opening, ...progressiveReply]
+      : [opening, reply];
+    reply = "";
   }
 
-  const useProgressive = seed % 3 === 0 && question.prompt.length > 40;
+  const useProgressive =
+    Boolean(progressiveReply?.length) || (seed % 4 === 0 && question.prompt.length > 40);
 
-  if (useProgressive) {
+  if (useProgressive && progressiveReply?.length) {
     return {
       thinkingContext: "analyzing-shared",
-      progressiveReply: [softenTransition(seed), question.prompt],
+      progressiveReply,
       reply: "",
       profileUpdates: mergeProfile(profile, {
         pendingQuestionId: question.id,
@@ -272,7 +282,7 @@ function askNextQuestion(profile: DiscoveryProfile): DiscoveryEngineResult | nul
   }
 
   return {
-    reply: `${prefix}${question.prompt}`,
+    reply: reply || question.prompt,
     profileUpdates: mergeProfile(profile, {
       pendingQuestionId: question.id,
       discoveryPhase: "learning",
@@ -295,7 +305,7 @@ function logTurnDecision(
   });
 }
 
-function buildDiscoveryFallback(profile: DiscoveryProfile, messageCount: number): DiscoveryEngineResult | null {
+function buildDiscoveryFallback(profile: DiscoveryProfile): DiscoveryEngineResult | null {
   const missingFields = getMissingDiscoveryFields(profile);
   const missingFieldPrompt = buildMissingFieldPrompt(missingFields);
 
@@ -305,7 +315,7 @@ function buildDiscoveryFallback(profile: DiscoveryProfile, messageCount: number)
 
   return {
     thinkingContext: "analyzing-shared",
-    reply: [pickAcknowledgment(messageCount), "", missingFieldPrompt].join("\n"),
+    reply: missingFieldPrompt,
     profileUpdates: profile,
   };
 }
@@ -319,16 +329,21 @@ export function processDiscoveryMessage(
   const profileBeforeTurn = profile;
   let nextProfile = mergeProfile(profile, { userMessageCount: messageCount });
   const extractedUrl = extractWebsiteUrl(rawMessage);
+  const answeredQuestionId = nextProfile.pendingQuestionId;
 
-  if (nextProfile.pendingQuestionId) {
-    nextProfile = recordAnswer(nextProfile, nextProfile.pendingQuestionId, rawMessage.trim());
+  if (answeredQuestionId) {
+    nextProfile = recordAnswer(nextProfile, answeredQuestionId, rawMessage.trim());
   }
 
   nextProfile = extractPassiveSignals(text, rawMessage, nextProfile);
+  const turnContext: DiscoveryTurnContext = {
+    userMessage: rawMessage.trim(),
+    answeredQuestionId,
+  };
 
   const relationshipAck = buildRelationshipAcknowledgment(nextProfile, rawMessage);
   if (relationshipAck) {
-    const nextQuestion = askNextQuestion(nextProfile);
+    const nextQuestion = askNextQuestion(nextProfile, turnContext);
     if (nextQuestion) {
       logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, getNextIndustryQuestion(nextProfile)?.id ?? null);
       return {
@@ -370,7 +385,7 @@ export function processDiscoveryMessage(
 
     logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, followUp?.id ?? null);
     return {
-      reply: `Perfect — I'll review your public site while we keep talking.${continueLine}`,
+      reply: buildConsultantWebsiteUrlAck(continueLine),
       profileUpdates: mergeProfile(nextProfile, { pendingQuestionId: followUp?.id }),
       triggerWebsiteAnalysis: extractedUrl,
       showWebsiteAnalyzing: true,
@@ -391,7 +406,7 @@ export function processDiscoveryMessage(
       discoveryPhase: "learning",
     });
 
-    const nextQuestion = askNextQuestion(nextProfile);
+    const nextQuestion = askNextQuestion(nextProfile, turnContext);
     if (nextQuestion) {
       logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, getNextIndustryQuestion(nextProfile)?.id ?? null);
       return nextQuestion;
@@ -410,12 +425,11 @@ export function processDiscoveryMessage(
 
   if (shouldAskWebsitePermission(nextProfile) && !nextProfile.websitePermissionAsked) {
     nextProfile = mergeProfile(nextProfile, { websitePermissionAsked: true });
-    const seed = nextProfile.userMessageCount ?? 0;
     logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, "website-permission");
     return {
       thinkingContext: "reviewing-business",
       progressiveReply: [
-        pickAcknowledgment(seed),
+        buildConsultantWebsitePermissionLead(nextProfile),
         websitePermissionPrompt(),
       ],
       reply: "",
@@ -437,13 +451,13 @@ export function processDiscoveryMessage(
     return buildRecommendationReply(nextProfile);
   }
 
-  const nextQuestion = askNextQuestion(nextProfile);
+  const nextQuestion = askNextQuestion(nextProfile, turnContext);
   if (nextQuestion) {
     logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, getNextIndustryQuestion(nextProfile)?.id ?? null);
     return nextQuestion;
   }
 
-  const fallback = buildDiscoveryFallback(nextProfile, messageCount);
+  const fallback = buildDiscoveryFallback(nextProfile);
   if (fallback) {
     logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, fallback.reply);
     return fallback;
@@ -453,7 +467,7 @@ export function processDiscoveryMessage(
   return {
     thinkingContext: "reviewing-business",
     progressiveReply: [
-      "I appreciate you walking me through that.",
+      "What you have described gives me a clearer picture of how the week actually runs.",
       "What tends to create the most friction in a typical week — scheduling, follow-ups, staffing, or something else?",
     ],
     reply: "",

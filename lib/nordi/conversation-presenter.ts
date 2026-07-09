@@ -1,11 +1,6 @@
 import type { DiscoveryEngineResult, DiscoveryProfile, WebsiteAnalysisResult } from "@/lib/cat/discovery-types";
-import {
-  buildConversationInsightCard,
-  buildWebsiteObservationCard,
-  pickPrimaryInsightSignal,
-  type NordiMessageCard,
-} from "@/lib/nordi/cards";
-import { noticedLeadIn } from "@/lib/nordi/human-language";
+import type { NordiMessageCard } from "@/lib/nordi/cards";
+import { buildWebsiteInsightNarrative } from "@/lib/nordi/consultant-voice";
 import { briefPauseMs, buildThinkingPhases, type ThinkingContext } from "@/lib/nordi/thinking-states";
 
 export type PresenterStep =
@@ -127,40 +122,22 @@ export function buildWebsiteAnalysisSequence(
     steps.push({ type: "think", label: phase.label, durationMs: phase.durationMs });
   }
 
-  const observationCard = buildWebsiteObservationCard(analysis);
-  const insightSignal = pickPrimaryInsightSignal(analysis);
-  const insightCard = insightSignal ? buildConversationInsightCard(insightSignal, profile) : null;
+  const narrative = buildWebsiteInsightNarrative(analysis, profile);
 
-  steps.push({
-    type: "message",
-    content: "I've finished reviewing your website.",
-    animate: true,
-    card: { type: "website-observation", data: observationCard },
-  });
+  narrative.forEach((paragraph, index) => {
+    if (index > 0) {
+      steps.push({
+        type: "think",
+        label: "Thinking...",
+        durationMs: briefPauseMs(sessionId, messageIndex, index),
+      });
+    }
 
-  if (insightCard) {
-    steps.push({
-      type: "think",
-      label: "Preparing observations...",
-      durationMs: briefPauseMs(sessionId, messageIndex, 1),
-    });
     steps.push({
       type: "message",
-      content: noticedLeadIn(messageIndex),
+      content: paragraph,
       animate: true,
-      card: { type: "conversation-insight", data: insightCard },
     });
-  }
-
-  steps.push({
-    type: "think",
-    label: "Thinking...",
-    durationMs: briefPauseMs(sessionId, messageIndex, 2),
-  });
-  steps.push({
-    type: "message",
-    content: "These are observations only — we'll keep learning as we talk.",
-    animate: true,
   });
 
   return steps;
