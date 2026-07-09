@@ -19,3 +19,4 @@ export {
 } from "./state.js";
 
 export * from "./factMemory/index.js";
+export * from "./multilingual/index.js";

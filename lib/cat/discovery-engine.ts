@@ -11,6 +11,7 @@ import {
   getConsultantVoice,
 } from "@/lib/nordi/consultant-voice";
 import { detectAndPersistLanguage } from "@/lib/nordi/language/detect-language";
+import { extractBusinessSignals } from "@/lib/nordi/entity-extraction";
 import type { NordiLanguage } from "@/lib/nordi/language/types";
 import {
   buildLocalizedMissingFieldPrompt,
@@ -34,76 +35,19 @@ function includesAny(text: string, terms: string[]): boolean {
   return terms.some((term) => text.includes(term));
 }
 
-function extractIndustry(text: string): string | undefined {
-  const industries: Record<string, string[]> = {
-    dental: ["dental", "dentist", "dental office", "dental clinic", "orthodont"],
-    hvac: ["hvac", "heating and cooling", "heating", "air conditioning", "furnace"],
-    aviation: ["flight school", "aviation", "pilot training", "flying school", "cfi"],
-    healthcare: ["healthcare", "medical", "clinic", "hospital", "patient"],
-    hospitality: ["restaurant", "restaurants", "hotel", "hospitality", "cafe", "bar", "restaurante", "restaurantes", "cafetería", "cafeteria"],
-    retail: ["retail", "store", "shop", "ecommerce", "e-commerce", "tienda", "comercio"],
-    "professional-services": [
-      "law firm",
-      "accounting",
-      "consulting",
-      "agency",
-      "tax",
-      "taxes",
-      "cpa",
-      "bookkeeping",
-      "accountant",
-      "tax preparer",
-      "tax preparation",
-      "impuestos",
-      "impuesto",
-      "contabilidad",
-      "contador",
-      "contadores",
-      "fiscal",
-      "negocio de impuestos",
-    ],
-    fitness: ["gym", "fitness", "studio", "yoga", "gimnasio"],
-    salon: ["salon", "spa", "beauty", "salón", "belleza"],
-  };
-
-  for (const [industry, keywords] of Object.entries(industries)) {
-    if (keywords.some((keyword) => text.includes(keyword))) return industry;
-  }
-
-  if (includesAny(text, ["business", "company", "firm", "practice", "shop", "store", "negocio", "empresa", "firma"])) {
-    return "general";
-  }
-
-  return undefined;
-}
-
-function extractEmployeeCount(text: string): number | undefined {
-  const match = text.match(/(\d+)\s*(employees|staff|people|team members|technicians|instructors|providers|workers|empleados|personal|personas|técnicos|trabajadores)/i);
-  if (match) return Number.parseInt(match[1], 10);
-
-  const wordMatch = text.match(/\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez)\s+(restaurants|locations|offices|stores|restaurantes|ubicaciones|oficinas|tiendas)/i);
-  if (wordMatch) {
-    const words: Record<string, number> = {
-      two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12,
-      dos: 2, tres: 3, cuatro: 4, cinco: 5, seis: 6, siete: 7, ocho: 8, nueve: 9, diez: 10,
-    };
-    return words[wordMatch[1].toLowerCase()];
-  }
-
-  if (includesAny(text, ["just me", "solo", "one person", "only me", "solo yo", "sólo yo", "unicamente yo", "únicamente yo"])) return 1;
-  if (includesAny(text, ["small team", "few people", "equipo pequeño", "pocas personas"])) return 5;
-  return undefined;
-}
-
-function extractLocationCount(text: string): number | undefined {
-  const match = text.match(/(\d+)\s*(locations|restaurants|offices|stores|sites)/i);
-  if (match) return Number.parseInt(match[1], 10);
-  if (includesAny(text, ["two restaurants", "2 restaurants"])) return 2;
-  return undefined;
-}
-
 function matchesWholeWord(text: string, words: string[]): boolean {
   return words.some((word) => new RegExp(`\\b${word}\\b`, "i").test(text));
+}
+
+function recordAnswer(profile: DiscoveryProfile, questionId: string, answer: string): DiscoveryProfile {
+  const answered = new Set(profile.answeredQuestions ?? []);
+  answered.add(questionId);
+
+  return mergeProfile(profile, {
+    answeredQuestions: Array.from(answered),
+    discoveryAnswers: { [questionId]: answer },
+    pendingQuestionId: undefined,
+  });
 }
 
 function isAffirmative(text: string): boolean {
@@ -120,15 +64,32 @@ function isSalesPressure(text: string): boolean {
   return includesAny(text, ["how much", "pricing", "price", "cost", "buy", "subscribe", "plan", "cuánto", "cuanto", "precio", "costo", "comprar"]);
 }
 
-function recordAnswer(profile: DiscoveryProfile, questionId: string, answer: string): DiscoveryProfile {
-  const answered = new Set(profile.answeredQuestions ?? []);
-  answered.add(questionId);
+function extractPassiveSignals(text: string, rawMessage: string, profile: DiscoveryProfile): DiscoveryProfile {
+  return applyExtractedSignals(profile, text, rawMessage);
+}
 
-  return mergeProfile(profile, {
-    answeredQuestions: Array.from(answered),
-    discoveryAnswers: { [questionId]: answer },
-    pendingQuestionId: undefined,
-  });
+function applyExtractedSignals(
+  profile: DiscoveryProfile,
+  text: string,
+  rawMessage: string,
+): DiscoveryProfile {
+  const signals = extractBusinessSignals(rawMessage);
+  let next = profile;
+
+  if (signals.industry) next = mergeProfile(next, { industry: signals.industry });
+  if (signals.employeeCount != null) next = mergeProfile(next, { employeeCount: signals.employeeCount });
+  if (signals.locationCount != null) next = mergeProfile(next, { locationCount: signals.locationCount });
+
+  if (signals.communicationChannels?.length) {
+    const channels = new Set([...(next.communicationChannels ?? []), ...signals.communicationChannels]);
+    next = mergeProfile(next, { communicationChannels: Array.from(channels) });
+  }
+
+  if (rawMessage.trim().length >= 8) {
+    next = mergeProfile(next, { notes: [...(next.notes ?? []), rawMessage.trim()] });
+  }
+
+  return hydrateProfileFromAccumulatedState(next);
 }
 
 function hydrateProfileFromAccumulatedState(profile: DiscoveryProfile): DiscoveryProfile {
@@ -136,49 +97,26 @@ function hydrateProfileFromAccumulatedState(profile: DiscoveryProfile): Discover
   if (!accumulatedText) return profile;
 
   let next = profile;
+  const signals = extractBusinessSignals(accumulatedText);
 
-  if (!next.industry) {
-    const industry = extractIndustry(accumulatedText);
-    if (industry) next = mergeProfile(next, { industry });
+  if (!next.industry && signals.industry) {
+    next = mergeProfile(next, { industry: signals.industry });
   }
 
-  if (next.employeeCount == null) {
-    const employees = extractEmployeeCount(accumulatedText);
-    if (employees) next = mergeProfile(next, { employeeCount: employees });
+  if (next.employeeCount == null && signals.employeeCount != null) {
+    next = mergeProfile(next, { employeeCount: signals.employeeCount });
   }
 
-  if (next.locationCount == null) {
-    const locations = extractLocationCount(accumulatedText);
-    if (locations) next = mergeProfile(next, { locationCount: locations });
+  if (next.locationCount == null && signals.locationCount != null) {
+    next = mergeProfile(next, { locationCount: signals.locationCount });
+  }
+
+  if (signals.communicationChannels?.length) {
+    const channels = new Set([...(next.communicationChannels ?? []), ...signals.communicationChannels]);
+    next = mergeProfile(next, { communicationChannels: Array.from(channels) });
   }
 
   return next;
-}
-
-function extractPassiveSignals(text: string, rawMessage: string, profile: DiscoveryProfile): DiscoveryProfile {
-  let next = { ...profile };
-
-  const industry = extractIndustry(text);
-  const employees = extractEmployeeCount(text);
-  const locations = extractLocationCount(text);
-
-  if (industry) next = mergeProfile(next, { industry });
-  if (employees) next = mergeProfile(next, { employeeCount: employees });
-  if (locations) next = mergeProfile(next, { locationCount: locations });
-
-  const channels = new Set(next.communicationChannels ?? []);
-  if (includesAny(text, ["whatsapp"])) channels.add("WhatsApp");
-  if (includesAny(text, ["phone", "call us", "by phone", "teléfono", "telefono", "llamada", "llamadas"])) channels.add("Phone");
-  if (includesAny(text, ["text", "texts", "sms", "text message", "texto", "mensaje", "mensajes"])) channels.add("Text");
-  if (includesAny(text, ["email", "gmail", "correo"])) channels.add("Email");
-  if (includesAny(text, ["walk-in", "walk in", "visita", "visitas"])) channels.add("Walk-ins");
-  if (channels.size > 0) next = mergeProfile(next, { communicationChannels: Array.from(channels) });
-
-  if (rawMessage.trim().length >= 8) {
-    next = mergeProfile(next, { notes: [...(next.notes ?? []), rawMessage.trim()] });
-  }
-
-  return hydrateProfileFromAccumulatedState(next);
 }
 
 function acknowledgeIndustry(profile: DiscoveryProfile): string {

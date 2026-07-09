@@ -13,6 +13,14 @@ describe("language detection", () => {
     expect(result.language).toBe("en");
   });
 
+  it("detects mixed Spanish-English scheduling messages as Spanish", () => {
+    expect(detectLanguageFromText("Necesito help with scheduling.").language).toBe("es");
+  });
+
+  it("detects mixed English-Spanish customer messages as Spanish", () => {
+    expect(detectLanguageFromText("My clientes always call me.").language).toBe("es");
+  });
+
   it("defaults to English when confidence is low", () => {
     expect(detectAndPersistLanguage({}, "ok")).toBe("en");
   });
