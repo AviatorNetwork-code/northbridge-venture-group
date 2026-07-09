@@ -1,0 +1,71 @@
+import type {
+  OrganizationHierarchy,
+  Team,
+  TeamHierarchyNode,
+  WorkforceFeatureFlags,
+} from "@northbridge/workforce-contracts";
+
+export interface BuildHierarchyInput {
+  orgId: string;
+  teams: Team[];
+  version?: number;
+  generatedAt?: string;
+}
+
+export function buildOrganizationHierarchy(
+  input: BuildHierarchyInput,
+): OrganizationHierarchy {
+  const teamNodes: TeamHierarchyNode[] = input.teams.map((team) => ({
+    teamId: team.id,
+    teamLeadId: team.teamLeadId,
+    specialistIds: [...team.specialistIds],
+  }));
+
+  return {
+    orgId: input.orgId,
+    version: input.version ?? 1,
+    teams: teamNodes,
+    generatedAt: input.generatedAt ?? new Date().toISOString(),
+  };
+}
+
+export function mergeHierarchyLayers(
+  base: OrganizationHierarchy,
+  layers: Pick<
+    OrganizationHierarchy,
+    "managers" | "directors" | "vicePresidents"
+  >,
+  flags: WorkforceFeatureFlags,
+): OrganizationHierarchy {
+  const next: OrganizationHierarchy = { ...base };
+
+  if (layers.managers?.length) {
+    if (!flags.managersEnabled) {
+      throw new Error("Cannot attach managers when managersEnabled is false");
+    }
+    next.managers = layers.managers;
+  }
+
+  if (layers.directors?.length) {
+    if (!flags.directorsEnabled) {
+      throw new Error("Cannot attach directors when directorsEnabled is false");
+    }
+    next.directors = layers.directors;
+  }
+
+  if (layers.vicePresidents?.length) {
+    if (!flags.vpsEnabled) {
+      throw new Error("Cannot attach vice presidents when vpsEnabled is false");
+    }
+    next.vicePresidents = layers.vicePresidents;
+  }
+
+  return next;
+}
+
+export function findTeamInHierarchy(
+  hierarchy: OrganizationHierarchy,
+  teamId: string,
+): TeamHierarchyNode | undefined {
+  return hierarchy.teams.find((team) => team.teamId === teamId);
+}

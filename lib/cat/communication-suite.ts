@@ -69,6 +69,16 @@ export const COMMUNICATION_PACKAGES = [
     role: "Budget and token utilities for core-conversation",
     wired: "dependency",
   },
+  {
+    id: "@northbridge/workforce-contracts",
+    role: "Workforce platform shared contracts (organization, roles, tasks)",
+    wired: "deferred",
+  },
+  {
+    id: "@northbridge/workforce-core",
+    role: "Workforce platform core model, hierarchy, permissions, validation",
+    wired: "deferred",
+  },
 ] as const;
 
 export type CommunicationPackageId = (typeof COMMUNICATION_PACKAGES)[number]["id"];

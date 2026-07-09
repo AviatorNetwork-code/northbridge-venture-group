@@ -1,0 +1,23 @@
+{
+  "name": "@northbridge/workforce-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared workforce platform contracts — organization, roles, tasks, recommendations (NEO Phase 1)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}
