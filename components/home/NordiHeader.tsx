@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import NorthbridgeLogo from "@/components/NorthbridgeLogo";
 import { IconClose } from "@/components/operations/icons";
 
 const menuItems = [
@@ -34,8 +35,14 @@ export default function NordiHeader() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-black/90 backdrop-blur-md">
-      <div className="grid h-14 grid-cols-[3rem_1fr_3rem] items-center px-3 sm:h-16 sm:px-4">
-        <div aria-hidden />
+      <div className="grid h-14 grid-cols-[auto_1fr_auto] items-center gap-3 px-3 sm:h-16 sm:px-4">
+        <Link
+          href="/about"
+          className="flex shrink-0 items-center transition-opacity hover:opacity-90"
+          aria-label="Northbridge Venture Group"
+        >
+          <NorthbridgeLogo className="h-8 sm:h-9" />
+        </Link>
 
         <Link
           href="/"

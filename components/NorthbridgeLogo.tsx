@@ -11,7 +11,9 @@ export default function NorthbridgeLogo({ className = "" }: NorthbridgeLogoProps
       alt="Northbridge Venture Group"
       width={1024}
       height={512}
-      className={`block h-auto w-auto shrink-0 ${className}`}
+      sizes="160px"
+      className={`block shrink-0 ${className}`}
+      style={{ width: "auto" }}
       priority
     />
   );

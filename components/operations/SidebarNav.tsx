@@ -30,7 +30,7 @@ export default function SidebarNav({ activeId, isOpen, onClose }: SidebarNavProp
         ].join(" ")}
       >
         <div className="flex h-14 items-center justify-between border-b border-white/10 px-4 sm:h-16 sm:px-5">
-          <Link href="/operations" className="min-w-0" onClick={onClose}>
+          <Link href="/operations" className="flex shrink-0 items-center" onClick={onClose}>
             <NorthbridgeLogo className="h-7 sm:h-8" />
           </Link>
           <button
