@@ -87,12 +87,12 @@ export const COMMUNICATION_PACKAGES = [
   {
     id: "@northbridge/team-orchestrator",
     role: "Team Lead orchestration, delegation, synthesis, and reports",
-    wired: "deferred",
+    wired: "ndp-conversation-router",
   },
   {
     id: "@northbridge/workforce-router",
     role: "Workforce request ownership routing — rules, capabilities, dedup, audit",
-    wired: "deferred",
+    wired: "ndp-conversation-router",
   },
 ] as const;
 
