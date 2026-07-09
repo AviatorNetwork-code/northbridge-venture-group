@@ -6,16 +6,19 @@ import {
   readLearningQueue,
   submitConversationForLearning,
 } from "@/lib/cat/conversation-learning-bridge";
+import { readLearningStore, resetLearningStoreForTests } from "@/lib/cat/conversation-learning/store";
 import { acceptLearningConsent } from "@/lib/nordi/conversation-learning-consent";
 import { createEmptyMemory } from "@/lib/nordi/conversation-memory";
 
 describe("conversation learning bridge", () => {
   beforeEach(() => {
     clearLearningQueueForTests();
+    resetLearningStoreForTests();
   });
 
   afterEach(() => {
     clearLearningQueueForTests();
+    resetLearningStoreForTests();
   });
 
   it("marks complete conversations as learning eligible only with consent", () => {
@@ -39,6 +42,11 @@ describe("conversation learning bridge", () => {
     const withConsent = submitConversationForLearning(memory);
     expect(withConsent.submitted).toBe(true);
     expect(readLearningQueue()).toHaveLength(1);
+
+    const store = readLearningStore();
+    expect(store.rawConversations).toHaveLength(1);
+    expect(store.analyzedRecords).toHaveLength(1);
+    expect(store.analyzedRecords[0]?.status).toBe("analyzed");
   });
 
   it("does not ingest declined conversations", () => {

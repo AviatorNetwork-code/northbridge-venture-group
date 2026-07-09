@@ -3,10 +3,13 @@ import {
   resolveLearningEligible,
   type FounderLearningSettings,
 } from "@/lib/nordi/conversation-learning-consent";
+import { ingestRawConversation } from "@/lib/cat/conversation-learning/workflow";
+import type {
+  RawConversationRecord,
+  LearningRecordStatus,
+} from "@/lib/cat/conversation-learning/types";
 
 export const CAT_LEARNING_QUEUE_KEY = "northbridge-cat-learning-queue";
-
-export type LearningSubmissionStatus = "queued" | "skipped";
 
 export type ConversationLearningSubmission = {
   sessionId: string;
@@ -20,7 +23,7 @@ export type ConversationLearningSubmission = {
   milestones: string[];
   industry?: string;
   discoveryPhase?: string;
-  status: LearningSubmissionStatus;
+  status: LearningRecordStatus;
 };
 
 export type LearningSubmissionResult = {
@@ -78,10 +81,10 @@ export function isConversationComplete(profile: NordiConversationMemory["profile
   );
 }
 
-export function buildLearningSubmission(
+export function buildRawConversationRecord(
   memory: NordiConversationMemory,
   founderSettings?: FounderLearningSettings | null,
-): ConversationLearningSubmission | null {
+): RawConversationRecord | null {
   const learningEligible = resolveLearningEligible(
     memory.conversationLearningConsent,
     founderSettings ?? memory.founderLearningSettings,
@@ -90,19 +93,40 @@ export function buildLearningSubmission(
   if (!learningEligible) return null;
 
   const settings = founderSettings ?? memory.founderLearningSettings;
-  const isFounder = Boolean(memory.founderSession && settings?.markAsFounderConversation);
 
   return {
     sessionId: memory.sessionId,
     submittedAt: new Date().toISOString(),
-    learningEligible: true,
-    isFounderConversation: isFounder,
-    highPriority: Boolean(settings?.highPriorityLearning),
-    autoSendToLearningCenter: Boolean(settings?.autoSendToLearningCenter ?? true),
-    generateRegressionTestCandidates: Boolean(settings?.autoGenerateRegressionTests),
-    messageCount: memory.messages.length,
+    messages: memory.messages,
+    profile: memory.profile,
     milestones: memory.milestones,
     industry: memory.profile.industry,
+    messageCount: memory.messages.length,
+    isFounderConversation: Boolean(memory.founderSession && settings?.markAsFounderConversation),
+    highPriority: Boolean(settings?.highPriorityLearning),
+  };
+}
+
+export function buildLearningSubmission(
+  memory: NordiConversationMemory,
+  founderSettings?: FounderLearningSettings | null,
+): ConversationLearningSubmission | null {
+  const raw = buildRawConversationRecord(memory, founderSettings);
+  if (!raw) return null;
+
+  const settings = founderSettings ?? memory.founderLearningSettings;
+
+  return {
+    sessionId: raw.sessionId,
+    submittedAt: raw.submittedAt,
+    learningEligible: true,
+    isFounderConversation: raw.isFounderConversation,
+    highPriority: raw.highPriority,
+    autoSendToLearningCenter: Boolean(settings?.autoSendToLearningCenter ?? true),
+    generateRegressionTestCandidates: Boolean(settings?.autoGenerateRegressionTests),
+    messageCount: raw.messageCount,
+    milestones: raw.milestones,
+    industry: raw.industry,
     discoveryPhase: memory.profile.discoveryPhase,
     status: "queued",
   };
@@ -124,8 +148,9 @@ export function submitConversationForLearning(
     return { submitted: false, submission: null, reason: "not_eligible" };
   }
 
+  const raw = buildRawConversationRecord(memory);
   const submission = buildLearningSubmission(memory);
-  if (!submission) {
+  if (!raw || !submission) {
     return { submitted: false, submission: null, reason: "not_eligible" };
   }
 
@@ -135,6 +160,8 @@ export function submitConversationForLearning(
   }
 
   writeQueue([...queue, submission]);
+  ingestRawConversation(raw);
+
   return { submitted: true, submission };
 }
 

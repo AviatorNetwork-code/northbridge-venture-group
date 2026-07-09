@@ -49,6 +49,12 @@ export const navigationItems: NavItem[] = [
     description: "Performance metrics and reporting",
   },
   {
+    id: "conversation-learning",
+    label: "Conversation Learning",
+    href: "/operations/conversation-learning",
+    description: "Review Nordi conversations and approve CAT lessons",
+  },
+  {
     id: "billing",
     label: "Billing",
     href: "/operations/billing",

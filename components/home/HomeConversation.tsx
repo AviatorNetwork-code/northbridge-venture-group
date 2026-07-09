@@ -6,6 +6,7 @@ import { useNordiActivity } from "@/components/home/NordiActivityContext";
 import NordiMessageBubble from "@/components/home/NordiMessageBubble";
 import NordiThinkingIndicator from "@/components/home/NordiThinkingIndicator";
 import PublicWebsiteMenu from "@/components/home/PublicWebsiteMenu";
+import NordiActionBar from "@/components/home/NordiActionBar";
 import ConversationLearningConsentCard from "@/components/home/ConversationLearningConsentCard";
 import SaveConversationCard from "@/components/home/SaveConversationCard";
 import BusinessSummaryCard from "@/components/home/BusinessSummaryCard";
@@ -407,9 +408,6 @@ export default function HomeConversation() {
   }, [
     messages,
     thinkingLabel,
-    showExploreButton,
-    showSaveButton,
-    showCallButton,
     showInput,
     saveActive,
     callActive,
@@ -620,7 +618,6 @@ export default function HomeConversation() {
   };
 
   const busy = isDelivering || Boolean(thinkingLabel);
-  const showActionButtons = showExploreButton || showSaveButton || showCallButton;
 
   useEffect(() => {
     setIsActive(busy);
@@ -629,141 +626,109 @@ export default function HomeConversation() {
 
   return (
     <section className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-black">
-      <div className="relative mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-4 pt-20 sm:px-6 sm:pt-[5.25rem]">
-        {showActionButtons ? (
-          <div className="mb-3 flex flex-wrap items-center gap-2 animate-fade-slide-up">
-            {showExploreButton ? (
-              <button
-                type="button"
-                onClick={() => setWebsiteMenuOpen(true)}
-                className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/15 bg-black/40 px-5 text-sm font-medium text-white backdrop-blur transition-colors hover:border-white/30 hover:bg-white/5"
-              >
-                Explore Northbridge
-              </button>
-            ) : null}
-            {showSaveButton ? (
-              <button
-                type="button"
-                onClick={handleSaveClick}
-                aria-pressed={saved}
-                className={[
-                  "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-medium backdrop-blur transition-colors",
-                  saved
-                    ? "border border-red/40 bg-red/15 text-white"
-                    : "border border-white/15 bg-black/40 text-white hover:border-white/30 hover:bg-white/5",
-                ].join(" ")}
-              >
-                {saved ? "Conversation saved" : "Save Conversation"}
-              </button>
-            ) : null}
-            {showCallButton ? (
-              <button
-                type="button"
-                onClick={handleCallClick}
-                aria-pressed={callRequested}
-                className={[
-                  "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-medium backdrop-blur transition-colors",
-                  callRequested
-                    ? "border border-red/40 bg-red/15 text-white"
-                    : "border border-white/15 bg-black/40 text-white hover:border-white/30 hover:bg-white/5",
-                ].join(" ")}
-              >
-                {callRequested ? "Call requested" : "Request a Call"}
-              </button>
-            ) : null}
-          </div>
-        ) : null}
-
+      <div className="relative mx-auto flex w-full max-w-3xl min-h-0 flex-1 flex-col px-4 pb-4 pt-20 sm:px-6 sm:pt-[5.25rem]">
         <BusinessSummaryCard
           profile={businessProfile}
           knownSince={knownSince}
           lastUpdated={lastUpdated}
         />
 
-        <div className="relative flex min-h-0 flex-1 overflow-hidden rounded-2xl border border-white/[0.06] bg-black/20">
+        <div className="relative mt-3 flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-white/[0.06] bg-black/20">
           <div className="nordi-chat-grid hidden md:block" aria-hidden />
           <div
             ref={scrollRef}
             className={[
-              "relative flex-1 overflow-y-auto pr-1 scroll-smooth",
+              "relative min-h-0 flex-1 overflow-y-auto pr-1 scroll-smooth",
               busy ? "nordi-chat-scan" : "",
             ].join(" ")}
           >
-          <div className="relative z-[1] space-y-6 px-1 py-3">
-            {messages.map((message) =>
-              message.role === "cat" ? (
-                <NordiMessageBubble
-                  key={message.id}
-                  messageId={message.id}
-                  content={message.content}
-                  animate={message.animate ?? false}
-                  card={message.card}
-                  onDone={() => handleCatMessageDone(message.id)}
-                  onProgress={scrollToBottom}
-                />
-              ) : (
-                <div key={message.id} className="flex justify-end animate-fade-in">
-                  <div className="max-w-[92%] rounded-2xl bg-red/20 px-4 py-3 shadow-sm shadow-black/10">
-                    <p className="text-sm leading-relaxed text-white">{message.content}</p>
+            <div className="relative z-[1] space-y-6 px-1 py-3">
+              {messages.map((message) =>
+                message.role === "cat" ? (
+                  <NordiMessageBubble
+                    key={message.id}
+                    messageId={message.id}
+                    content={message.content}
+                    animate={message.animate ?? false}
+                    card={message.card}
+                    onDone={() => handleCatMessageDone(message.id)}
+                    onProgress={scrollToBottom}
+                  />
+                ) : (
+                  <div key={message.id} className="flex justify-end animate-fade-in">
+                    <div className="max-w-[92%] rounded-2xl bg-red/20 px-4 py-3 shadow-sm shadow-black/10">
+                      <p className="text-sm leading-relaxed text-white">{message.content}</p>
+                    </div>
                   </div>
-                </div>
-              ),
-            )}
+                ),
+              )}
 
-            {thinkingLabel ? <NordiThinkingIndicator label={thinkingLabel} /> : null}
+              {thinkingLabel ? <NordiThinkingIndicator label={thinkingLabel} /> : null}
 
-            {showConsentCard ? (
-              <ConversationLearningConsentCard
-                onAllow={handleAllowLearning}
-                onDecline={handleDeclineLearning}
-              />
-            ) : null}
+              {showConsentCard ? (
+                <ConversationLearningConsentCard
+                  onAllow={handleAllowLearning}
+                  onDecline={handleDeclineLearning}
+                />
+              ) : null}
 
-            {saveActive && !saved ? (
-              <SaveConversationCard onComplete={handleSaved} onCancel={() => setSaveActive(false)} />
-            ) : null}
+              {saveActive && !saved ? (
+                <SaveConversationCard onComplete={handleSaved} onCancel={() => setSaveActive(false)} />
+              ) : null}
 
-            {callActive && !callRequested ? (
-              <RequestCallCard
-                onComplete={handleCallRequested}
-                onCancel={() => setCallActive(false)}
-              />
-            ) : null}
+              {callActive && !callRequested ? (
+                <RequestCallCard
+                  onComplete={handleCallRequested}
+                  onCancel={() => setCallActive(false)}
+                />
+              ) : null}
 
-            <div ref={bottomRef} />
-          </div>
+              <div ref={bottomRef} />
+            </div>
           </div>
         </div>
 
         {showInput ? (
-          <form onSubmit={handleSubmit} className="mt-3 animate-fade-slide-up">
-            <div className="flex items-end gap-2 rounded-2xl border border-white/10 bg-black/50 p-2 backdrop-blur focus-within:border-red/40">
-              <label className="flex-1">
-                <span className="sr-only">Tell Nordi about your business</span>
-                <textarea
-                  ref={inputRef}
-                  value={input}
-                  onChange={(event) => setInput(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" && !event.shiftKey) {
-                      event.preventDefault();
-                      void sendMessage(input);
-                    }
-                  }}
-                  rows={2}
-                  placeholder="Tell me about your business in your own words…"
-                  className="w-full resize-none bg-transparent px-3 py-2.5 text-base text-white placeholder:text-stone focus:outline-none"
-                />
-              </label>
-              <button
-                type="submit"
-                disabled={!input.trim() || busy}
-                className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-red px-5 text-sm font-semibold text-white transition-colors hover:bg-red-hover disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Send
-              </button>
-            </div>
-          </form>
+          <div className="sticky bottom-0 z-10 mt-3 shrink-0 bg-black pb-[max(0.25rem,env(safe-area-inset-bottom))]">
+            <NordiActionBar
+              showExploreButton={showExploreButton}
+              showSaveButton={showSaveButton}
+              showCallButton={showCallButton}
+              saved={saved}
+              callRequested={callRequested}
+              onExplore={() => setWebsiteMenuOpen(true)}
+              onSave={handleSaveClick}
+              onCall={handleCallClick}
+            />
+            <form onSubmit={handleSubmit} className="animate-fade-slide-up">
+              <div className="flex items-end gap-2 rounded-2xl border border-white/10 bg-black/50 p-2 backdrop-blur focus-within:border-red/40">
+                <label className="flex-1">
+                  <span className="sr-only">Tell Nordi about your business</span>
+                  <textarea
+                    ref={inputRef}
+                    value={input}
+                    onChange={(event) => setInput(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" && !event.shiftKey) {
+                        event.preventDefault();
+                        void sendMessage(input);
+                      }
+                    }}
+                    rows={2}
+                    placeholder="Tell me about your business in your own words…"
+                    className="w-full resize-none bg-transparent px-3 py-2.5 text-base text-white placeholder:text-stone focus:outline-none"
+                  />
+                </label>
+                <button
+                  type="submit"
+                  disabled={!input.trim() || busy}
+                  className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-red px-5 text-sm font-semibold text-white transition-colors hover:bg-red-hover disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Send
+                </button>
+              </div>
+            </form>
+          </div>
         ) : null}
       </div>
 
