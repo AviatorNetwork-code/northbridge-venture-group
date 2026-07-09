@@ -101,4 +101,5 @@ export {
   type CommunicationRouter,
   type CommunicationRouterDependencies,
   type HandleCustomerRequestInput,
+  type ResolveOrganizationCapabilitiesInput,
 } from "./router/communication-router.js";

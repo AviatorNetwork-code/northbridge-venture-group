@@ -33,6 +33,8 @@ import {
   emitTeamSynthesisEvent,
   emitEscalationEvent,
 } from "../observability/index.js";
+import type { CapabilityResolver } from "@/lib/ndp/connectors";
+import type { OrganizationCapabilityAvailability } from "@/lib/ndp/connectors";
 import { CommunicationRouterError } from "./errors.js";
 
 export interface CommunicationRouterDependencies {
@@ -46,14 +48,25 @@ export interface CommunicationRouterDependencies {
   responseCoordinator?: ResponseCoordinator;
   resolveRouteRules: (orgId: string, customerId: string) => Promise<RouteRuleSet>;
   telemetryEmitter?: WorkforceTelemetryEmitter;
+  capabilityResolver?: CapabilityResolver;
 }
 
 export interface HandleCustomerRequestInput {
   request: CustomerRequest;
 }
 
+export interface ResolveOrganizationCapabilitiesInput {
+  orgId: string;
+  region?: string;
+  correlationId?: string;
+  capabilityIds?: string[];
+}
+
 export interface CommunicationRouter {
   handleRequest(input: HandleCustomerRequestInput): Promise<ResponseEnvelope>;
+  resolveAvailableCapabilities(
+    input: ResolveOrganizationCapabilitiesInput,
+  ): OrganizationCapabilityAvailability;
 }
 
 export function createCommunicationRouter(
@@ -73,6 +86,7 @@ export class DefaultCommunicationRouter implements CommunicationRouter {
   private readonly responseCoordinator: ResponseCoordinator;
   private readonly resolveRouteRules: CommunicationRouterDependencies["resolveRouteRules"];
   private readonly telemetryEmitter: WorkforceTelemetryEmitter;
+  private readonly capabilityResolver?: CapabilityResolver;
 
   constructor(deps: CommunicationRouterDependencies) {
     this.organizationLoader = deps.organizationLoader;
@@ -86,6 +100,21 @@ export class DefaultCommunicationRouter implements CommunicationRouter {
     this.resolveRouteRules = deps.resolveRouteRules;
     this.telemetryEmitter =
       deps.telemetryEmitter ?? new NoOpWorkforceTelemetryEmitter();
+    this.capabilityResolver = deps.capabilityResolver;
+  }
+
+  resolveAvailableCapabilities(
+    input: ResolveOrganizationCapabilitiesInput,
+  ): OrganizationCapabilityAvailability {
+    if (!this.capabilityResolver) {
+      return {
+        orgId: input.orgId,
+        region: input.region,
+        capabilities: [],
+      };
+    }
+
+    return this.capabilityResolver.resolveOrganizationAvailability(input);
   }
 
   async handleRequest(input: HandleCustomerRequestInput): Promise<ResponseEnvelope> {
