@@ -1,26 +1,31 @@
 import Link from "next/link";
+import NordiPublicCta from "@/components/home/NordiPublicCta";
 
 type MarketingPrimaryCtaProps = {
   href?: string;
-  label?: string;
+  primaryLabel?: string;
   secondaryHref?: string;
   secondaryLabel?: string;
 };
 
+const primaryLinkClassName =
+  "inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover sm:w-auto";
+
 export default function MarketingPrimaryCta({
   href = "/",
-  label = "Talk to Nordi",
+  primaryLabel,
   secondaryHref,
   secondaryLabel,
 }: MarketingPrimaryCtaProps) {
   return (
     <div className="mb-10 flex flex-col gap-3 sm:mb-12 sm:flex-row sm:flex-wrap">
-      <Link
-        href={href}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover sm:w-auto"
-      >
-        {label}
-      </Link>
+      {primaryLabel ? (
+        <Link href={href} className={primaryLinkClassName}>
+          {primaryLabel}
+        </Link>
+      ) : (
+        <NordiPublicCta variant="primary" href={href} />
+      )}
       {secondaryHref && secondaryLabel ? (
         <Link
           href={secondaryHref}

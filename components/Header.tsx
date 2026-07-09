@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import NorthbridgeLogo from "@/components/NorthbridgeLogo";
+import NordiPublicCta from "@/components/home/NordiPublicCta";
 import PublicNavLinks from "@/components/PublicNavLinks";
 import { useState } from "react";
 import {
@@ -29,6 +30,8 @@ export default function Header() {
             className="hidden md:block"
             linkClassName="inline-flex min-h-11 items-center text-sm font-semibold tracking-wide text-silver hover:text-white transition-colors"
           />
+
+          <NordiPublicCta variant="header" className="hidden md:inline-flex shrink-0" />
 
           <button
             type="button"
@@ -75,6 +78,9 @@ export default function Header() {
 
         {mobileOpen ? (
           <div className="md:hidden mt-3 border border-white/10 bg-black/95">
+            <div className="px-4 py-3 border-b border-white/10">
+              <NordiPublicCta variant="header" className="flex w-full" />
+            </div>
             <ul className="flex flex-col">
               {publicWebsiteMenuLinks.map((link) => (
                 <li key={link.href} className="border-t border-white/10 first:border-t-0">

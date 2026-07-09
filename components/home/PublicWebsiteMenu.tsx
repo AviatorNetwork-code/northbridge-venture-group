@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import NordiPublicCta from "@/components/home/NordiPublicCta";
 import { IconClose } from "@/components/operations/icons";
 import { publicWebsiteMenuLinks } from "@/lib/public-navigation";
 
@@ -71,13 +72,7 @@ export default function PublicWebsiteMenu({ open, onClose }: PublicWebsiteMenuPr
         </nav>
 
         <footer className="border-t border-white/10 px-5 py-4">
-          <Link
-            href="/"
-            onClick={onClose}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-white/15 bg-black/30 px-4 text-sm font-medium text-white transition-colors hover:border-white/30 hover:bg-white/5"
-          >
-            Back to Nordi
-          </Link>
+          <NordiPublicCta variant="header" href="/" className="w-full" />
         </footer>
       </aside>
     </div>

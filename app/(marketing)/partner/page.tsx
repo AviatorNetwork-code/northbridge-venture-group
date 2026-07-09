@@ -65,7 +65,7 @@ export default function PartnerPage() {
           </p>
           <MarketingPrimaryCta
             href="/contact"
-            label="Contact Partnerships"
+            primaryLabel="Contact Partnerships"
           />
         </section>
       </div>

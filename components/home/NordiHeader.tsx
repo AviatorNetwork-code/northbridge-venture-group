@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import NorthbridgeLogo from "@/components/NorthbridgeLogo";
+import NordiPublicCta from "@/components/home/NordiPublicCta";
 import PublicNavLinks from "@/components/PublicNavLinks";
 import { useNordiActivity } from "@/components/home/NordiActivityContext";
 import { IconClose } from "@/components/operations/icons";
@@ -119,9 +120,10 @@ export default function NordiHeader() {
               ))}
             </ul>
 
-            <div className="mt-auto border-t border-white/10 px-5 py-4">
+            <div className="mt-auto space-y-3 border-t border-white/10 px-5 py-4">
+              <NordiPublicCta variant="header" className="w-full" />
               <p className="text-xs leading-relaxed text-stone">
-                Nordi is your homepage advisor. Operations dashboard links are not shown here while that product is in development.
+                Your conversation is saved locally while you browse. Use Resume Nordi on any page to pick up where you left off.
               </p>
             </div>
           </nav>

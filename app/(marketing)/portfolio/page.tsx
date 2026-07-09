@@ -1,58 +1,79 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
+import { northbridgeVentures } from "@/lib/nordi/ventures";
 
 export const metadata: Metadata = {
-  title: "Ventures | Northbridge Digital",
+  title: "Ventures | Northbridge Venture Group",
   description:
-    "Northbridge Digital builds and operates serious digital platforms. Nordi is the product that brings that experience to business owners.",
+    "Northbridge Venture Group builds and operates platform ventures including Northbridge Digital, Aviator Network, and AirTax Financial.",
 };
 
 export default function PortfolioPage() {
   return (
-    <main className="pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 bg-black min-h-screen">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white mb-4">
-          Built on Real Experience
+    <main className="min-h-screen bg-black px-4 pb-16 pt-24 sm:px-6 sm:pt-28 md:pt-32 md:pb-24">
+      <div className="mx-auto max-w-4xl">
+        <h1 className="mb-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl md:text-5xl">
+          Northbridge Ventures
         </h1>
-        <p className="text-base sm:text-lg text-silver mb-8 sm:mb-10 max-w-2xl leading-relaxed">
-          Northbridge Digital did not start as a software company. It started by
-          building and operating real businesses — and Nordi carries that
-          operational DNA.
+        <p className="mb-8 max-w-2xl text-sm leading-relaxed text-silver sm:mb-10 sm:text-base">
+          Northbridge Venture Group builds and operates platform businesses — not generic
+          website products. Nordi on this site is the public entry point for Northbridge Digital.
+          The ventures below are separate operating companies within the group.
         </p>
 
         <MarketingPrimaryCta />
 
         <section className="mb-10 sm:mb-12">
-          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4">
-            Why This Matters
+          <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-red sm:text-sm">
+            Active Ventures
           </h2>
-          <div className="space-y-4 text-silver text-sm sm:text-base leading-relaxed max-w-2xl">
-            <p>
-              Nordi is built by a team that runs platforms with real users,
-              real transactions, and real operational workflows — not brochure
-              websites or generic automation templates.
-            </p>
-            <p>
-              That experience shapes how Nordi advises you. It understands
-              operations, not just features. It recommends support based on how
-              businesses actually run.
-            </p>
+          <div className="space-y-4">
+            {northbridgeVentures
+              .filter((venture) => venture.status === "active")
+              .map((venture) => (
+                <article
+                  key={venture.id}
+                  className="rounded-xl border border-white/10 bg-slate/50 p-5 sm:p-6"
+                >
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <h3 className="text-xl font-semibold text-white">{venture.name}</h3>
+                    <span className="text-xs font-semibold uppercase tracking-wider text-red">
+                      Active venture
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm leading-relaxed text-silver">{venture.description}</p>
+                  <p className="mt-3 text-xs uppercase tracking-wide text-stone">{venture.focus}</p>
+                  {venture.id === "northbridge-digital" ? (
+                    <div className="mt-4">
+                      <Link
+                        href="/services#products"
+                        className="text-sm font-semibold text-red transition-colors hover:text-red-hover"
+                      >
+                        Learn about Nordi →
+                      </Link>
+                    </div>
+                  ) : null}
+                </article>
+              ))}
           </div>
         </section>
 
         <section>
-          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4">
-            Northbridge Ventures
+          <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-red sm:text-sm">
+            Incubation
           </h2>
-          <p className="text-silver text-sm sm:text-base leading-relaxed max-w-2xl mb-6">
-            Northbridge Venture Group continues to build and operate ventures in
-            aviation and financial services. These are separate businesses — not
-            products you browse or buy on this site.
-          </p>
-          <p className="text-silver text-sm sm:text-base leading-relaxed max-w-2xl">
-            If you are here, you are here for Nordi. Start a conversation on the
-            homepage and let Nordi understand your business first.
-          </p>
+          {northbridgeVentures
+            .filter((venture) => venture.status === "incubation")
+            .map((venture) => (
+              <article
+                key={venture.id}
+                className="rounded-xl border border-white/10 bg-black/30 p-5 sm:p-6"
+              >
+                <h3 className="text-lg font-semibold text-white">{venture.name}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-silver">{venture.description}</p>
+              </article>
+            ))}
         </section>
       </div>
     </main>

@@ -47,10 +47,13 @@ export default function ServicesPage() {
         </section>
 
         <section id="products" className="mb-12 sm:mb-14 scroll-mt-28">
-          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-2">
-            Flagship Platform
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-red sm:text-sm">
+            Products
           </h2>
-          <div className="border border-white/10 p-5 sm:p-6 bg-slate/60">
+          <p className="mb-4 max-w-3xl text-sm text-silver">
+            Nordi is our flagship product — the business advisor you meet on the homepage.
+          </p>
+          <div className="border border-white/10 bg-slate/60 p-5 sm:p-6">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
               <div>
                 <h3 className="text-xl sm:text-2xl font-semibold text-white">
@@ -82,7 +85,7 @@ export default function ServicesPage() {
                 href="/"
                 className="inline-flex min-h-11 items-center text-sm font-semibold text-red hover:text-red-hover transition-colors"
               >
-                Talk to Nordi →
+                Talk to Nordi on the homepage →
               </Link>
             </div>
           </div>
