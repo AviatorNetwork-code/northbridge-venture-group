@@ -7,14 +7,23 @@ import {
 
 describe("conversation interruption engine", () => {
   it("detects company knowledge questions during a pending discovery question", () => {
-    const detection = detectInterruption({
-      message: "What is Northbridge?",
-      hasPendingQuestion: true,
-      pendingQuestionId: "general-friction",
-    });
+    const cases = [
+      "What is Northbridge?",
+      "tell me about Northbridge first",
+      "before we continue tell me about Northbridge",
+      "what does Northbridge do",
+    ];
 
-    expect(detection.isInterruption).toBe(true);
-    expect(detection.type).toBe("company");
+    for (const message of cases) {
+      const detection = detectInterruption({
+        message,
+        hasPendingQuestion: true,
+        pendingQuestionId: "general-friction",
+      });
+
+      expect(detection.isInterruption, message).toBe(true);
+      expect(detection.type, message).toBe("company");
+    }
   });
 
   it("does not treat a friction answer as an interruption", () => {

@@ -310,10 +310,17 @@ export function processDiscoveryMessage(
 
     if (interruption) {
       logTurnDecision(rawMessage, profileBeforeTurn, profile, `interruption:${interruption.detection.type}`);
+      const progressiveReply = interruption.resumeLine
+        ? [interruption.answer, interruption.resumeLine]
+        : [interruption.answer];
+
       return {
         thinkingContext: "general",
-        reply: interruption.fullReply,
-        profileUpdates: nextProfile,
+        reply: "",
+        progressiveReply,
+        profileUpdates: mergeProfile(nextProfile, {
+          pendingQuestionId,
+        }),
         humanAssistanceRequested: interruption.humanAssistanceRequested,
       };
     }

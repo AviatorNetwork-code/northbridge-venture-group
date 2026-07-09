@@ -32,13 +32,21 @@ const TYPE_PATTERNS: Record<InterruptionType, RegExp[]> = {
   ],
   company: [
     /\bwhat is northbridge\b/i,
+    /\bwhat(?:'s| is) northbridge\b/i,
     /\bwho is northbridge\b/i,
+    /\bwhat does northbridge do\b/i,
+    /\bwhat does northbridge\b/i,
     /\btell me about northbridge\b/i,
+    /\blearn about northbridge\b/i,
     /\babout northbridge\b/i,
     /\bnorthbridge digital\b/i,
+    /\bbefore we continue.*northbridge\b/i,
+    /\bfirst.*northbridge\b/i,
+    /\bnorthbridge.*first\b/i,
     /\bqu[eé] es northbridge\b/i,
     /\bqui[eé]n es northbridge\b/i,
     /\bsobre northbridge\b/i,
+    /\bcu[eé]ntame sobre northbridge\b/i,
   ],
   founder: [
     /\bfounder\b/i,
@@ -131,10 +139,16 @@ function isLikelyPendingAnswer(pendingQuestionId: string | undefined, message: s
   }
 
   if (pendingQuestionId.includes("friction") || pendingQuestionId === "cat-friction") {
+    if (/\b(northbridge|nordi)\b/i.test(text) && isQuestionLike(message)) {
+      return false;
+    }
     if (isQuestionLike(message)) return false;
     if (matchesAny(message, TYPE_PATTERNS.company)) return false;
     if (matchesAny(message, TYPE_PATTERNS.pricing)) return false;
     if (matchesAny(message, TYPE_PATTERNS.human_assistance)) return false;
+    if (matchesAny(message, TYPE_PATTERNS.founder)) return false;
+    if (matchesAny(message, TYPE_PATTERNS.services)) return false;
+    if (matchesAny(message, TYPE_PATTERNS.products)) return false;
     return text.length >= 8;
   }
 
