@@ -89,6 +89,11 @@ export const COMMUNICATION_PACKAGES = [
     role: "Team Lead orchestration, delegation, synthesis, and reports",
     wired: "deferred",
   },
+  {
+    id: "@northbridge/workforce-router",
+    role: "Workforce request ownership routing — rules, capabilities, dedup, audit",
+    wired: "deferred",
+  },
 ] as const;
 
 export type CommunicationPackageId = (typeof COMMUNICATION_PACKAGES)[number]["id"];

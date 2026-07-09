@@ -28,6 +28,7 @@
     "@northbridge/progressive-forms": "file:./packages/progressive-forms",
     "@northbridge/workforce-contracts": "file:./packages/workforce-contracts",
     "@northbridge/workforce-core": "file:./packages/workforce-core",
+    "@northbridge/workforce-router": "file:./packages/workforce-router",
     "@northbridge/specialist-runtime": "file:./packages/specialist-runtime",
     "@northbridge/team-orchestrator": "file:./packages/team-orchestrator",
     "next": "14.2.18",

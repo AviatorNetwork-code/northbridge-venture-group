@@ -1,0 +1,63 @@
+export type {
+  RoutingRequest,
+  RoutingContext,
+  RoutingChannel,
+  RoutingRequestPayload,
+} from "./types/request.js";
+
+export type {
+  RoutingDecision,
+  RoutingDecisionStatus,
+} from "./types/decision.js";
+
+export type {
+  RouteCandidate,
+  RouteScore,
+  RouteReason,
+} from "./types/candidate.js";
+export { createRouteScore, scoreToConfidence } from "./types/candidate.js";
+
+export type { RoutePolicy } from "./types/policy.js";
+export { DEFAULT_ROUTE_POLICY } from "./policy/defaults.js";
+
+export type { RouteRule, RouteRuleSet } from "./types/rules.js";
+export type { RouteAudit } from "./types/audit.js";
+export { WORKFORCE_ROUTER_VERSION } from "./types/audit.js";
+
+export type { RouteResolver, AiAssistedRouteResolver } from "./types/resolver.js";
+
+export {
+  createWorkforceRouter,
+  createDefaultCompositeResolver,
+  DefaultWorkforceRouter,
+  RuleBasedRouteResolver,
+  CapabilityRouteResolver,
+  CompositeRouteResolver,
+  type WorkforceRouter,
+  type WorkforceRouterDependencies,
+  type RouteInput,
+  type TransferOwnerInput,
+  type CheckDedupInput,
+} from "./runtime/router.js";
+
+export {
+  WorkforceRouterError,
+  type WorkforceRouterErrorCode,
+} from "./runtime/errors.js";
+
+export {
+  buildDedupKey,
+  assertSingleRouteOwner,
+  filterCandidatesByEntitlement,
+  filterCandidatesByFeatureFlags,
+  checkDedup,
+  InMemoryDedupStore,
+  ownersEqual,
+} from "./validation/index.js";
+export type { DedupStore, DedupRecord } from "./validation/dedup.js";
+
+export {
+  applyRoutePolicy,
+  detectAmbiguousRouting,
+  rejectNordiCandidates,
+} from "./policy/enforce.js";

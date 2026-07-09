@@ -1,0 +1,1 @@
+export const WORKFORCE_ROUTER_VERSION = 1;
