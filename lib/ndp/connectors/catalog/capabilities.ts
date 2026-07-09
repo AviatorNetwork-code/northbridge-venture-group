@@ -130,6 +130,54 @@ export const NDP_EXECUTION_CAPABILITIES: ConnectorCapability[] = [
     requiredPermission: "marketing:read",
     tags: ["marketing", "analytics"],
   },
+  {
+    id: "campaign.create",
+    label: "Create campaign",
+    description: "Plan and structure a marketing campaign",
+    category: "marketing",
+    requiredPermission: "marketing:write",
+    tags: ["marketing", "campaign"],
+  },
+  {
+    id: "campaign.review",
+    label: "Review campaign",
+    description: "Review campaign performance and structure",
+    category: "marketing",
+    requiredPermission: "marketing:read",
+    tags: ["marketing", "campaign"],
+  },
+  {
+    id: "content.plan",
+    label: "Plan content",
+    description: "Plan content themes and messaging",
+    category: "marketing",
+    requiredPermission: "content:write",
+    tags: ["marketing", "content"],
+  },
+  {
+    id: "content.calendar",
+    label: "Content calendar",
+    description: "Build and review content calendar schedules",
+    category: "marketing",
+    requiredPermission: "content:write",
+    tags: ["marketing", "content", "scheduling"],
+  },
+  {
+    id: "marketing.analyze",
+    label: "Analyze marketing performance",
+    description: "Analyze trends, KPIs, and campaign metrics",
+    category: "marketing",
+    requiredPermission: "analytics:read",
+    tags: ["marketing", "analytics"],
+  },
+  {
+    id: "budget.review",
+    label: "Review marketing budget",
+    description: "Review budget allocation and ROI",
+    category: "marketing",
+    requiredPermission: "finance:read",
+    tags: ["marketing", "finance", "budget"],
+  },
   // Storage
   {
     id: "storage.file.upload",
@@ -183,9 +231,21 @@ export const ROUTING_TAG_TO_EXECUTION_CAPABILITIES: Record<string, string[]> = {
   "capability:customer_acquisition": [
     "marketing.ad.create",
     "marketing.ad.read",
+    "campaign.create",
+    "campaign.review",
+    "budget.review",
   ],
-  "capability:content_marketing": ["storage.file.upload", "storage.file.read"],
-  "capability:analytics": ["marketing.ad.read", "accounting.report.read"],
+  "capability:content_marketing": [
+    "storage.file.upload",
+    "storage.file.read",
+    "content.plan",
+    "content.calendar",
+  ],
+  "capability:analytics": [
+    "marketing.ad.read",
+    "accounting.report.read",
+    "marketing.analyze",
+  ],
   "capability:general_operations": ["schedule.list", "messaging.email.send"],
 };
 
