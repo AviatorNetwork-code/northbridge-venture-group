@@ -1,0 +1,17 @@
+{
+  "name": "@northbridge/conversation-state",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Durable conversation state — goals, workflows, pending questions, resume",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./factMemory": "./src/factMemory/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts"
+  }
+}
