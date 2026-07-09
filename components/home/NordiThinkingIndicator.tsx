@@ -8,7 +8,7 @@ type NordiThinkingIndicatorProps = {
 
 export default function NordiThinkingIndicator({ label }: NordiThinkingIndicatorProps) {
   return (
-    <div className="flex items-start gap-3 animate-fade-in">
+    <div className="flex items-start gap-3 animate-nordi-message">
       <NordiAvatar />
       <div className="rounded-2xl border border-white/10 bg-slate/50 px-4 py-3 shadow-sm shadow-black/20">
         <p className="mb-2 text-xs text-stone">{label}</p>

@@ -52,7 +52,7 @@ export default function NordiMessageBubble({
   onProgress,
 }: NordiMessageBubbleProps) {
   return (
-    <div className="flex items-start gap-3 animate-fade-in">
+    <div className="flex items-start gap-3 animate-nordi-message">
       <NordiAvatar />
       <div className="max-w-[92%] space-y-3">
         {content ? (

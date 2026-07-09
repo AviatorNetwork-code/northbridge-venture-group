@@ -99,6 +99,110 @@
     animation: cat-dot 1.3s ease-in-out infinite;
   }
 
+  @keyframes nordi-orb-pulse {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(177, 18, 38, 0);
+    }
+    50% {
+      opacity: 0.7;
+      transform: scale(1.08);
+      box-shadow: 0 0 6px 1px rgba(177, 18, 38, 0.18);
+    }
+  }
+
+  @keyframes nordi-orb-pulse-active {
+    0%,
+    100% {
+      opacity: 0.55;
+      transform: scale(1);
+      box-shadow: 0 0 4px 0 rgba(177, 18, 38, 0.2);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.12);
+      box-shadow: 0 0 10px 2px rgba(177, 18, 38, 0.32);
+    }
+  }
+
+  .nordi-activity-orb {
+    width: 7px;
+    height: 7px;
+    border-radius: 9999px;
+    background-color: #b11226;
+    animation: nordi-orb-pulse 3.2s ease-in-out infinite;
+  }
+
+  .nordi-activity-orb-active {
+    animation: nordi-orb-pulse-active 1.35s ease-in-out infinite;
+  }
+
+  @keyframes nordi-scan {
+    0% {
+      transform: translateY(-120%);
+      opacity: 0;
+    }
+    12% {
+      opacity: 0.28;
+    }
+    88% {
+      opacity: 0.28;
+    }
+    100% {
+      transform: translateY(120%);
+      opacity: 0;
+    }
+  }
+
+  .nordi-chat-scan::after {
+    content: "";
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(177, 18, 38, 0.08) 20%,
+      rgba(255, 255, 255, 0.12) 50%,
+      rgba(177, 18, 38, 0.08) 80%,
+      transparent 100%
+    );
+    animation: nordi-scan 2.6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  @keyframes nordi-message-rise {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-nordi-message {
+    animation: nordi-message-rise 0.68s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .nordi-chat-grid {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    opacity: 0.035;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.35) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.35) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(circle at 50% 35%, black 0%, transparent 72%);
+  }
+
   .ops-mobile-spacer {
     height: calc(5.5rem + env(safe-area-inset-bottom, 0px));
   }
@@ -108,6 +212,10 @@
   .animate-fade-slide-up,
   .animate-fade-in,
   .animate-nordi-card,
+  .animate-nordi-message,
+  .nordi-activity-orb,
+  .nordi-activity-orb-active,
+  .nordi-chat-scan::after,
   .cat-caret,
   .cat-typing-dot {
     animation: none !important;

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNeo } from "@/components/neo/NeoProvider";
+import { useNordiActivity } from "@/components/home/NordiActivityContext";
 import NordiMessageBubble from "@/components/home/NordiMessageBubble";
 import NordiThinkingIndicator from "@/components/home/NordiThinkingIndicator";
 import PublicWebsiteMenu from "@/components/home/PublicWebsiteMenu";
@@ -24,33 +25,23 @@ import {
   buildWebsiteAnalysisSequence,
   deliverPresenterSequence,
 } from "@/lib/nordi/conversation-presenter";
+import {
+  BROWSE_MESSAGE,
+  detectHumanAssistanceRequest,
+  HUMAN_CONNECT_MESSAGE,
+  INTRO_MESSAGE,
+  SAVE_PROMPT_MESSAGE,
+  shouldOfferSavePrompt,
+  shouldShowSaveButton,
+} from "@/lib/nordi/home-conversation-flow";
 import type { NordiIdentity } from "@/lib/nordi/identity";
 import {
   buildResumeMessage,
   buildSaveConfirmation,
-  buildSaveConversationPrompt,
   buildWelcomeBackMessage,
   enrichProfileForRelationship,
 } from "@/lib/nordi/relationship";
 import { getNordiStorage } from "@/lib/nordi/storage";
-
-const INTRO_MESSAGE = [
-  "Hello.",
-  "",
-  "I'm Nordi.",
-  "",
-  "I was created by Northbridge Digital to help business owners understand their business, organize their operations, and build a digital workforce only when it truly makes sense.",
-  "",
-  "My job is not to sell you software.",
-  "",
-  "My job is to understand your business first.",
-  "",
-  "If I believe we can help, I'll explain why.",
-  "",
-  "If I don't believe we're the right fit, I'll tell you honestly.",
-  "",
-  "Tell me about your business in your own words.",
-].join("\n");
 
 function createId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
@@ -62,6 +53,7 @@ function toChatMessage(message: NordiChatMessage): NordiChatMessage {
 
 export default function HomeConversation() {
   const { client } = useNeo();
+  const { setIsActive } = useNordiActivity();
   const storage = getNordiStorage();
 
   const [messages, setMessages] = useState<NordiChatMessage[]>([]);
@@ -74,7 +66,9 @@ export default function HomeConversation() {
   const [thinkingLabel, setThinkingLabel] = useState<string | null>(null);
   const [isDelivering, setIsDelivering] = useState(false);
   const [input, setInput] = useState("");
-  const [showButtons, setShowButtons] = useState(false);
+  const [showExploreButton, setShowExploreButton] = useState(false);
+  const [showSaveButton, setShowSaveButton] = useState(false);
+  const [showCallButton, setShowCallButton] = useState(false);
   const [showInput, setShowInput] = useState(false);
   const [introReady, setIntroReady] = useState(false);
   const [websiteMenuOpen, setWebsiteMenuOpen] = useState(false);
@@ -140,6 +134,17 @@ export default function HomeConversation() {
     [appendCatMessage],
   );
 
+  const maybeOfferSavePrompt = useCallback(
+    async (profile: DiscoveryProfile) => {
+      if (savePromptShown || saved || !shouldOfferSavePrompt(profile)) return;
+
+      setSavePromptShown(true);
+      setShowSaveButton(true);
+      await deliverSequence(buildSimpleSequence(SAVE_PROMPT_MESSAGE, { animate: true }));
+    },
+    [deliverSequence, savePromptShown, saved],
+  );
+
   const analyzeWebsiteInBackground = useCallback(
     async (url: string, profile: DiscoveryProfile) => {
       if (analysisInFlightRef.current === url) return;
@@ -201,9 +206,12 @@ export default function HomeConversation() {
       setKnownSince(stored.knownSince);
       setLastUpdated(stored.lastUpdated);
       setIsReturning(true);
-      setShowButtons(true);
+      setShowExploreButton(true);
       setShowInput(true);
       setIntroReady(true);
+      setSavePromptShown(shouldShowSaveButton(stored.profile, Boolean(stored.saved)));
+      setShowSaveButton(shouldShowSaveButton(stored.profile, Boolean(stored.saved)));
+      setShowCallButton(Boolean(stored.callRequested));
 
       if (!stored.welcomeBackShown) {
         welcomeBackShownRef.current = true;
@@ -287,7 +295,18 @@ export default function HomeConversation() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, thinkingLabel, showButtons, showInput, saveActive, callActive, isDelivering, scrollToBottom]);
+  }, [
+    messages,
+    thinkingLabel,
+    showExploreButton,
+    showSaveButton,
+    showCallButton,
+    showInput,
+    saveActive,
+    callActive,
+    isDelivering,
+    scrollToBottom,
+  ]);
 
   const handleCatMessageDone = useCallback((id: string) => {
     const resolve = pendingDoneRef.current.get(id);
@@ -297,12 +316,27 @@ export default function HomeConversation() {
     }
 
     if (id === "intro") {
-      window.setTimeout(() => setShowButtons(true), 600);
       window.setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: "browse-intro",
+            role: "cat",
+            content: BROWSE_MESSAGE,
+            animate: true,
+            timestamp: new Date().toISOString(),
+          },
+        ]);
+      }, 400);
+    }
+
+    if (id === "browse-intro") {
+      window.setTimeout(() => {
+        setShowExploreButton(true);
         setShowInput(true);
         setIntroReady(true);
         inputRef.current?.focus();
-      }, 1200);
+      }, 500);
     }
   }, []);
 
@@ -310,6 +344,8 @@ export default function HomeConversation() {
     async (raw: string) => {
       const text = raw.trim();
       if (!text || isDelivering || thinkingLabel) return;
+
+      const wantsHuman = detectHumanAssistanceRequest(text);
 
       const userMessage: NordiChatMessage = {
         id: createId("user"),
@@ -359,20 +395,33 @@ export default function HomeConversation() {
         });
         setBusinessProfile(nextProfile);
 
-        const engineResult: DiscoveryEngineResult = {
-          reply: response.reply,
-          progressiveReply: response.metadata?.progressiveReply as string[] | undefined,
-          thinkingContext: response.metadata?.thinkingContext as DiscoveryEngineResult["thinkingContext"],
-          cards: response.metadata?.cards as DiscoveryEngineResult["cards"],
-        };
+        if (wantsHuman) {
+          await deliverSequence(
+            buildSimpleSequence(HUMAN_CONNECT_MESSAGE, {
+              thinkingContext: "general",
+              sessionId: sessionIdRef.current,
+              messageIndex,
+            }),
+          );
+          setShowCallButton(true);
+        } else {
+          const engineResult: DiscoveryEngineResult = {
+            reply: response.reply,
+            progressiveReply: response.metadata?.progressiveReply as string[] | undefined,
+            thinkingContext: response.metadata?.thinkingContext as DiscoveryEngineResult["thinkingContext"],
+            cards: response.metadata?.cards as DiscoveryEngineResult["cards"],
+          };
 
-        const sequence = buildPresenterSequence({
-          result: engineResult,
-          sessionId: sessionIdRef.current,
-          messageIndex,
-        });
+          const sequence = buildPresenterSequence({
+            result: engineResult,
+            sessionId: sessionIdRef.current,
+            messageIndex,
+          });
 
-        await deliverSequence(sequence);
+          await deliverSequence(sequence);
+        }
+
+        await maybeOfferSavePrompt(nextProfile);
 
         const analysisUrl =
           typeof response.metadata?.triggerWebsiteAnalysis === "string"
@@ -399,6 +448,7 @@ export default function HomeConversation() {
       deliverSequence,
       isDelivering,
       isReturning,
+      maybeOfferSavePrompt,
       messages,
       thinkingLabel,
     ],
@@ -416,12 +466,6 @@ export default function HomeConversation() {
     }
 
     setCallActive(false);
-
-    if (!savePromptShown) {
-      void deliverSequence(buildSimpleSequence(buildSaveConversationPrompt()));
-      setSavePromptShown(true);
-    }
-
     setSaveActive(true);
     window.setTimeout(scrollToBottom, 60);
   };
@@ -455,45 +499,57 @@ export default function HomeConversation() {
   };
 
   const busy = isDelivering || Boolean(thinkingLabel);
+  const showActionButtons = showExploreButton || showSaveButton || showCallButton;
+
+  useEffect(() => {
+    setIsActive(busy);
+    return () => setIsActive(false);
+  }, [busy, setIsActive]);
 
   return (
     <section className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-black">
-      <div className="relative mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-4 pt-[4.5rem] sm:px-6 sm:pt-[4.75rem]">
-        {showButtons ? (
+      <div className="relative mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-4 pt-20 sm:px-6 sm:pt-[5.25rem]">
+        {showActionButtons ? (
           <div className="mb-3 flex flex-wrap items-center gap-2 animate-fade-slide-up">
-            <button
-              type="button"
-              onClick={() => setWebsiteMenuOpen(true)}
-              className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/15 bg-black/40 px-5 text-sm font-medium text-white backdrop-blur transition-colors hover:border-white/30 hover:bg-white/5"
-            >
-              Explore Northbridge
-            </button>
-            <button
-              type="button"
-              onClick={handleSaveClick}
-              aria-pressed={saved}
-              className={[
-                "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-medium backdrop-blur transition-colors",
-                saved
-                  ? "border border-red/40 bg-red/15 text-white"
-                  : "border border-white/15 bg-black/40 text-white hover:border-white/30 hover:bg-white/5",
-              ].join(" ")}
-            >
-              {saved ? "Conversation saved" : "Save Conversation"}
-            </button>
-            <button
-              type="button"
-              onClick={handleCallClick}
-              aria-pressed={callRequested}
-              className={[
-                "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-medium backdrop-blur transition-colors",
-                callRequested
-                  ? "border border-red/40 bg-red/15 text-white"
-                  : "border border-white/15 bg-black/40 text-white hover:border-white/30 hover:bg-white/5",
-              ].join(" ")}
-            >
-              {callRequested ? "Call requested" : "Request a Call"}
-            </button>
+            {showExploreButton ? (
+              <button
+                type="button"
+                onClick={() => setWebsiteMenuOpen(true)}
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/15 bg-black/40 px-5 text-sm font-medium text-white backdrop-blur transition-colors hover:border-white/30 hover:bg-white/5"
+              >
+                Explore Northbridge
+              </button>
+            ) : null}
+            {showSaveButton ? (
+              <button
+                type="button"
+                onClick={handleSaveClick}
+                aria-pressed={saved}
+                className={[
+                  "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-medium backdrop-blur transition-colors",
+                  saved
+                    ? "border border-red/40 bg-red/15 text-white"
+                    : "border border-white/15 bg-black/40 text-white hover:border-white/30 hover:bg-white/5",
+                ].join(" ")}
+              >
+                {saved ? "Conversation saved" : "Save Conversation"}
+              </button>
+            ) : null}
+            {showCallButton ? (
+              <button
+                type="button"
+                onClick={handleCallClick}
+                aria-pressed={callRequested}
+                className={[
+                  "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-medium backdrop-blur transition-colors",
+                  callRequested
+                    ? "border border-red/40 bg-red/15 text-white"
+                    : "border border-white/15 bg-black/40 text-white hover:border-white/30 hover:bg-white/5",
+                ].join(" ")}
+              >
+                {callRequested ? "Call requested" : "Request a Call"}
+              </button>
+            ) : null}
           </div>
         ) : null}
 
@@ -503,8 +559,16 @@ export default function HomeConversation() {
           lastUpdated={lastUpdated}
         />
 
-        <div ref={scrollRef} className="flex-1 overflow-y-auto pr-1 scroll-smooth">
-          <div className="space-y-6 py-3">
+        <div className="relative flex min-h-0 flex-1 overflow-hidden rounded-2xl border border-white/[0.06] bg-black/20">
+          <div className="nordi-chat-grid hidden md:block" aria-hidden />
+          <div
+            ref={scrollRef}
+            className={[
+              "relative flex-1 overflow-y-auto pr-1 scroll-smooth",
+              busy ? "nordi-chat-scan" : "",
+            ].join(" ")}
+          >
+          <div className="relative z-[1] space-y-6 px-1 py-3">
             {messages.map((message) =>
               message.role === "cat" ? (
                 <NordiMessageBubble
@@ -539,6 +603,7 @@ export default function HomeConversation() {
             ) : null}
 
             <div ref={bottomRef} />
+          </div>
           </div>
         </div>
 

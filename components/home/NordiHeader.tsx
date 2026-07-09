@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import NorthbridgeLogo from "@/components/NorthbridgeLogo";
 import PublicNavLinks from "@/components/PublicNavLinks";
+import { useNordiActivity } from "@/components/home/NordiActivityContext";
 import { IconClose } from "@/components/operations/icons";
 import {
   primaryPublicNavLinks,
@@ -12,6 +13,7 @@ import {
 
 export default function NordiHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { isActive } = useNordiActivity();
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
@@ -31,13 +33,13 @@ export default function NordiHeader() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-black/90 backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-3 sm:h-16 sm:px-4 lg:gap-6">
+      <div className="mx-auto flex h-[4.5rem] max-w-6xl items-center gap-3 px-3 sm:h-20 sm:px-4 lg:gap-6">
         <Link
           href="/"
           className="flex shrink-0 items-center transition-opacity hover:opacity-90"
           aria-label="Northbridge Venture Group home"
         >
-          <NorthbridgeLogo className="h-8 sm:h-9" />
+          <NorthbridgeLogo className="h-16 sm:h-[4.5rem]" />
         </Link>
 
         <PublicNavLinks
@@ -48,9 +50,16 @@ export default function NordiHeader() {
 
         <Link
           href="/"
-          className="ml-auto text-base font-semibold uppercase tracking-[0.3em] text-white transition-opacity hover:opacity-80 sm:text-lg lg:ml-0 lg:justify-self-center lg:tracking-[0.35em]"
+          className="ml-auto inline-flex items-center gap-2.5 text-base font-semibold uppercase tracking-[0.3em] text-white transition-opacity hover:opacity-80 sm:text-lg lg:ml-0 lg:justify-self-center lg:tracking-[0.35em]"
           aria-label="Nordi home"
         >
+          <span
+            aria-hidden
+            className={[
+              "nordi-activity-orb shrink-0",
+              isActive ? "nordi-activity-orb-active" : "",
+            ].join(" ")}
+          />
           NORDI
         </Link>
 
@@ -82,7 +91,7 @@ export default function NordiHeader() {
           />
 
           <nav className="absolute right-0 top-0 flex h-full w-full max-w-xs flex-col border-l border-white/10 bg-charcoal shadow-2xl animate-fade-slide-up">
-            <div className="flex h-14 items-center justify-between border-b border-white/10 px-4 sm:h-16">
+            <div className="flex h-[4.5rem] items-center justify-between border-b border-white/10 px-4 sm:h-20">
               <span className="text-sm font-semibold uppercase tracking-[0.3em] text-white">
                 Northbridge
               </span>

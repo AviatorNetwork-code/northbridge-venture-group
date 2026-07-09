@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import NordiHeader from "@/components/home/NordiHeader";
+import HomeShell from "@/components/home/HomeShell";
 
 export const metadata: Metadata = {
   title: "Nordi | Northbridge Digital",
@@ -12,10 +12,5 @@ export default function HomeLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <>
-      <NordiHeader />
-      {children}
-    </>
-  );
+  return <HomeShell>{children}</HomeShell>;
 }
