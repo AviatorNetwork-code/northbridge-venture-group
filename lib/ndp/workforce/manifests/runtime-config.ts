@@ -26,6 +26,7 @@ export function buildSpecialistRuntimeConfigPreview(
     confidencePolicy: manifest.confidencePolicy,
     escalationPolicy: manifest.escalationPolicy,
     requiredToolCapabilities,
+    knowledgePackIds: manifest.knowledgePackIds,
   };
 }
 

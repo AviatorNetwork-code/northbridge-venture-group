@@ -32,6 +32,7 @@ export interface DigitalEmployeeManifest {
   escalationPolicy: EscalationPolicy;
   confidencePolicy: ConfidencePolicy;
   toolRequirements: ToolCapabilityRequirement[];
+  knowledgePackIds: string[];
   lifecycleStatus: DigitalEmployeeLifecycleStatus;
   launchVisible: boolean;
   featureFlags?: Partial<WorkforceFeatureFlags>;
@@ -46,6 +47,7 @@ export interface ManifestValidationIssue {
   teamId?: string;
   capability?: string;
   connectorCapability?: string;
+  knowledgePackId?: string;
 }
 
 export interface SpecialistRuntimeConfigPreview {
@@ -60,4 +62,5 @@ export interface SpecialistRuntimeConfigPreview {
   confidencePolicy: ConfidencePolicy;
   escalationPolicy: EscalationPolicy;
   requiredToolCapabilities: string[];
+  knowledgePackIds: string[];
 }

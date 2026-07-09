@@ -79,7 +79,7 @@ interface DigitalEmployeeManifest {
 }
 ```
 
-Digital Employees request `schedule.create` — never Google Calendar.
+Digital Employees reference **Knowledge Pack IDs** via `knowledgePackIds` (see `lib/ndp/workforce/knowledge/`). Specialists request capabilities — never provider names.
 
 ## Launch manifests
 

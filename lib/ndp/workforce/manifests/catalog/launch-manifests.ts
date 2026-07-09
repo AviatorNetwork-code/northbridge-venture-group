@@ -29,6 +29,7 @@ function manifest(input: {
   specialistId: string;
   capabilities: string[];
   connectorCapabilities: string[];
+  knowledgePackIds: string[];
   permissions?: ReturnType<typeof createSpecialistPermissions>;
   memoryPolicy?: ReturnType<typeof createSpecialistMemoryPolicy>;
   confidencePolicy?: ReturnType<typeof createSpecialistConfidencePolicy>;
@@ -46,6 +47,7 @@ function manifest(input: {
     specialistId: input.specialistId,
     capabilities: input.capabilities,
     connectorCapabilities: input.connectorCapabilities,
+    knowledgePackIds: input.knowledgePackIds,
     permissions: input.permissions ?? createSpecialistPermissions(),
     memoryPolicy: input.memoryPolicy ?? createSpecialistMemoryPolicy(),
     kpis: createDefaultKpis(input.category),
@@ -60,6 +62,9 @@ function manifest(input: {
   };
 }
 
+const ORG_STANDARDS = ["knowledge-pack-northbridge-communication-standards"];
+const PRO_COMMUNICATION = ["knowledge-pack-professional-communication"];
+
 /**
  * Launch-visible Digital Employee manifests for reusable cross-industry specialists.
  * Metadata only — no prompts or tool execution.
@@ -72,6 +77,11 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
     specialistId: "marketing-campaign-specialist",
     capabilities: ["capability:customer_acquisition", "capability:analytics"],
     connectorCapabilities: ["marketing.ad.create", "marketing.ad.read"],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-marketing-fundamentals",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["marketing:write"]),
   }),
   manifest({
@@ -81,6 +91,12 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
     specialistId: "content-posts-specialist",
     capabilities: ["capability:content_marketing"],
     connectorCapabilities: ["storage.file.upload", "storage.file.read"],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-business-writing",
+      "knowledge-pack-marketing-fundamentals",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["content:write"]),
   }),
   manifest({
@@ -90,6 +106,12 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
     specialistId: "brand-specialist",
     capabilities: ["capability:content_marketing"],
     connectorCapabilities: ["storage.file.read", "storage.file.upload"],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-business-writing",
+      "knowledge-pack-marketing-fundamentals",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["content:read"]),
   }),
   manifest({
@@ -99,6 +121,11 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
     specialistId: "marketing-analytics-specialist",
     capabilities: ["capability:analytics", "capability:customer_acquisition"],
     connectorCapabilities: ["marketing.ad.read", "accounting.report.read"],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-marketing-fundamentals",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["analytics:read"]),
   }),
   manifest({
@@ -108,6 +135,12 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
     specialistId: "advertising-budget-specialist",
     capabilities: ["capability:customer_acquisition", "capability:finance"],
     connectorCapabilities: ["marketing.ad.create", "marketing.ad.read"],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-marketing-fundamentals",
+      "knowledge-pack-financial-fundamentals",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["marketing:write", "finance:read"]),
   }),
   manifest({
@@ -120,6 +153,11 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
       "crm.contact.create",
       "crm.deal.create",
       "messaging.email.send",
+    ],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-sales-fundamentals",
+      ...ORG_STANDARDS,
     ],
     permissions: createSpecialistPermissions(["sales:write"]),
   }),
@@ -134,6 +172,11 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
       "crm.contact.update",
       "crm.deal.create",
     ],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-sales-fundamentals",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["sales:write"]),
   }),
   manifest({
@@ -143,6 +186,12 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
     specialistId: "proposal-quote-specialist",
     capabilities: ["capability:sales_pipeline"],
     connectorCapabilities: ["crm.deal.create", "storage.file.upload"],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-business-writing",
+      "knowledge-pack-sales-fundamentals",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["sales:write"]),
   }),
   manifest({
@@ -152,6 +201,12 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
     specialistId: "follow-up-specialist",
     capabilities: ["capability:sales_pipeline", "capability:customer_service"],
     connectorCapabilities: ["messaging.email.send", "crm.contact.update"],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-sales-fundamentals",
+      "knowledge-pack-customer-service-fundamentals",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["sales:write", "messaging:send"]),
   }),
   manifest({
@@ -165,6 +220,11 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
       "crm.contact.update",
       "crm.deal.create",
     ],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-sales-fundamentals",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["crm:write"]),
   }),
   manifest({
@@ -174,6 +234,12 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
     specialistId: "customer-service-specialist",
     capabilities: ["capability:customer_service"],
     connectorCapabilities: ["messaging.email.send", "messaging.sms.send"],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-customer-service-fundamentals",
+      "knowledge-pack-northbridge-customer-success-doctrine",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["messaging:send"]),
     memoryPolicy: createSpecialistMemoryPolicy({ loadCustomerProfile: true }),
   }),
@@ -184,6 +250,12 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
     specialistId: "reception-specialist",
     capabilities: ["capability:customer_service"],
     connectorCapabilities: ["messaging.email.send", "messaging.sms.send"],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-customer-service-fundamentals",
+      "knowledge-pack-northbridge-customer-success-doctrine",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["messaging:send"]),
   }),
   manifest({
@@ -197,6 +269,11 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
       "schedule.update",
       "schedule.cancel",
     ],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-scheduling-fundamentals",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["scheduling:write"]),
   }),
   manifest({
@@ -206,6 +283,12 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
     specialistId: "reminder-specialist",
     capabilities: ["capability:scheduling", "capability:customer_service"],
     connectorCapabilities: ["schedule.list", "messaging.sms.send"],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-scheduling-fundamentals",
+      "knowledge-pack-customer-service-fundamentals",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["scheduling:read", "messaging:send"]),
   }),
   manifest({
@@ -215,6 +298,12 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
     specialistId: "customer-success-specialist",
     capabilities: ["capability:customer_service"],
     connectorCapabilities: ["messaging.email.send", "crm.contact.update"],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-customer-service-fundamentals",
+      "knowledge-pack-northbridge-customer-success-doctrine",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["messaging:send", "crm:write"]),
     memoryPolicy: createSpecialistMemoryPolicy({
       scope: "customer",
@@ -230,6 +319,12 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
     connectorCapabilities: [
       "accounting.report.read",
       "accounting.invoice.create",
+    ],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-business-writing",
+      "knowledge-pack-financial-fundamentals",
+      ...ORG_STANDARDS,
     ],
     permissions: createSpecialistPermissions(["finance:read"]),
     confidencePolicy: createSpecialistConfidencePolicy({
@@ -247,6 +342,11 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
       "accounting.invoice.create",
       "accounting.payment.record",
     ],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-financial-fundamentals",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["finance:write"]),
     confidencePolicy: createSpecialistConfidencePolicy({
       minimumConfidence: "high",
@@ -263,6 +363,11 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
       "accounting.payment.record",
       "accounting.report.read",
     ],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-financial-fundamentals",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["finance:write"]),
   }),
   manifest({
@@ -272,6 +377,11 @@ export const NDP_LAUNCH_EMPLOYEE_MANIFESTS: DigitalEmployeeManifest[] = [
     specialistId: "financial-reporting-specialist",
     capabilities: ["capability:finance", "capability:analytics"],
     connectorCapabilities: ["accounting.report.read"],
+    knowledgePackIds: [
+      ...PRO_COMMUNICATION,
+      "knowledge-pack-financial-fundamentals",
+      ...ORG_STANDARDS,
+    ],
     permissions: createSpecialistPermissions(["finance:read", "analytics:read"]),
     confidencePolicy: createSpecialistConfidencePolicy({
       minimumConfidence: "high",

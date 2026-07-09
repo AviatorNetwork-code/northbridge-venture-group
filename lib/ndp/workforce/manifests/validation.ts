@@ -5,6 +5,11 @@ import {
 } from "../catalog/teams.js";
 import { NDP_SPECIALIST_ID_SET } from "../catalog/specialists.js";
 import { NDP_EXECUTION_CAPABILITY_ID_SET } from "@/lib/ndp/connectors";
+import {
+  createKnowledgePackRegistry,
+  NDP_LAUNCH_KNOWLEDGE_PACKS,
+  validateEmployeeKnowledgeReferences,
+} from "@/lib/ndp/workforce/knowledge";
 import type { DigitalEmployeeManifest, ManifestValidationIssue } from "../types/manifest.js";
 
 const MANAGEMENT_ROLE_PATTERN =
@@ -15,6 +20,7 @@ const NORDI_PATTERN = /\bnordi\b/i;
 export interface ManifestValidationContext {
   manifests: DigitalEmployeeManifest[];
   hasConnectorCapability?: (capabilityId: string) => boolean;
+  hasKnowledgePack?: (knowledgePackId: string) => boolean;
 }
 
 export function validateEmployeeManifest(
@@ -180,6 +186,19 @@ export function validateEmployeeManifest(
       employeeId: manifest.employeeId,
     });
   }
+
+  const knowledgeRegistry = createKnowledgePackRegistry(NDP_LAUNCH_KNOWLEDGE_PACKS);
+  issues.push(
+    ...validateEmployeeKnowledgeReferences(manifest, knowledgeRegistry).map(
+      (issue) => ({
+        code: issue.code,
+        message: issue.message,
+        employeeId: issue.employeeId ?? manifest.employeeId,
+        knowledgePackId: issue.knowledgePackId,
+        teamId: issue.teamId,
+      }),
+    ),
+  );
 
   return issues;
 }

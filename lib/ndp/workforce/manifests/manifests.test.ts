@@ -79,6 +79,7 @@ describe("Digital Employee Manifest Framework", () => {
       expect(manifest.escalationPolicy.target).toBeDefined();
       expect(manifest.kpis.length).toBeGreaterThan(0);
       expect(manifest.toolRequirements.length).toBeGreaterThan(0);
+      expect(manifest.knowledgePackIds.length).toBeGreaterThan(0);
     }
   });
 
@@ -153,6 +154,9 @@ describe("Digital Employee Manifest Framework", () => {
       "schedule.cancel",
     ]);
     expect(appointmentPreview.confidencePolicy.minimumConfidence).toBe("medium");
+    expect(appointmentPreview.knowledgePackIds).toContain(
+      "knowledge-pack-scheduling-fundamentals",
+    );
   });
 
   it("remains compatible with valid Team Catalog", () => {
