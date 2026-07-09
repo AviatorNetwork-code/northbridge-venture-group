@@ -2,6 +2,8 @@
 
 First production-ready Digital Team on the Northbridge Workforce Platform. Reference implementation for all future teams.
 
+**Multi-agent default:** Marketing Team Alpha delegates to multiple specialists by default. Team Lead (`lead-team-marketing`) is the single customer-facing voice. See [Multi-Agent Default Policy v1.0](../../../docs/northbridge-digital-workforce-multi-agent-default-policy-v1.md).
+
 ## Structure
 
 ### Domain layer (`lib/ndp/domain/marketing/`)
@@ -17,7 +19,7 @@ Reusable marketing domain assets shared across teams and future organizational l
 
 Team-specific orchestration and operational wiring:
 
-- `runtime/` — roster, selector, executor, synthesizer, orchestrator
+- `runtime/` — roster, selector, executor, synthesizer, orchestrator (multi-agent default)
 - `recommendations/` — customer-success-first recommendation engine
 - `dashboard/` — operational dashboard model
 - `reporting/` — Team Lead operational reporting
@@ -25,7 +27,7 @@ Team-specific orchestration and operational wiring:
 
 ## Digital Employees
 
-- **Team Lead** (`lead-team-marketing`) — single external voice; orchestrates specialists
+- **Team Lead** (`lead-team-marketing`) — single external voice; orchestrates specialists in parallel by default
 - **Marketing Campaign Specialist** — campaign planning and audience recommendations
 - **Content & Posts Specialist** — content calendar and social planning
 - **Brand Specialist** — brand consistency and tone verification
@@ -47,10 +49,10 @@ Each Digital Employee connects through:
 ## Nordi Flow
 
 ```
-Customer request → Communication Router → Marketing Team Lead → Specialists → Single synthesized response
+Customer request → Communication Router → Marketing Team Lead → Specialists (parallel, multi-agent) → Single synthesized response
 ```
 
-Internal delegation is never exposed to the customer.
+Internal delegation is never exposed to the customer. Broad requests delegate to two or more specialists; simple KPI lookups may use one specialist.
 
 ## Usage
 

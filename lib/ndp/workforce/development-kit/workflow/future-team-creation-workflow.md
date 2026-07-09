@@ -4,14 +4,16 @@ How to build a new Digital Team using Marketing Team Alpha as the reference.
 
 **Do not implement teams in the DEDK phase.** This workflow documents the repeatable pattern for Sales, Customer Service, Financial, and industry teams.
 
+**Multi-agent default:** Every new team must operate multi-agent by default. See [Multi-Agent Default Policy v1.0](../../../../docs/northbridge-digital-workforce-multi-agent-default-policy-v1.md) and `lib/ndp/teams/shared/multi-agent-policy.ts`.
+
 ## Overview
 
 ```text
 Phase A — Platform metadata (per employee)
 Phase B — Domain layer (reusable assets)
-Phase C — Team layer (orchestration)
+Phase C — Team layer (orchestration, multi-agent-first)
 Phase D — Integration (Communication Router)
-Phase E — Validation
+Phase E — Validation (including multi-agent default tests)
 ```
 
 ## Phase A — Platform metadata
@@ -69,6 +71,29 @@ lib/ndp/teams/<team>/
 
 Copy structure from `lib/ndp/teams/marketing/`. Replace domain imports and specialist mappings.
 
+### Multi-agent-first requirements (Phase C)
+
+Every team orchestrator must:
+
+1. Import `NDP_DEFAULT_TEAM_LEAD_POLICY` from `@/lib/ndp/teams/shared`
+2. Use `IsolatedSpecialistRuntimeFactory` for parallel multi-agent execution
+3. Implement `SpecialistSelector` with `isSimpleTeamRequest()` and `ensureMultiAgentSelection()`
+4. Delegate to **two or more specialists** for broad requests
+5. Allow **one specialist** only for simple factual/status requests
+6. Use a synthesizer that hides specialist identities from the customer
+7. Set `customerFacingViaTeamLeadOnly: true` and `escalateOnConflict: true`
+
+```typescript
+import { NDP_DEFAULT_TEAM_LEAD_POLICY } from "@/lib/ndp/teams/shared";
+import { IsolatedSpecialistRuntimeFactory } from "@northbridge/team-orchestrator";
+
+return createTeamOrchestrator({
+  runtimeFactory: new IsolatedSpecialistRuntimeFactory(runtimeDeps),
+  policy: NDP_DEFAULT_TEAM_LEAD_POLICY,
+  // specialistSelector, synthesizer, ...
+});
+```
+
 ## Phase D — Communication Router integration
 
 1. Define route rules mapping capability tags to team ID
@@ -98,6 +123,9 @@ Per `checklist/testing-checklist.md`:
 - [ ] All employee readiness checks pass
 - [ ] Framework tests pass (manifests, knowledge, prompts, connectors)
 - [ ] Team unit tests pass
+- [ ] **Multi-agent default tests pass** — broad requests delegate to ≥2 specialists
+- [ ] **Simple request test** — narrow KPI/status may use 1 specialist
+- [ ] **Single Team Lead response** — synthesis hides specialist IDs
 - [ ] Integration test: Nordi request → router → team → single response
 - [ ] Team Orchestrator + Specialist Runtime package tests pass
 - [ ] Root lint passes
@@ -108,7 +136,9 @@ Per `checklist/testing-checklist.md`:
 |------|----------------|----------|
 | Team catalog entry | `team-marketing` | `team-<name>` |
 | Team lead ID | `lead-team-marketing` | `lead-team-<name>` |
-| Specialist selector | Tag-based | Adapt tags |
+| Multi-agent policy | `NDP_DEFAULT_TEAM_LEAD_POLICY` | Import from `lib/ndp/teams/shared` |
+| Specialist selector | Multi-agent default; simple exception | Adapt tags + `isSimpleTeamRequest()` |
+| Runtime factory | `IsolatedSpecialistRuntimeFactory` | Same for parallel teams |
 | Synthesizer | Single customer voice | Reuse pattern |
 | Mock connectors | 6 marketing caps | Domain-specific |
 | Dashboard cards | 9 operational cards | Domain-specific |

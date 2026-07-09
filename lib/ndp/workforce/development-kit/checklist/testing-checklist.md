@@ -23,12 +23,14 @@ npx vitest run lib/ndp
 
 ```bash
 npx vitest run lib/ndp/teams/<team>/
+npx vitest run lib/ndp/teams/shared/
 ```
 
 Example for Marketing Team Alpha:
 
 ```bash
 npx vitest run lib/ndp/teams/marketing/
+npx vitest run lib/ndp/teams/shared/multi-agent-policy.test.ts
 ```
 
 ## Workforce package tests
@@ -62,6 +64,15 @@ assertEmployeeReadiness({ employeeId: "employee-<your-employee>" });
 | `connectors.test.ts` | Execution capability registry, routing tag mappings |
 | `employee-readiness.test.ts` | DEDK aggregated readiness validation |
 | Team tests | End-to-end orchestration, mock connectors, router wiring |
+| `multi-agent-policy.test.ts` | Launch team list, default policy, simple vs broad classification |
+
+## Multi-agent default tests (required for production teams)
+
+- [ ] Broad request delegates to **two or more** specialists
+- [ ] Simple KPI/status request may delegate to **one** specialist
+- [ ] End-to-end orchestration contributes ≥2 specialists for broad requests
+- [ ] Synthesis returns **one** Team Lead response without specialist IDs
+- [ ] Integration test confirms no delegation language in customer reply
 
 ## New employee test additions
 
@@ -74,7 +85,8 @@ When adding a production team:
 
 - [ ] Create `lib/ndp/teams/<team>/<team>.test.ts`
 - [ ] Create `lib/ndp/teams/<team>/<team>.integration.test.ts` for Communication Router wiring
-- [ ] Test specialist selection, mock connector execution, synthesis, and dashboard model
+- [ ] Import `NDP_DEFAULT_TEAM_LEAD_POLICY` and use `IsolatedSpecialistRuntimeFactory`
+- [ ] Test specialist selection (multi-agent default + simple exception), mock connector execution, synthesis, and dashboard model
 
 ## Failure response
 

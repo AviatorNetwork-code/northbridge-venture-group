@@ -59,6 +59,17 @@ Skip for manifest-only employees. Required when building a production team.
 - [ ] Production prompt sections in `lib/ndp/domain/<domain>/prompts/`
 - [ ] Mock connectors in `lib/ndp/domain/<domain>/mock-connectors/` (until real providers)
 
+## Phase 6b — Multi-agent team wiring (team implementation phase)
+
+Required when building a customer-facing team. See [Multi-Agent Default Policy v1.0](../../../../docs/northbridge-digital-workforce-multi-agent-default-policy-v1.md).
+
+- [ ] Team orchestrator uses `NDP_DEFAULT_TEAM_LEAD_POLICY` from `lib/ndp/teams/shared/`
+- [ ] `IsolatedSpecialistRuntimeFactory` for parallel multi-agent execution
+- [ ] Specialist selector delegates to multiple specialists by default
+- [ ] `isSimpleTeamRequest()` gates single-specialist exception
+- [ ] Team Lead synthesizer hides specialist identities
+- [ ] `escalateOnConflict: true` and `customerFacingViaTeamLeadOnly: true`
+
 ## Phase 7 — Validation
 
 - [ ] `validateEmployeeReadiness({ employeeId })` returns `ready: true`

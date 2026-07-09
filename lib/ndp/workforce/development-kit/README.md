@@ -4,6 +4,8 @@ Developer and product scaffolding for creating Northbridge Digital Employees con
 
 **This is not a runtime engine.** It is a structured checklist, guide, and validation layer that ensures every new Digital Employee follows the same platform composition model established by Marketing Team Alpha.
 
+**Multi-agent default:** All customer-facing teams operate multi-agent by default. Team Lead is the single external voice; specialists work internally. See [Multi-Agent Default Policy v1.0](../../../docs/northbridge-digital-workforce-multi-agent-default-policy-v1.md).
+
 ## Reference implementation
 
 Marketing Team Alpha (`lib/ndp/teams/marketing/`) is the canonical end-to-end example. Domain assets live in `lib/ndp/domain/marketing/`; team orchestration lives in `lib/ndp/teams/marketing/`.
@@ -50,7 +52,8 @@ Team runtime wiring (orchestrator, executor, router)
 | Prompt template selection guide | `guides/prompt-template-selection-guide.md` | How to choose templates |
 | Connector capability guide | `guides/connector-capability-guide.md` | How to reference execution capabilities |
 | Marketing Campaign example | `examples/marketing-campaign-specialist.md` | Full worked example |
-| Future team workflow | `workflow/future-team-creation-workflow.md` | Creating a new Digital Team |
+| Future team workflow | `workflow/future-team-creation-workflow.md` | Creating a new Digital Team (multi-agent-first) |
+| Multi-agent policy | `lib/ndp/teams/shared/multi-agent-policy.ts` | Default Team Lead policy and request classification |
 | Readiness validation | `validation/employee-readiness.ts` | Aggregated validation helper |
 
 ## Quick start

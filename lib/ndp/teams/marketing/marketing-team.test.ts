@@ -114,10 +114,45 @@ describe("Marketing Team Alpha", () => {
       availableSpecialistIds: [...MARKETING_SPECIALIST_IDS],
     });
 
-    expect(selections.length).toBeGreaterThan(0);
+    expect(selections.length).toBeGreaterThanOrEqual(2);
     expect(selections.some((entry) => entry.specialistId === "marketing-campaign-specialist")).toBe(
       true,
     );
+    expect(selections.some((entry) => entry.specialistId === "marketing-analytics-specialist")).toBe(
+      true,
+    );
+  });
+
+  it("delegates to multiple specialists by default for broad requests without tags", async () => {
+    const selector = new MarketingSpecialistSelector();
+    const selections = await selector.select({
+      requestId: "req-broad",
+      orgId: ORG,
+      teamId: MARKETING_TEAM_ID,
+      payload: {
+        message: "Help us improve our marketing strategy.",
+      },
+      availableSpecialistIds: [...MARKETING_SPECIALIST_IDS],
+    });
+
+    expect(selections.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("may delegate to a single specialist for simple KPI lookups", async () => {
+    const selector = new MarketingSpecialistSelector();
+    const selections = await selector.select({
+      requestId: "req-simple",
+      orgId: ORG,
+      teamId: MARKETING_TEAM_ID,
+      payload: {
+        message: "What is our cost per lead?",
+        capabilityTags: ["capability:analytics"],
+      },
+      availableSpecialistIds: [...MARKETING_SPECIALIST_IDS],
+    });
+
+    expect(selections).toHaveLength(1);
+    expect(selections[0]!.specialistId).toBe("marketing-analytics-specialist");
   });
 
   it("generates customer-success-first recommendations", () => {
@@ -189,7 +224,9 @@ describe("Marketing Team Alpha", () => {
 
     expect(result.outcome).toBe("complete");
     expect(result.synthesis.summary.length).toBeGreaterThan(0);
-    expect(result.synthesis.contributingSpecialistIds.length).toBeGreaterThan(0);
+    expect(result.synthesis.contributingSpecialistIds.length).toBeGreaterThanOrEqual(2);
+    expect(result.synthesis.summary).not.toContain("marketing-campaign-specialist");
+    expect(result.synthesis.summary).not.toContain("delegat");
   });
 
   it("builds operational dashboard model with required cards", () => {

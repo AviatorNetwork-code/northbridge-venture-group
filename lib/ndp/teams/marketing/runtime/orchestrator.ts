@@ -1,16 +1,14 @@
-import {
-  createSpecialistRuntime,
-  InMemoryCapabilityRegistry,
-} from "@northbridge/specialist-runtime";
+import { InMemoryCapabilityRegistry } from "@northbridge/specialist-runtime";
 import {
   createTeamOrchestrator,
   DefaultConflictDetector,
   DefaultExecutionPlanBuilder,
   InMemorySpecialistRoster,
   InMemoryTeamProgressReporter,
-  SharedSpecialistRuntimeFactory,
+  IsolatedSpecialistRuntimeFactory,
   type TeamOrchestrator,
 } from "@northbridge/team-orchestrator";
+import { NDP_DEFAULT_TEAM_LEAD_POLICY } from "@/lib/ndp/teams/shared";
 import {
   MARKETING_TEAM_ID,
   MARKETING_TEAM_LEAD_ID,
@@ -46,7 +44,7 @@ export function createMarketingTeamOrchestrator(
     ]);
   }
 
-  const runtime = createSpecialistRuntime({
+  const runtimeDeps = {
     capabilityRegistry,
     taskExecutor: createMarketingTaskExecutor({ now }),
     policy: {
@@ -58,11 +56,11 @@ export function createMarketingTeamOrchestrator(
     },
     now,
     createSessionId: () => `marketing-session-${crypto.randomUUID()}`,
-  });
+  };
 
   return createTeamOrchestrator({
     roster: new InMemorySpecialistRoster(specialists),
-    runtimeFactory: new SharedSpecialistRuntimeFactory(runtime),
+    runtimeFactory: new IsolatedSpecialistRuntimeFactory(runtimeDeps),
     specialistSelector: new MarketingSpecialistSelector(),
     planBuilder: new DefaultExecutionPlanBuilder(),
     synthesizer: new MarketingTeamSynthesizer(),
@@ -81,14 +79,7 @@ export function createMarketingTeamOrchestrator(
     },
     conflictDetector: new DefaultConflictDetector(),
     progressReporter: new InMemoryTeamProgressReporter(),
-    policy: {
-      maxConcurrentDelegations: 8,
-      delegationExecutionMode: "parallel",
-      synthesizeOnPartialFailure: true,
-      escalateOnConflict: true,
-      requireAllSpecialistsComplete: false,
-      customerFacingViaTeamLeadOnly: true,
-    },
+    policy: NDP_DEFAULT_TEAM_LEAD_POLICY,
   });
 }
 
