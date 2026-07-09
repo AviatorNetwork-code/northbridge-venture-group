@@ -25,6 +25,7 @@ export type {
 
 export type {
   OrganizationContextLoader,
+  OperationsIntelligenceLoader,
   SubscriptionResolver,
   TeamResolver,
   ConversationContextBuilder,

@@ -18,6 +18,9 @@ export interface MarketingOperationalReport extends TeamReport {
   pendingWork: string[];
   recommendations: MarketingRecommendation[];
   kpis: OperationalMetric[];
+  organizationContextRef?: string;
+  organizationPublicName?: string;
+  operationsContextVersion?: string;
 }
 
 export interface MarketingReportContext {
@@ -25,6 +28,9 @@ export interface MarketingReportContext {
   recommendations: MarketingRecommendation[];
   pendingWork?: string[];
   escalations?: string[];
+  organizationContextRef?: string;
+  organizationPublicName?: string;
+  operationsContextVersion?: string;
 }
 
 export class MarketingOperationalReportBuilder implements TeamReportBuilder {
@@ -61,6 +67,9 @@ export class MarketingOperationalReportBuilder implements TeamReportBuilder {
       pendingWork: this.context.pendingWork ?? [],
       recommendations: this.context.recommendations,
       kpis: input.metrics ?? [],
+      organizationContextRef: this.context.organizationContextRef,
+      organizationPublicName: this.context.organizationPublicName,
+      operationsContextVersion: this.context.operationsContextVersion,
     };
   }
 }

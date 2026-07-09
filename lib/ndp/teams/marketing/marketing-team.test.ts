@@ -55,13 +55,21 @@ describe("Marketing Team Alpha", () => {
     expect(manifests.length).toBeGreaterThan(0);
 
     for (const manifest of manifests) {
-      const assembly = assembleMarketingEmployeeRuntime(manifest);
+      const assembly = assembleMarketingEmployeeRuntime(manifest, {
+        organizationId: ORG,
+      });
       expect(assembly.runtimeConfigPreview.employeeId).toBe(manifest.employeeId);
       expect(assembly.knowledgePlan.resolvedPacks.length).toBeGreaterThan(0);
       expect(assembly.promptAssemblyPlan.templateId).toBe(
         "prompt-template-marketing-specialist",
       );
       expect(assembly.knowledgeContentRefs.length).toBeGreaterThan(0);
+      expect(assembly.organizationContextRef).toContain(`operations-intelligence:${ORG}`);
+      expect(
+        assembly.promptAssemblyPlan.sectionOrder.find(
+          (entry) => entry.sectionId === "organization_context",
+        )?.sourceKeys[0],
+      ).toBe(assembly.organizationContextRef);
     }
   });
 

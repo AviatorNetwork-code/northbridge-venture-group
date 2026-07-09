@@ -7,6 +7,7 @@ import type { CustomerRequest } from "../types/customer-request.js";
 import type { ResponseEnvelope } from "../types/response.js";
 import type {
   ConversationContextBuilder,
+  OperationsIntelligenceLoader,
   OrganizationContextLoader,
   SubscriptionResolver,
   TeamResolver,
@@ -42,6 +43,7 @@ export interface CommunicationRouterDependencies {
   subscriptionResolver: SubscriptionResolver;
   teamResolver: TeamResolver;
   ownershipDecision: OwnershipDecisionService;
+  operationsIntelligenceLoader?: OperationsIntelligenceLoader;
   contextBuilder?: ConversationContextBuilder;
   nordiHandler?: NordiConversationHandler;
   teamHandler?: TeamExecutionHandler;
@@ -80,6 +82,7 @@ export class DefaultCommunicationRouter implements CommunicationRouter {
   private readonly subscriptionResolver: SubscriptionResolver;
   private readonly teamResolver: TeamResolver;
   private readonly ownershipDecision: OwnershipDecisionService;
+  private readonly operationsIntelligenceLoader?: OperationsIntelligenceLoader;
   private readonly contextBuilder: ConversationContextBuilder;
   private readonly nordiHandler: NordiConversationHandler;
   private readonly teamHandler: TeamExecutionHandler;
@@ -93,6 +96,7 @@ export class DefaultCommunicationRouter implements CommunicationRouter {
     this.subscriptionResolver = deps.subscriptionResolver;
     this.teamResolver = deps.teamResolver;
     this.ownershipDecision = deps.ownershipDecision;
+    this.operationsIntelligenceLoader = deps.operationsIntelligenceLoader;
     this.contextBuilder = deps.contextBuilder ?? new DefaultConversationContextBuilder();
     this.nordiHandler = deps.nordiHandler ?? new PassthroughNordiConversationHandler();
     this.teamHandler = deps.teamHandler ?? new PassthroughTeamExecutionHandler();
@@ -141,11 +145,17 @@ export class DefaultCommunicationRouter implements CommunicationRouter {
       request.customerId,
     );
     const teams = await this.teamResolver.resolve(request.orgId, request.customerId);
+    const operationsIntelligence = this.operationsIntelligenceLoader
+      ? await this.operationsIntelligenceLoader
+          .load(request.orgId, request.customerId)
+          .catch(() => undefined)
+      : undefined;
     const context = this.contextBuilder.build({
       request,
       organization,
       subscription,
       teams,
+      operationsIntelligence,
     });
 
     const routeRules = await this.resolveRouteRules(request.orgId, request.customerId);

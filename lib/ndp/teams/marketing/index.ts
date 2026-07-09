@@ -42,7 +42,13 @@ export { MarketingSpecialistSelector } from "./runtime/specialist-selector.js";
 export {
   assembleMarketingEmployeeRuntime,
   renderEmployeeRuntimePrompt,
+  type MarketingEmployeeRuntimeAssemblyOptions,
 } from "./runtime/employee-runtime.js";
+
+export {
+  buildMarketingTeamRuntimeContext,
+  type MarketingTeamRuntimeContext,
+} from "./runtime/operations-context.js";
 
 export { MarketingTeamSynthesizer } from "./runtime/synthesizer.js";
 export { createMarketingTaskExecutor } from "./runtime/task-executor.js";

@@ -4,6 +4,8 @@ First production-ready Digital Team on the Northbridge Workforce Platform. Refer
 
 **Multi-agent default:** Marketing Team Alpha delegates to multiple specialists by default. Team Lead (`lead-team-marketing`) is the single customer-facing voice. See [Multi-Agent Default Policy v1.0](../../../docs/northbridge-digital-workforce-multi-agent-default-policy-v1.md).
 
+**Operations Intelligence:** Team consumes `@northbridge/operations-intelligence` via `@/lib/ndp/operations-context` for shared organization context (profile, services, goals, policies, facts).
+
 ## Structure
 
 ### Domain layer (`lib/ndp/domain/marketing/`)

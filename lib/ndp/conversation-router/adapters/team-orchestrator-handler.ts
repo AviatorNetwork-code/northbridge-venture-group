@@ -1,3 +1,4 @@
+import { resolveOrganizationContextRef } from "@/lib/ndp/operations-context";
 import type { TeamOrchestrator } from "@northbridge/team-orchestrator";
 import type { TeamRequest } from "@northbridge/team-orchestrator";
 import type { WorkforceTelemetryEmitter } from "@northbridge/workforce-observability";
@@ -36,6 +37,14 @@ export class TeamOrchestratorExecutionHandler implements TeamExecutionHandler {
       input.teamId,
     );
 
+    const operationsIntelligence = input.context.operationsIntelligence;
+    const organizationContextRef = operationsIntelligence
+      ? resolveOrganizationContextRef({
+          organizationId: operationsIntelligence.organizationId,
+          contextVersion: operationsIntelligence.contextVersion,
+        })
+      : undefined;
+
     const teamRequest: TeamRequest = {
       id: input.request.requestId,
       orgId: input.request.orgId,
@@ -46,7 +55,15 @@ export class TeamOrchestratorExecutionHandler implements TeamExecutionHandler {
         message: input.request.message,
         intentTags: input.request.intentTags,
         capabilityTags: input.request.capabilityTags,
-        metadata: input.request.metadata,
+        metadata: {
+          ...input.request.metadata,
+          ...(organizationContextRef
+            ? {
+                organizationContextRef,
+                organizationPublicName: operationsIntelligence?.profile.publicName,
+              }
+            : {}),
+        },
       },
       customerThreadRef: input.request.threadId,
       receivedAt: input.request.receivedAt,

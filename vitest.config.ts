@@ -10,6 +10,10 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "."),
+      "@northbridge/operations-intelligence": path.resolve(
+        __dirname,
+        "../../NEOS - Northbridge Engineering Operating System/packages/platform/operations-intelligence/src/index.ts",
+      ),
     },
   },
 });

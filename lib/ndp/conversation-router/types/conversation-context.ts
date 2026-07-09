@@ -1,4 +1,5 @@
 import type { Organization, WorkforceFeatureFlags } from "@northbridge/workforce-contracts";
+import type { OrganizationIntelligenceContext } from "@northbridge/operations-intelligence";
 import type { CustomerRequest } from "./customer-request.js";
 
 export type SubscriptionStatus = "active" | "missing" | "suspended";
@@ -34,6 +35,8 @@ export interface ConversationContext {
   organization: OrganizationContext;
   subscription: SubscriptionContext;
   teams: TeamContext;
+  /** Operations Intelligence from @northbridge/operations-intelligence when loaded */
+  operationsIntelligence?: OrganizationIntelligenceContext;
   conversationStateId: string;
   now: string;
   consentEnabled?: boolean;
@@ -44,5 +47,6 @@ export interface ConversationContextBuildInput {
   organization: OrganizationContext;
   subscription: SubscriptionContext;
   teams: TeamContext;
+  operationsIntelligence?: OrganizationIntelligenceContext;
   now?: string;
 }

@@ -3,6 +3,7 @@ import {
   createWorkforceRouter,
   type RouteRuleSet,
 } from "@northbridge/workforce-router";
+import { createExampleOperationsIntelligenceLoader } from "@/lib/ndp/operations-context";
 import { TeamOrchestratorExecutionHandler } from "@/lib/ndp/conversation-router/adapters/team-orchestrator-handler";
 import {
   createCommunicationRouter,
@@ -23,6 +24,7 @@ export interface MarketingCommunicationRouterOptions {
   customerId: string;
   entitledTeamIds?: string[];
   hiredTeamIds?: string[];
+  includeOperationsIntelligence?: boolean;
   now?: () => string;
 }
 
@@ -67,6 +69,7 @@ export function createMarketingCommunicationRouter(
     customerId,
     entitledTeamIds = [MARKETING_TEAM_ID],
     hiredTeamIds = [MARKETING_TEAM_ID],
+    includeOperationsIntelligence = true,
     now = () => new Date().toISOString(),
   } = options;
 
@@ -84,6 +87,9 @@ export function createMarketingCommunicationRouter(
         ],
       ]),
     ),
+    operationsIntelligenceLoader: includeOperationsIntelligence
+      ? createExampleOperationsIntelligenceLoader([orgId], { now })
+      : undefined,
     subscriptionResolver: new InMemorySubscriptionResolver(
       new Map([
         [

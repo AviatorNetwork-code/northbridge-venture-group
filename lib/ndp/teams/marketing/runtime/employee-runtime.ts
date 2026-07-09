@@ -9,6 +9,7 @@ import {
   getPromptTemplate,
 } from "@/lib/ndp/workforce/prompts";
 import { buildSpecialistRuntimeConfigPreview } from "@/lib/ndp/workforce/manifests";
+import { buildOperationsContextReferences } from "@/lib/ndp/operations-context";
 import {
   renderKnowledgePackText,
   getProductionPromptForEmployee,
@@ -18,6 +19,11 @@ import { MARKETING_TEAM_ID } from "../constants.js";
 
 const knowledgeRegistry = createKnowledgePackRegistry(NDP_LAUNCH_KNOWLEDGE_PACKS);
 
+export interface MarketingEmployeeRuntimeAssemblyOptions {
+  organizationId?: string;
+  contextVersion?: string;
+}
+
 export interface MarketingEmployeeRuntimeAssembly {
   employeeId: string;
   specialistId: string;
@@ -26,10 +32,12 @@ export interface MarketingEmployeeRuntimeAssembly {
   promptAssemblyPlan: ReturnType<typeof buildPromptAssemblyPlan>;
   productionPromptVersion: string;
   knowledgeContentRefs: string[];
+  organizationContextRef?: string;
 }
 
 export function assembleMarketingEmployeeRuntime(
   manifest: DigitalEmployeeManifest,
+  options?: MarketingEmployeeRuntimeAssemblyOptions,
 ): MarketingEmployeeRuntimeAssembly {
   const knowledgePlan = buildKnowledgeResolutionPlan({
     manifest,
@@ -41,10 +49,18 @@ export function assembleMarketingEmployeeRuntime(
     getPromptTemplate("prompt-template-marketing-specialist") ??
     getPromptTemplate("prompt-template-team-lead")!;
 
+  const contextReferences = options?.organizationId
+    ? buildOperationsContextReferences({
+        organizationId: options.organizationId,
+        contextVersion: options.contextVersion,
+      })
+    : undefined;
+
   const promptAssemblyPlan = buildPromptAssemblyPlan({
     manifest,
     knowledgePlan,
     template,
+    contextReferences,
   });
 
   const productionPrompt = getProductionPromptForEmployee(manifest.employeeId);
@@ -59,6 +75,7 @@ export function assembleMarketingEmployeeRuntime(
     knowledgeContentRefs: knowledgePlan.resolvedPacks
       .map((entry) => entry.knowledgePackId)
       .filter((packId) => renderKnowledgePackText(packId).length > 0),
+    organizationContextRef: contextReferences?.organizationContextRef,
   };
 }
 
