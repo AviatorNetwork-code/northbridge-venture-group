@@ -589,7 +589,7 @@ Protocol version field: `communicationProtocolVersion: 1` on all messages for mi
 | Package | Responsibility |
 |---------|----------------|
 | `@northbridge/workforce-communication-contracts` | `RequestOwner`, `MessageActor`, `TaskEnvelope`, `CollaborationSession`, `ArbitrationRecord` types |
-| `@northbridge/communication-router` | Owner assignment, dedup, transfer, invariant enforcement |
+| `@northbridge/communication-router` | Owner assignment, dedup, transfer, invariant enforcement — **platform engine:** `@northbridge/workforce-router` ([ADR-W9](./northbridge-workforce-router-phase-4-design-v1.md#adr-w9-workforce-router-vs-communication-router)); NDP Conversation Router composes with conversation-engine |
 | `@northbridge/collaboration-session` | Cross-team session lifecycle |
 | `@northbridge/conflict-arbitrator` | Evidence collection interface + resolution struct (policy-agnostic) |
 | `@northbridge/reporting-ladder` | Report aggregation levels (specialist → team → manager+) |

@@ -568,11 +568,12 @@ Milestones ordered for parallel work where safe. Each is scoped for 1–3 week s
 | Field | Detail |
 |-------|--------|
 | **Dependencies** | M4 |
-| **NEO** | conversation-engine plugins |
-| **NBD** | NDP Conversation Router |
+| **NEO** | `@northbridge/workforce-router` (platform ownership engine); conversation-engine plugins |
+| **NBD** | NDP Conversation Router (composes workforce-router + conversation-engine + presentation-policy) |
 | **Deliverables** | nordi-customer + team-customer threads; enforces single-`RequestOwner` invariant per Communication Protocol v1.0 |
 | **Validation** | Routing tests, attribution metadata, ownership matrix scenarios |
 | **Order** | **5** |
+| **Design** | [Architecture Review v1.0](./northbridge-workforce-platform-architecture-review-v1.md), [Workforce Router Phase 4 Design v1.0](./northbridge-workforce-router-phase-4-design-v1.md) |
 
 ### M6 — Nordi customer-success mode (NBD)
 
