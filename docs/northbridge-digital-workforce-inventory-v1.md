@@ -270,5 +270,7 @@ This aligns with the NEO philosophy:
 
 ## Related documents
 
+- [Workforce Communication Protocol v1.0](./northbridge-digital-workforce-communication-protocol-v1.md) — how teams, specialists, and Nordi communicate with customers
+- [NEO Execution Plan v1.0](./northbridge-digital-workforce-execution-plan-v1.md) — phased engineering roadmap
+- [Northbridge Digital Workforce Organizational Structure v1.0](./northbridge-digital-workforce-organizational-structure-v1.md) — hierarchy, Nordi role, evidence-based growth
 - [Nordi Mobile Architecture](./nordi-mobile-architecture.md) — customer app shows hired **teams** at launch; manager tiers deferred
-- `lib/workforce/catalog.ts` — implementation catalog (to be aligned with this inventory in a future pass)

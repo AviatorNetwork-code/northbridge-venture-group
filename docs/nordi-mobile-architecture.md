@@ -266,7 +266,7 @@ Base path: `/api/mobile/v1`
 | GET | `/teams/{teamId}/conversations` | Team conversation threads |
 | GET | `/workforce/conversations` | Workforce-level threads |
 | GET | `/conversations/{id}` | Thread detail + paginated messages |
-| POST | `/conversations/{id}/messages` | Send message (non-Nordi workforce/team channels) |
+| POST | `/conversations/{id}/messages` | Send message (non-Nordi workforce/team channels); routing follows [Communication Protocol v1.0](./northbridge-digital-workforce-communication-protocol-v1.md) |
 
 ### Nordi (customer-success)
 
@@ -445,6 +445,10 @@ Ship a **customer-success cockpit** for existing paying accounts: see team perfo
 
 | Asset | Relevance |
 |-------|-----------|
+| [Workforce Communication Protocol v1.0](./northbridge-digital-workforce-communication-protocol-v1.md) | Thread ownership, Nordi vs team voice, customer-facing routing |
+| [NEO Execution Plan v1.0](./northbridge-digital-workforce-execution-plan-v1.md) | Phased workforce engineering roadmap |
+| [Workforce Inventory v1.0](./northbridge-digital-workforce-inventory-v1.md) | Specialists and team products |
+| [Organizational Structure v1.0](./northbridge-digital-workforce-organizational-structure-v1.md) | Hierarchy and Nordi role |
 | `lib/neo/providers/local-provider.ts` | Anticipated NDP route shapes (`/api/cat/send`, workforce, operations) |
 | `lib/neo/types.ts` | `NeoRequest` / `NeoResponse` — inspiration for mobile DTOs, not copied logic |
 | `lib/cat/discovery-engine.ts` | **Website only** — not used by mobile |

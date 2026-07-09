@@ -8,6 +8,7 @@
 - [Nordi Mobile Architecture](./nordi-mobile-architecture.md)
 - [Workforce Inventory v1.0](./northbridge-digital-workforce-inventory-v1.md)
 - [Organizational Structure v1.0](./northbridge-digital-workforce-organizational-structure-v1.md)
+- [Workforce Communication Protocol v1.0](./northbridge-digital-workforce-communication-protocol-v1.md)
 
 **Doctrine:** *We succeed when you succeed.*
 
@@ -242,6 +243,8 @@ Inbound (customer message, connector event, scheduled job)
 ## Phase 4 — Nordi integration
 
 **Goal:** Nordi represents Northbridge Digital **outside** customer org chart.
+
+**Behavioral spec:** [Workforce Communication Protocol v1.0](./northbridge-digital-workforce-communication-protocol-v1.md) (Layers 0–1, routing, conflict resolution).
 
 ### Nordi communication matrix
 
@@ -567,8 +570,8 @@ Milestones ordered for parallel work where safe. Each is scoped for 1–3 week s
 | **Dependencies** | M4 |
 | **NEO** | conversation-engine plugins |
 | **NBD** | NDP Conversation Router |
-| **Deliverables** | nordi-customer + team-customer threads |
-| **Validation** | Routing tests, attribution metadata |
+| **Deliverables** | nordi-customer + team-customer threads; enforces single-`RequestOwner` invariant per Communication Protocol v1.0 |
+| **Validation** | Routing tests, attribution metadata, ownership matrix scenarios |
 | **Order** | **5** |
 
 ### M6 — Nordi customer-success mode (NBD)
@@ -765,6 +768,7 @@ Phase 7 (data) embedded in M2–M4 ───────┤
 
 ## 13. Related documents
 
+- [Workforce Communication Protocol v1.0](./northbridge-digital-workforce-communication-protocol-v1.md) — behavioral spec for routing, ownership, and reporting
 - [Northbridge Digital Workforce Inventory v1.0](./northbridge-digital-workforce-inventory-v1.md)
 - [Northbridge Digital Workforce Organizational Structure v1.0](./northbridge-digital-workforce-organizational-structure-v1.md)
 - [Nordi Mobile Architecture](./nordi-mobile-architecture.md)
