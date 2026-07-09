@@ -54,6 +54,7 @@ describe("consultant voice", () => {
         analyzedAt: new Date().toISOString(),
       },
       {
+        preferredLanguage: "en",
         discoveryAnswers: { "general-friction": "Scheduling cancellations are tough" },
         notes: ["Scheduling cancellations are tough"],
       },
@@ -63,5 +64,33 @@ describe("consultant voice", () => {
     expect(narrative.join(" ")).toContain("online appointment booking");
     expect(narrative.join(" ")).not.toContain("OBSERVATION");
     expect(narrative.join(" ")).not.toContain("Not detected");
+  });
+
+  it("localizes website insight narrative in Spanish", () => {
+    const narrative = buildWebsiteInsightNarrative(
+      {
+        url: "https://example.com",
+        services: [],
+        contactMethods: [],
+        hasBookingFlow: false,
+        hasAppointmentSystem: false,
+        hasBusinessHours: false,
+        hasContactForm: false,
+        hasEmergencyMessaging: false,
+        phoneProminent: false,
+        hasGoogleBusinessProfile: false,
+        technologies: [],
+        signals: [],
+        analyzedAt: new Date().toISOString(),
+      },
+      {
+        preferredLanguage: "es",
+        discoveryAnswers: { "general-friction": "La agenda es difícil" },
+        notes: ["La agenda es difícil"],
+      },
+    );
+
+    expect(narrative.join(" ")).toContain("Terminé de revisar tu sitio web");
+    expect(narrative.join(" ")).not.toContain("finished reviewing your website");
   });
 });

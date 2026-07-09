@@ -1,5 +1,5 @@
 import type { DiscoveryEngineResult, DiscoveryProfile } from "@/lib/cat/discovery-types";
-import { getIndustryLabel, getNextIndustryQuestion, getIndustryQuestionsAnsweredCount } from "@/lib/cat/industry-questions";
+import { getNextIndustryQuestion, getIndustryQuestionsAnsweredCount } from "@/lib/cat/industry-questions";
 import { discoveryTurnWantsQuestion } from "@/lib/cat/platform-turn-policy";
 import { buildRelationshipAcknowledgment } from "@/lib/nordi/relationship";
 import {
@@ -8,10 +8,16 @@ import {
   buildConsultantRecommendationReply,
   buildConsultantWebsitePermissionLead,
   buildConsultantWebsiteUrlAck,
+  getConsultantVoice,
 } from "@/lib/nordi/consultant-voice";
+import { detectAndPersistLanguage } from "@/lib/nordi/language/detect-language";
+import type { NordiLanguage } from "@/lib/nordi/language/types";
+import {
+  buildLocalizedMissingFieldPrompt,
+  getLocalizedQuestionPrompt,
+} from "@/lib/nordi/localized-content";
 import { extractWebsiteUrl } from "@/lib/cat/website-analysis";
 import {
-  buildMissingFieldPrompt,
   collectProfileText,
   diffProfileFields,
   getMissingDiscoveryFields,
@@ -19,6 +25,10 @@ import {
   logDiscoveryDecision,
   mergeProfile,
 } from "@/lib/cat/discovery-profile-state";
+
+function getLanguage(profile: DiscoveryProfile): NordiLanguage {
+  return profile.preferredLanguage ?? "en";
+}
 
 function includesAny(text: string, terms: string[]): boolean {
   return terms.some((term) => text.includes(term));
@@ -30,8 +40,8 @@ function extractIndustry(text: string): string | undefined {
     hvac: ["hvac", "heating and cooling", "heating", "air conditioning", "furnace"],
     aviation: ["flight school", "aviation", "pilot training", "flying school", "cfi"],
     healthcare: ["healthcare", "medical", "clinic", "hospital", "patient"],
-    hospitality: ["restaurant", "restaurants", "hotel", "hospitality", "cafe", "bar"],
-    retail: ["retail", "store", "shop", "ecommerce", "e-commerce"],
+    hospitality: ["restaurant", "restaurants", "hotel", "hospitality", "cafe", "bar", "restaurante", "restaurantes", "cafetería", "cafeteria"],
+    retail: ["retail", "store", "shop", "ecommerce", "e-commerce", "tienda", "comercio"],
     "professional-services": [
       "law firm",
       "accounting",
@@ -44,16 +54,23 @@ function extractIndustry(text: string): string | undefined {
       "accountant",
       "tax preparer",
       "tax preparation",
+      "impuestos",
+      "impuesto",
+      "contabilidad",
+      "contador",
+      "contadores",
+      "fiscal",
+      "negocio de impuestos",
     ],
-    fitness: ["gym", "fitness", "studio", "yoga"],
-    salon: ["salon", "spa", "beauty"],
+    fitness: ["gym", "fitness", "studio", "yoga", "gimnasio"],
+    salon: ["salon", "spa", "beauty", "salón", "belleza"],
   };
 
   for (const [industry, keywords] of Object.entries(industries)) {
     if (keywords.some((keyword) => text.includes(keyword))) return industry;
   }
 
-  if (includesAny(text, ["business", "company", "firm", "practice", "shop", "store"])) {
+  if (includesAny(text, ["business", "company", "firm", "practice", "shop", "store", "negocio", "empresa", "firma"])) {
     return "general";
   }
 
@@ -61,19 +78,20 @@ function extractIndustry(text: string): string | undefined {
 }
 
 function extractEmployeeCount(text: string): number | undefined {
-  const match = text.match(/(\d+)\s*(employees|staff|people|team members|technicians|instructors|providers|workers)/i);
+  const match = text.match(/(\d+)\s*(employees|staff|people|team members|technicians|instructors|providers|workers|empleados|personal|personas|técnicos|trabajadores)/i);
   if (match) return Number.parseInt(match[1], 10);
 
-  const wordMatch = text.match(/\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\s+(restaurants|locations|offices|stores)/i);
+  const wordMatch = text.match(/\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez)\s+(restaurants|locations|offices|stores|restaurantes|ubicaciones|oficinas|tiendas)/i);
   if (wordMatch) {
     const words: Record<string, number> = {
       two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12,
+      dos: 2, tres: 3, cuatro: 4, cinco: 5, seis: 6, siete: 7, ocho: 8, nueve: 9, diez: 10,
     };
     return words[wordMatch[1].toLowerCase()];
   }
 
-  if (includesAny(text, ["just me", "solo", "one person", "only me"])) return 1;
-  if (includesAny(text, ["small team", "few people"])) return 5;
+  if (includesAny(text, ["just me", "solo", "one person", "only me", "solo yo", "sólo yo", "unicamente yo", "únicamente yo"])) return 1;
+  if (includesAny(text, ["small team", "few people", "equipo pequeño", "pocas personas"])) return 5;
   return undefined;
 }
 
@@ -89,17 +107,17 @@ function matchesWholeWord(text: string, words: string[]): boolean {
 }
 
 function isAffirmative(text: string): boolean {
-  return matchesWholeWord(text, ["yes", "yeah", "yep", "sure", "please", "ok", "okay", "absolutely"])
-    || includesAny(text, ["go ahead"]);
+  return matchesWholeWord(text, ["yes", "yeah", "yep", "sure", "please", "ok", "okay", "absolutely", "sí", "si", "claro", "vale", "por supuesto"])
+    || includesAny(text, ["go ahead", "de acuerdo"]);
 }
 
 function isNegative(text: string): boolean {
   return matchesWholeWord(text, ["no", "nope", "nah"])
-    || includesAny(text, ["not now", "no website", "rather not", "skip"]);
+    || includesAny(text, ["not now", "no website", "rather not", "skip", "ahora no", "mejor no", "sin sitio"]);
 }
 
 function isSalesPressure(text: string): boolean {
-  return includesAny(text, ["how much", "pricing", "price", "cost", "buy", "subscribe", "plan"]);
+  return includesAny(text, ["how much", "pricing", "price", "cost", "buy", "subscribe", "plan", "cuánto", "cuanto", "precio", "costo", "comprar"]);
 }
 
 function recordAnswer(profile: DiscoveryProfile, questionId: string, answer: string): DiscoveryProfile {
@@ -150,10 +168,10 @@ function extractPassiveSignals(text: string, rawMessage: string, profile: Discov
 
   const channels = new Set(next.communicationChannels ?? []);
   if (includesAny(text, ["whatsapp"])) channels.add("WhatsApp");
-  if (includesAny(text, ["phone", "call us", "by phone"])) channels.add("Phone");
-  if (includesAny(text, ["text", "texts", "sms", "text message"])) channels.add("Text");
-  if (includesAny(text, ["email", "gmail"])) channels.add("Email");
-  if (includesAny(text, ["walk-in", "walk in"])) channels.add("Walk-ins");
+  if (includesAny(text, ["phone", "call us", "by phone", "teléfono", "telefono", "llamada", "llamadas"])) channels.add("Phone");
+  if (includesAny(text, ["text", "texts", "sms", "text message", "texto", "mensaje", "mensajes"])) channels.add("Text");
+  if (includesAny(text, ["email", "gmail", "correo"])) channels.add("Email");
+  if (includesAny(text, ["walk-in", "walk in", "visita", "visitas"])) channels.add("Walk-ins");
   if (channels.size > 0) next = mergeProfile(next, { communicationChannels: Array.from(channels) });
 
   if (rawMessage.trim().length >= 8) {
@@ -164,8 +182,7 @@ function extractPassiveSignals(text: string, rawMessage: string, profile: Discov
 }
 
 function acknowledgeIndustry(profile: DiscoveryProfile): string {
-  const label = getIndustryLabel(profile.industry);
-  return buildConsultantIndustryOpening(label, profile.userMessageCount ?? 0);
+  return buildConsultantIndustryOpening(profile, profile.industry, profile.userMessageCount ?? 0);
 }
 
 type DiscoveryTurnContext = {
@@ -181,8 +198,8 @@ function shouldAskWebsitePermission(profile: DiscoveryProfile): boolean {
   return industryAnswered >= 2 || getNextIndustryQuestion(profile) === null;
 }
 
-function websitePermissionPrompt(): string {
-  return "Would you like me to take a quick look at your public website while we continue?";
+function websitePermissionPrompt(profile: DiscoveryProfile): string {
+  return getConsultantVoice(getLanguage(profile)).copy.websitePermissionPrompt;
 }
 
 function buildSupportAreas(profile: DiscoveryProfile): string[] {
@@ -246,13 +263,15 @@ function askNextQuestion(
   const question = getNextIndustryQuestion(profile);
   if (!question) return null;
 
+  const language = getLanguage(profile);
+  const localizedPrompt = getLocalizedQuestionPrompt(question.id, language, question.prompt);
   const seed = profile.userMessageCount ?? 0;
   const presentation = buildConsultantQuestionTurn({
     profile,
     userMessage: turnContext?.userMessage ?? "",
     answeredQuestionId: turnContext?.answeredQuestionId,
     nextQuestionId: question.id,
-    nextQuestionPrompt: question.prompt,
+    nextQuestionPrompt: localizedPrompt,
   });
 
   let progressiveReply = presentation.progressiveReply;
@@ -267,7 +286,7 @@ function askNextQuestion(
   }
 
   const useProgressive =
-    Boolean(progressiveReply?.length) || (seed % 4 === 0 && question.prompt.length > 40);
+    Boolean(progressiveReply?.length) || (seed % 4 === 0 && localizedPrompt.length > 40);
 
   if (useProgressive && progressiveReply?.length) {
     return {
@@ -282,7 +301,7 @@ function askNextQuestion(
   }
 
   return {
-    reply: reply || question.prompt,
+    reply: reply || localizedPrompt,
     profileUpdates: mergeProfile(profile, {
       pendingQuestionId: question.id,
       discoveryPhase: "learning",
@@ -307,7 +326,7 @@ function logTurnDecision(
 
 function buildDiscoveryFallback(profile: DiscoveryProfile): DiscoveryEngineResult | null {
   const missingFields = getMissingDiscoveryFields(profile);
-  const missingFieldPrompt = buildMissingFieldPrompt(missingFields);
+  const missingFieldPrompt = buildLocalizedMissingFieldPrompt(missingFields, getLanguage(profile));
 
   if (!missingFieldPrompt) {
     return null;
@@ -328,6 +347,13 @@ export function processDiscoveryMessage(
   const messageCount = (profile.userMessageCount ?? 0) + 1;
   const profileBeforeTurn = profile;
   let nextProfile = mergeProfile(profile, { userMessageCount: messageCount });
+
+  if (!nextProfile.preferredLanguage && rawMessage.trim().length >= 8) {
+    nextProfile = mergeProfile(nextProfile, {
+      preferredLanguage: detectAndPersistLanguage(nextProfile, rawMessage),
+    });
+  }
+
   const extractedUrl = extractWebsiteUrl(rawMessage);
   const answeredQuestionId = nextProfile.pendingQuestionId;
 
@@ -359,13 +385,10 @@ export function processDiscoveryMessage(
   }
 
   if (nextProfile.discoveryPhase !== "recommendations" && isSalesPressure(text)) {
+    const voice = getConsultantVoice(getLanguage(nextProfile));
     logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, "sales-pressure-deflection");
     return {
-      reply: [
-        "I want to understand your business properly before we talk about solutions.",
-        "",
-        "Help me with one more operational detail — what part of the week feels most repetitive for your team?",
-      ].join("\n"),
+      reply: voice.copy.salesPressureDeflection.join("\n"),
       profileUpdates: nextProfile,
     };
   }
@@ -378,14 +401,19 @@ export function processDiscoveryMessage(
       discoveryPhase: "website_analyzing",
     });
 
+    const language = getLanguage(nextProfile);
+    const voice = getConsultantVoice(language);
     const followUp = getNextIndustryQuestion(nextProfile);
-    const continueLine = followUp
-      ? `\n\nWhile that runs, ${followUp.prompt.charAt(0).toLowerCase()}${followUp.prompt.slice(1)}`
-      : "\n\nWhile that runs, tell me more about how customers usually find you.";
+    const followUpPrompt = followUp
+      ? getLocalizedQuestionPrompt(followUp.id, language, followUp.prompt)
+      : null;
+    const continueLine = followUpPrompt
+      ? `\n\n${voice.copy.whileThatRunsPrefix} ${followUpPrompt.charAt(0).toLowerCase()}${followUpPrompt.slice(1)}`
+      : `\n\n${voice.copy.whileThatRunsPrefix} ${voice.copy.customerFindYouFallback}`;
 
     logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, followUp?.id ?? null);
     return {
-      reply: buildConsultantWebsiteUrlAck(continueLine),
+      reply: buildConsultantWebsiteUrlAck(nextProfile, continueLine),
       profileUpdates: mergeProfile(nextProfile, { pendingQuestionId: followUp?.id }),
       triggerWebsiteAnalysis: extractedUrl,
       showWebsiteAnalyzing: true,
@@ -393,9 +421,10 @@ export function processDiscoveryMessage(
   }
 
   if (nextProfile.websitePermissionGranted && !nextProfile.website && isAffirmative(text)) {
+    const voice = getConsultantVoice(getLanguage(nextProfile));
     logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, "awaiting-website-url");
     return {
-      reply: "Great — paste your website URL whenever you're ready, and I'll review it while we keep talking.",
+      reply: voice.copy.websiteUrlReady,
       profileUpdates: nextProfile,
     };
   }
@@ -413,12 +442,9 @@ export function processDiscoveryMessage(
     }
 
     logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, "website-declined-follow-up");
+    const voice = getConsultantVoice(getLanguage(nextProfile));
     return {
-      reply: [
-        "No problem — we can keep learning from the conversation.",
-        "",
-        "What does a typical customer journey look like from first contact to completed service?",
-      ].join("\n"),
+      reply: [voice.copy.websiteDeclinedLead, "", voice.copy.websiteDeclinedFollowUp].join("\n"),
       profileUpdates: nextProfile,
     };
   }
@@ -430,7 +456,7 @@ export function processDiscoveryMessage(
       thinkingContext: "reviewing-business",
       progressiveReply: [
         buildConsultantWebsitePermissionLead(nextProfile),
-        websitePermissionPrompt(),
+        websitePermissionPrompt(nextProfile),
       ],
       reply: "",
       profileUpdates: nextProfile,
@@ -439,9 +465,10 @@ export function processDiscoveryMessage(
 
   if (nextProfile.websitePermissionAsked && !nextProfile.websitePermissionGranted && isAffirmative(text)) {
     nextProfile = mergeProfile(nextProfile, { websitePermissionGranted: true });
+    const voice = getConsultantVoice(getLanguage(nextProfile));
     logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, "website-permission-granted");
     return {
-      reply: "Great — paste your website URL whenever you're ready, and I'll review it while we keep talking.",
+      reply: voice.copy.websiteUrlReady,
       profileUpdates: nextProfile,
     };
   }
@@ -464,12 +491,10 @@ export function processDiscoveryMessage(
   }
 
   logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, "general-friction");
+  const voice = getConsultantVoice(getLanguage(nextProfile));
   return {
     thinkingContext: "reviewing-business",
-    progressiveReply: [
-      "What you have described gives me a clearer picture of how the week actually runs.",
-      "What tends to create the most friction in a typical week — scheduling, follow-ups, staffing, or something else?",
-    ],
+    progressiveReply: [voice.copy.generalFrictionLead, voice.copy.generalFrictionQuestion],
     reply: "",
     profileUpdates: nextProfile,
   };

@@ -1,5 +1,6 @@
 import type { BusinessProfile } from "@/lib/cat/types";
 import type { NordiMessageCard } from "@/lib/nordi/cards";
+import type { NordiLanguage } from "@/lib/nordi/language/types";
 
 export type DiscoveryPhase =
   | "learning"
@@ -53,6 +54,7 @@ export type DiscoveryProfile = BusinessProfile & {
   pendingQuestionId?: string;
   areasForSupport?: string[];
   isReturningVisitor?: boolean;
+  preferredLanguage?: NordiLanguage;
 };
 
 export type DiscoveryEngineResult = {
