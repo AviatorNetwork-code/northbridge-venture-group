@@ -19,3 +19,9 @@ export class InMemoryWorkforceTelemetryEmitter implements WorkforceTelemetryEmit
     return this.events.filter((event) => event.correlationId === correlationId);
   }
 }
+
+export class NoOpWorkforceTelemetryEmitter implements WorkforceTelemetryEmitter {
+  emit(_event: WorkforceEvent): void {
+    // intentionally empty
+  }
+}

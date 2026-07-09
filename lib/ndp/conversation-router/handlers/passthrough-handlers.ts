@@ -26,6 +26,10 @@ export interface NordiConversationHandler {
 export interface TeamHandlerResult {
   reply: string;
   escalated?: boolean;
+  telemetry?: {
+    synthesisEmitted?: boolean;
+    escalationEmitted?: boolean;
+  };
 }
 
 export interface TeamExecutionHandler {

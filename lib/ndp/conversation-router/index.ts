@@ -76,6 +76,16 @@ export { TeamOrchestratorExecutionHandler } from "./adapters/team-orchestrator-h
 export type { TeamOrchestratorExecutionHandlerOptions } from "./adapters/team-orchestrator-handler.js";
 
 export {
+  applyOrchestratorObservability,
+  createOrchestratorTelemetryHooks,
+  createRequestTelemetryContext,
+  safeEmitTelemetry,
+  withObservabilityRuntimeDeps,
+  type OrchestratorTelemetryOptions,
+  type RequestTelemetryContext,
+} from "./observability/index.js";
+
+export {
   DefaultResponseCoordinator,
 } from "./coordination/response-coordinator.js";
 export type { ResponseCoordinator } from "./coordination/response-coordinator.js";

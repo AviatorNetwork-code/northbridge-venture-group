@@ -1,4 +1,8 @@
 import type { RouteRuleSet } from "@northbridge/workforce-router";
+import {
+  NoOpWorkforceTelemetryEmitter,
+  type WorkforceTelemetryEmitter,
+} from "@northbridge/workforce-observability";
 import type { CustomerRequest } from "../types/customer-request.js";
 import type { ResponseEnvelope } from "../types/response.js";
 import type {
@@ -20,6 +24,15 @@ import {
   DefaultResponseCoordinator,
   type ResponseCoordinator,
 } from "../coordination/response-coordinator.js";
+import {
+  createRequestTelemetryContext,
+  emitCustomerRequestEvent,
+  emitCustomerResponseEvent,
+  emitRoutingDecisionEvent,
+  emitTeamExecutionEvent,
+  emitTeamSynthesisEvent,
+  emitEscalationEvent,
+} from "../observability/index.js";
 import { CommunicationRouterError } from "./errors.js";
 
 export interface CommunicationRouterDependencies {
@@ -32,6 +45,7 @@ export interface CommunicationRouterDependencies {
   teamHandler?: TeamExecutionHandler;
   responseCoordinator?: ResponseCoordinator;
   resolveRouteRules: (orgId: string, customerId: string) => Promise<RouteRuleSet>;
+  telemetryEmitter?: WorkforceTelemetryEmitter;
 }
 
 export interface HandleCustomerRequestInput {
@@ -58,6 +72,7 @@ export class DefaultCommunicationRouter implements CommunicationRouter {
   private readonly teamHandler: TeamExecutionHandler;
   private readonly responseCoordinator: ResponseCoordinator;
   private readonly resolveRouteRules: CommunicationRouterDependencies["resolveRouteRules"];
+  private readonly telemetryEmitter: WorkforceTelemetryEmitter;
 
   constructor(deps: CommunicationRouterDependencies) {
     this.organizationLoader = deps.organizationLoader;
@@ -69,10 +84,18 @@ export class DefaultCommunicationRouter implements CommunicationRouter {
     this.teamHandler = deps.teamHandler ?? new PassthroughTeamExecutionHandler();
     this.responseCoordinator = deps.responseCoordinator ?? new DefaultResponseCoordinator();
     this.resolveRouteRules = deps.resolveRouteRules;
+    this.telemetryEmitter =
+      deps.telemetryEmitter ?? new NoOpWorkforceTelemetryEmitter();
   }
 
   async handleRequest(input: HandleCustomerRequestInput): Promise<ResponseEnvelope> {
     const { request } = input;
+    const telemetry = createRequestTelemetryContext({
+      request,
+      emitter: this.telemetryEmitter,
+    });
+
+    await emitCustomerRequestEvent(telemetry, request);
 
     let organization;
     try {
@@ -99,12 +122,20 @@ export class DefaultCommunicationRouter implements CommunicationRouter {
     const routeRules = await this.resolveRouteRules(request.orgId, request.customerId);
     const ownership = await this.ownershipDecision.decide({ context, routeRules });
 
+    await emitRoutingDecisionEvent(telemetry, request, ownership);
+
     if (ownership.owner.type === "nordi") {
-      return this.handleNordiPath(request, context, ownership);
+      return this.handleNordiPath(request, context, ownership, telemetry);
     }
 
     if (ownership.owner.type === "team") {
-      return this.handleTeamPath(request, context, ownership, ownership.owner.id!);
+      return this.handleTeamPath(
+        request,
+        context,
+        ownership,
+        ownership.owner.id!,
+        telemetry,
+      );
     }
 
     throw new CommunicationRouterError(
@@ -117,6 +148,7 @@ export class DefaultCommunicationRouter implements CommunicationRouter {
     request: CustomerRequest,
     context: ConversationContext,
     ownership: ConversationOwnership,
+    telemetry: ReturnType<typeof createRequestTelemetryContext>,
   ): Promise<ResponseEnvelope> {
     const mode = this.resolveNordiMode(ownership);
     const nordiResult = await this.nordiHandler.handle({
@@ -131,7 +163,7 @@ export class DefaultCommunicationRouter implements CommunicationRouter {
         ? `${ownership.bridgeNote}\n\n`
         : "";
 
-    return this.responseCoordinator.coordinate({
+    const envelope = await this.responseCoordinator.coordinate({
       requestId: request.requestId,
       orgId: request.orgId,
       customerId: request.customerId,
@@ -147,6 +179,14 @@ export class DefaultCommunicationRouter implements CommunicationRouter {
         bridgeNote: ownership.bridgeNote,
       },
     });
+
+    await emitCustomerResponseEvent(telemetry, {
+      orgId: request.orgId,
+      owner: ownership.owner,
+      metadata: { ownershipSource: ownership.source },
+    });
+
+    return envelope;
   }
 
   private async handleTeamPath(
@@ -154,15 +194,63 @@ export class DefaultCommunicationRouter implements CommunicationRouter {
     context: ConversationContext,
     ownership: ConversationOwnership,
     teamId: string,
+    telemetry: ReturnType<typeof createRequestTelemetryContext>,
   ): Promise<ResponseEnvelope> {
-    const teamResult = await this.teamHandler.execute({
-      request,
-      context,
-      ownership,
+    await emitTeamExecutionEvent(telemetry, {
+      orgId: request.orgId,
       teamId,
+      status: "started",
     });
 
-    return this.responseCoordinator.coordinate({
+    let teamResult;
+    try {
+      teamResult = await this.teamHandler.execute({
+        request,
+        context,
+        ownership,
+        teamId,
+      });
+    } catch (error) {
+      await emitTeamExecutionEvent(telemetry, {
+        orgId: request.orgId,
+        teamId,
+        status: "failed",
+        metadata: {
+          error: error instanceof Error ? error.message : "team execution failed",
+        },
+      });
+      throw error;
+    }
+
+    if (teamResult.escalated) {
+      await emitTeamExecutionEvent(telemetry, {
+        orgId: request.orgId,
+        teamId,
+        status: "escalated",
+      });
+      if (!teamResult.telemetry?.escalationEmitted) {
+        await emitEscalationEvent(telemetry, {
+          orgId: request.orgId,
+          teamId,
+          metadata: { reply: teamResult.reply },
+        });
+      }
+    } else {
+      await emitTeamExecutionEvent(telemetry, {
+        orgId: request.orgId,
+        teamId,
+        status: "completed",
+      });
+      if (!teamResult.telemetry?.synthesisEmitted) {
+        await emitTeamSynthesisEvent(telemetry, {
+          orgId: request.orgId,
+          teamId,
+          metadata: { source: "communication-router" },
+        });
+      }
+    }
+
+    const envelope = await this.responseCoordinator.coordinate({
       requestId: request.requestId,
       orgId: request.orgId,
       customerId: request.customerId,
@@ -177,6 +265,17 @@ export class DefaultCommunicationRouter implements CommunicationRouter {
         ownershipSource: ownership.source,
       },
     });
+
+    await emitCustomerResponseEvent(telemetry, {
+      orgId: request.orgId,
+      owner: ownership.owner,
+      metadata: {
+        escalated: teamResult.escalated,
+        ownershipSource: ownership.source,
+      },
+    });
+
+    return envelope;
   }
 
   private resolveNordiMode(ownership: ConversationOwnership): NordiHandlerMode {

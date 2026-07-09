@@ -23,6 +23,7 @@ export {
 
 export {
   InMemoryWorkforceTelemetryEmitter,
+  NoOpWorkforceTelemetryEmitter,
   type WorkforceTelemetryEmitter,
 } from "./emitter.js";
 
