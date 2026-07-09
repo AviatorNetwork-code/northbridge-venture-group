@@ -1,4 +1,6 @@
 import type { DiscoveryProfile } from "@/lib/cat/discovery-types";
+import { profileToFactMemory, buildNordiFieldDefinitions } from "@/lib/cat/fact-memory-bridge";
+import { selectNextQuestion } from "@northbridge/conversation-state";
 
 export type IndustryQuestion = {
   id: string;
@@ -119,26 +121,20 @@ export const INDUSTRY_QUESTION_BANK: IndustryQuestion[] = [
 ];
 
 export function getNextIndustryQuestion(profile: DiscoveryProfile): IndustryQuestion | null {
-  const answered = new Set(profile.answeredQuestions ?? []);
-  const industry = profile.industry ?? "general";
-  const candidates = INDUSTRY_QUESTION_BANK.filter(
-    (question) =>
-      (question.industries.includes(industry) || question.industries.includes("general")) &&
-      !answered.has(question.id),
-  );
+  const memory = profileToFactMemory(profile);
+  const fieldDefinitions = buildNordiFieldDefinitions(profile);
+  const { question } = selectNextQuestion(memory, fieldDefinitions);
+  if (!question) return null;
 
-  if (industry !== "general") {
-    const industrySpecific = candidates
-      .filter((question) => question.industries.includes(industry))
-      .sort((a, b) => a.priority - b.priority);
-    if (industrySpecific.length > 0) return industrySpecific[0];
-  }
+  const match = INDUSTRY_QUESTION_BANK.find((entry) => entry.id === question.fieldId);
+  if (match) return match;
 
-  const general = candidates
-    .filter((question) => question.industries.includes("general"))
-    .sort((a, b) => a.priority - b.priority);
-
-  return general[0] ?? null;
+  return {
+    id: question.fieldId,
+    industries: [profile.industry ?? "general"],
+    prompt: question.prompt,
+    priority: question.priority ?? 100,
+  };
 }
 
 export function getIndustryQuestionsAnsweredCount(profile: DiscoveryProfile): number {

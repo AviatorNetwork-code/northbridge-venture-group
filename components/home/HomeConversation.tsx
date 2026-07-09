@@ -9,6 +9,7 @@ import SaveConversationCard from "@/components/home/SaveConversationCard";
 import BusinessSummaryCard from "@/components/home/BusinessSummaryCard";
 import RequestCallCard, { type CallRequest } from "@/components/home/RequestCallCard";
 import type { DiscoveryEngineResult, DiscoveryProfile, WebsiteAnalysisResult } from "@/lib/cat/discovery-types";
+import { mergeProfile as mergeDiscoveryProfile } from "@/lib/cat/discovery-profile-state";
 import type { NordiMessageCard } from "@/lib/nordi/cards";
 import {
   createEmptyMemory,
@@ -352,7 +353,10 @@ export default function HomeConversation() {
         );
 
         const updates = (response.profileUpdates ?? {}) as DiscoveryProfile;
-        const nextProfile = { ...businessProfile, ...updates, isReturningVisitor: isReturning };
+        const nextProfile = mergeDiscoveryProfile(businessProfile, {
+          ...updates,
+          isReturningVisitor: isReturning,
+        });
         setBusinessProfile(nextProfile);
 
         const engineResult: DiscoveryEngineResult = {

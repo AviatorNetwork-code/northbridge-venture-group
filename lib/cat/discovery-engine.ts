@@ -9,6 +9,15 @@ import {
   softenTransition,
 } from "@/lib/nordi/human-language";
 import { extractWebsiteUrl } from "@/lib/cat/website-analysis";
+import {
+  buildMissingFieldPrompt,
+  collectProfileText,
+  diffProfileFields,
+  getMissingDiscoveryFields,
+  hasMinimumBusinessContext,
+  logDiscoveryDecision,
+  mergeProfile,
+} from "@/lib/cat/discovery-profile-state";
 
 function includesAny(text: string, terms: string[]): boolean {
   return terms.some((term) => text.includes(term));
@@ -22,13 +31,29 @@ function extractIndustry(text: string): string | undefined {
     healthcare: ["healthcare", "medical", "clinic", "hospital", "patient"],
     hospitality: ["restaurant", "restaurants", "hotel", "hospitality", "cafe", "bar"],
     retail: ["retail", "store", "shop", "ecommerce", "e-commerce"],
-    "professional-services": ["law firm", "accounting", "consulting", "agency"],
+    "professional-services": [
+      "law firm",
+      "accounting",
+      "consulting",
+      "agency",
+      "tax",
+      "taxes",
+      "cpa",
+      "bookkeeping",
+      "accountant",
+      "tax preparer",
+      "tax preparation",
+    ],
     fitness: ["gym", "fitness", "studio", "yoga"],
     salon: ["salon", "spa", "beauty"],
   };
 
   for (const [industry, keywords] of Object.entries(industries)) {
     if (keywords.some((keyword) => text.includes(keyword))) return industry;
+  }
+
+  if (includesAny(text, ["business", "company", "firm", "practice", "shop", "store"])) {
+    return "general";
   }
 
   return undefined;
@@ -76,17 +101,6 @@ function isSalesPressure(text: string): boolean {
   return includesAny(text, ["how much", "pricing", "price", "cost", "buy", "subscribe", "plan"]);
 }
 
-function mergeProfile(current: DiscoveryProfile, updates: Partial<DiscoveryProfile>): DiscoveryProfile {
-  return {
-    ...current,
-    ...updates,
-    answeredQuestions: updates.answeredQuestions ?? current.answeredQuestions,
-    discoveryAnswers: { ...current.discoveryAnswers, ...updates.discoveryAnswers },
-    communicationChannels: updates.communicationChannels ?? current.communicationChannels,
-    notes: updates.notes ?? current.notes,
-  };
-}
-
 function recordAnswer(profile: DiscoveryProfile, questionId: string, answer: string): DiscoveryProfile {
   const answered = new Set(profile.answeredQuestions ?? []);
   answered.add(questionId);
@@ -96,6 +110,30 @@ function recordAnswer(profile: DiscoveryProfile, questionId: string, answer: str
     discoveryAnswers: { [questionId]: answer },
     pendingQuestionId: undefined,
   });
+}
+
+function hydrateProfileFromAccumulatedState(profile: DiscoveryProfile): DiscoveryProfile {
+  const accumulatedText = collectProfileText(profile);
+  if (!accumulatedText) return profile;
+
+  let next = profile;
+
+  if (!next.industry) {
+    const industry = extractIndustry(accumulatedText);
+    if (industry) next = mergeProfile(next, { industry });
+  }
+
+  if (next.employeeCount == null) {
+    const employees = extractEmployeeCount(accumulatedText);
+    if (employees) next = mergeProfile(next, { employeeCount: employees });
+  }
+
+  if (next.locationCount == null) {
+    const locations = extractLocationCount(accumulatedText);
+    if (locations) next = mergeProfile(next, { locationCount: locations });
+  }
+
+  return next;
 }
 
 function extractPassiveSignals(text: string, rawMessage: string, profile: DiscoveryProfile): DiscoveryProfile {
@@ -112,15 +150,16 @@ function extractPassiveSignals(text: string, rawMessage: string, profile: Discov
   const channels = new Set(next.communicationChannels ?? []);
   if (includesAny(text, ["whatsapp"])) channels.add("WhatsApp");
   if (includesAny(text, ["phone", "call us", "by phone"])) channels.add("Phone");
+  if (includesAny(text, ["text", "texts", "sms", "text message"])) channels.add("Text");
   if (includesAny(text, ["email", "gmail"])) channels.add("Email");
   if (includesAny(text, ["walk-in", "walk in"])) channels.add("Walk-ins");
   if (channels.size > 0) next = mergeProfile(next, { communicationChannels: Array.from(channels) });
 
-  if (rawMessage.trim().length > 12) {
+  if (rawMessage.trim().length >= 8) {
     next = mergeProfile(next, { notes: [...(next.notes ?? []), rawMessage.trim()] });
   }
 
-  return next;
+  return hydrateProfileFromAccumulatedState(next);
 }
 
 function acknowledgeIndustry(profile: DiscoveryProfile): string {
@@ -130,7 +169,7 @@ function acknowledgeIndustry(profile: DiscoveryProfile): string {
 
 function shouldAskWebsitePermission(profile: DiscoveryProfile): boolean {
   if (profile.websitePermissionAsked || profile.website) return false;
-  if (!profile.industry) return false;
+  if (!hasMinimumBusinessContext(profile)) return false;
 
   const industryAnswered = getIndustryQuestionsAnsweredCount(profile);
   return industryAnswered >= 2 || getNextIndustryQuestion(profile) === null;
@@ -238,12 +277,43 @@ function askNextQuestion(profile: DiscoveryProfile): DiscoveryEngineResult | nul
   };
 }
 
+function logTurnDecision(
+  rawMessage: string,
+  profileBeforeTurn: DiscoveryProfile,
+  nextProfile: DiscoveryProfile,
+  nextSelectedQuestion: string | null,
+): void {
+  logDiscoveryDecision({
+    message: rawMessage,
+    extractedFields: diffProfileFields(profileBeforeTurn, nextProfile),
+    accumulatedProfile: nextProfile,
+    missingFields: getMissingDiscoveryFields(nextProfile),
+    nextSelectedQuestion,
+  });
+}
+
+function buildDiscoveryFallback(profile: DiscoveryProfile, messageCount: number): DiscoveryEngineResult | null {
+  const missingFields = getMissingDiscoveryFields(profile);
+  const missingFieldPrompt = buildMissingFieldPrompt(missingFields);
+
+  if (!missingFieldPrompt) {
+    return null;
+  }
+
+  return {
+    thinkingContext: "analyzing-shared",
+    reply: [pickAcknowledgment(messageCount), "", missingFieldPrompt].join("\n"),
+    profileUpdates: profile,
+  };
+}
+
 export function processDiscoveryMessage(
   rawMessage: string,
   profile: DiscoveryProfile,
 ): DiscoveryEngineResult {
   const text = rawMessage.trim().toLowerCase();
   const messageCount = (profile.userMessageCount ?? 0) + 1;
+  const profileBeforeTurn = profile;
   let nextProfile = mergeProfile(profile, { userMessageCount: messageCount });
   const extractedUrl = extractWebsiteUrl(rawMessage);
 
@@ -257,11 +327,13 @@ export function processDiscoveryMessage(
   if (relationshipAck) {
     const nextQuestion = askNextQuestion(nextProfile);
     if (nextQuestion) {
+      logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, getNextIndustryQuestion(nextProfile)?.id ?? null);
       return {
         reply: `${relationshipAck}\n\n${nextQuestion.reply}`,
         profileUpdates: nextQuestion.profileUpdates,
       };
     }
+    logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, null);
     return {
       reply: relationshipAck,
       profileUpdates: nextProfile,
@@ -269,6 +341,7 @@ export function processDiscoveryMessage(
   }
 
   if (nextProfile.discoveryPhase !== "recommendations" && isSalesPressure(text)) {
+    logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, "sales-pressure-deflection");
     return {
       reply: [
         "I want to understand your business properly before we talk about solutions.",
@@ -292,6 +365,7 @@ export function processDiscoveryMessage(
       ? `\n\nWhile that runs, ${followUp.prompt.charAt(0).toLowerCase()}${followUp.prompt.slice(1)}`
       : "\n\nWhile that runs, tell me more about how customers usually find you.";
 
+    logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, followUp?.id ?? null);
     return {
       reply: `Perfect — I'll review your public site while we keep talking.${continueLine}`,
       profileUpdates: mergeProfile(nextProfile, { pendingQuestionId: followUp?.id }),
@@ -301,6 +375,7 @@ export function processDiscoveryMessage(
   }
 
   if (nextProfile.websitePermissionGranted && !nextProfile.website && isAffirmative(text)) {
+    logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, "awaiting-website-url");
     return {
       reply: "Great — paste your website URL whenever you're ready, and I'll review it while we keep talking.",
       profileUpdates: nextProfile,
@@ -314,8 +389,12 @@ export function processDiscoveryMessage(
     });
 
     const nextQuestion = askNextQuestion(nextProfile);
-    if (nextQuestion) return nextQuestion;
+    if (nextQuestion) {
+      logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, getNextIndustryQuestion(nextProfile)?.id ?? null);
+      return nextQuestion;
+    }
 
+    logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, "website-declined-follow-up");
     return {
       reply: [
         "No problem — we can keep learning from the conversation.",
@@ -329,6 +408,7 @@ export function processDiscoveryMessage(
   if (shouldAskWebsitePermission(nextProfile) && !nextProfile.websitePermissionAsked) {
     nextProfile = mergeProfile(nextProfile, { websitePermissionAsked: true });
     const seed = nextProfile.userMessageCount ?? 0;
+    logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, "website-permission");
     return {
       thinkingContext: "reviewing-business",
       progressiveReply: [
@@ -342,6 +422,7 @@ export function processDiscoveryMessage(
 
   if (nextProfile.websitePermissionAsked && !nextProfile.websitePermissionGranted && isAffirmative(text)) {
     nextProfile = mergeProfile(nextProfile, { websitePermissionGranted: true });
+    logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, "website-permission-granted");
     return {
       reply: "Great — paste your website URL whenever you're ready, and I'll review it while we keep talking.",
       profileUpdates: nextProfile,
@@ -349,24 +430,23 @@ export function processDiscoveryMessage(
   }
 
   if (shouldOfferRecommendation(nextProfile)) {
+    logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, "recommendations");
     return buildRecommendationReply(nextProfile);
   }
 
   const nextQuestion = askNextQuestion(nextProfile);
-  if (nextQuestion) return nextQuestion;
-
-  if (!nextProfile.industry) {
-    return {
-      thinkingContext: "analyzing-shared",
-      reply: [
-        pickAcknowledgment(messageCount),
-        "",
-        "What kind of business is it, and roughly how many people are involved in day-to-day operations?",
-      ].join("\n"),
-      profileUpdates: nextProfile,
-    };
+  if (nextQuestion) {
+    logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, getNextIndustryQuestion(nextProfile)?.id ?? null);
+    return nextQuestion;
   }
 
+  const fallback = buildDiscoveryFallback(nextProfile, messageCount);
+  if (fallback) {
+    logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, fallback.reply);
+    return fallback;
+  }
+
+  logTurnDecision(rawMessage, profileBeforeTurn, nextProfile, "general-friction");
   return {
     thinkingContext: "reviewing-business",
     progressiveReply: [
@@ -393,3 +473,5 @@ export function applyWebsiteInsight(
     deliverPendingInsight: true,
   };
 }
+
+export { mergeProfile } from "@/lib/cat/discovery-profile-state";
