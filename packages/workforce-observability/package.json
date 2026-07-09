@@ -1,8 +1,8 @@
 {
-  "name": "@northbridge/specialist-runtime",
+  "name": "@northbridge/workforce-observability",
   "version": "0.1.0",
   "private": true,
-  "description": "Reusable digital specialist execution runtime (NEO Phase 2)",
+  "description": "Reusable workforce telemetry primitives (NEO platform)",
   "license": "UNLICENSED",
   "type": "module",
   "exports": {
@@ -14,10 +14,8 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@northbridge/workforce-connectors": "file:../workforce-connectors",
     "@northbridge/workforce-contracts": "file:../workforce-contracts",
-    "@northbridge/workforce-core": "file:../workforce-core",
-    "@northbridge/workforce-observability": "file:../workforce-observability"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "typescript": "^5.7.3",

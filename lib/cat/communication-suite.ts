@@ -94,6 +94,21 @@ export const COMMUNICATION_PACKAGES = [
     role: "Workforce request ownership routing — rules, capabilities, dedup, audit",
     wired: "ndp-conversation-router",
   },
+  {
+    id: "@northbridge/workforce-connectors",
+    role: "Capability-based connector registry and routing — no vendor SDK coupling",
+    wired: "deferred",
+  },
+  {
+    id: "@northbridge/workforce-observability",
+    role: "Workforce telemetry event primitives — correlation, audit fields",
+    wired: "deferred",
+  },
+  {
+    id: "@northbridge/research-governance",
+    role: "NEO research metadata, trust levels, ADR linkage schemas",
+    wired: "deferred",
+  },
 ] as const;
 
 export type CommunicationPackageId = (typeof COMMUNICATION_PACKAGES)[number]["id"];

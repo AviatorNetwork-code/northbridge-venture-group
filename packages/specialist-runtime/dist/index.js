@@ -7,3 +7,6 @@ export { SpecialistRuntimeError, } from "./runtime/errors.js";
 export { assertTransition, canTransition, isTerminalState, } from "./runtime/state-machine.js";
 export { createSpecialistRuntime, DefaultSpecialistRuntime, } from "./runtime/specialist-runtime.js";
 export { validateConfidenceAgainstPolicy, validateExecutionOutput, } from "./validation/results.js";
+export { ConnectorCapabilityToolRouter, createCapabilityToolRouter, } from "./connectors/capability-tool-router.js";
+export { createCapabilityRoutedTaskExecutor, } from "./connectors/capability-routed-executor.js";
+export { createObservabilityExecutionHooks, } from "./observability/hooks.js";

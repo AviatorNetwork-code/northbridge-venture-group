@@ -1,0 +1,50 @@
+export type {
+  ConnectorCapabilityDefinition,
+  CapabilityDiscoveryQuery,
+} from "./types/capability.js";
+
+export type {
+  ConnectorConfiguration,
+  ConnectorConfigurationStore,
+} from "./types/configuration.js";
+
+export type {
+  ConnectorHealth,
+  ConnectorHealthChecker,
+  ConnectorHealthStatus,
+} from "./types/health.js";
+
+export type {
+  ConnectorPermissionEnvelope,
+  ConnectorPermissionResult,
+} from "./types/permissions.js";
+
+export type {
+  CapabilityRequest,
+  ConnectorExecutionResult,
+  ConnectorExecutionStatus,
+} from "./types/request.js";
+
+export type {
+  Connector,
+  ConnectorDefinition,
+  ConnectorDiscoveryQuery,
+  ConnectorFactory,
+  ConnectorRegistrationStatus,
+} from "./types/connector.js";
+
+export type { ConnectorRegistry } from "./types/registry.js";
+
+export {
+  ConnectorError,
+  type ConnectorErrorCode,
+} from "./runtime/errors.js";
+
+export {
+  createConnectorRouter,
+  DefaultConnectorRouter,
+  type ConnectorRouterOptions,
+} from "./runtime/connector-router.js";
+
+export { InMemoryConnectorRegistry } from "./registry/in-memory-registry.js";
+export { InMemoryConnectorConfigurationStore } from "./registry/in-memory-configuration-store.js";

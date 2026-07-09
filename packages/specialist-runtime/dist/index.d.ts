@@ -16,3 +16,7 @@ export { assertTransition, canTransition, isTerminalState, } from "./runtime/sta
 export { createSpecialistRuntime, DefaultSpecialistRuntime, type SpecialistRuntimeDependencies, } from "./runtime/specialist-runtime.js";
 export type { RunTaskEscalated, RunTaskFailed, RunTaskInput, RunTaskResult, RunTaskSuccess, SpecialistRuntime, } from "./runtime/types.js";
 export { validateConfidenceAgainstPolicy, validateExecutionOutput, } from "./validation/results.js";
+export type { CapabilityToolRouter } from "./connectors/capability-tool-router.js";
+export { ConnectorCapabilityToolRouter, createCapabilityToolRouter, } from "./connectors/capability-tool-router.js";
+export { createCapabilityRoutedTaskExecutor, type CapabilityRoutedExecutorOptions, } from "./connectors/capability-routed-executor.js";
+export { createObservabilityExecutionHooks, type ObservabilityExecutionHooksOptions, } from "./observability/hooks.js";

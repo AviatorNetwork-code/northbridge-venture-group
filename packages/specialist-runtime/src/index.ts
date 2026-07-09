@@ -78,3 +78,19 @@ export {
   validateConfidenceAgainstPolicy,
   validateExecutionOutput,
 } from "./validation/results.js";
+
+export type { CapabilityToolRouter } from "./connectors/capability-tool-router.js";
+export {
+  ConnectorCapabilityToolRouter,
+  createCapabilityToolRouter,
+} from "./connectors/capability-tool-router.js";
+
+export {
+  createCapabilityRoutedTaskExecutor,
+  type CapabilityRoutedExecutorOptions,
+} from "./connectors/capability-routed-executor.js";
+
+export {
+  createObservabilityExecutionHooks,
+  type ObservabilityExecutionHooksOptions,
+} from "./observability/hooks.js";
