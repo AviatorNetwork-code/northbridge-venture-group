@@ -17,6 +17,10 @@ import {
   buildLocalizedMissingFieldPrompt,
   getLocalizedQuestionPrompt,
 } from "@/lib/nordi/localized-content";
+import {
+  resolvePendingQuestionPrompt,
+  tryConversationInterruption,
+} from "@/lib/cat/interruption-bridge";
 import { extractWebsiteUrl } from "@/lib/cat/website-analysis";
 import {
   collectProfileText,
@@ -293,7 +297,29 @@ export function processDiscoveryMessage(
   }
 
   const extractedUrl = extractWebsiteUrl(rawMessage);
-  const answeredQuestionId = nextProfile.pendingQuestionId;
+  const pendingQuestionId = nextProfile.pendingQuestionId;
+
+  if (pendingQuestionId) {
+    const interruption = tryConversationInterruption({
+      message: rawMessage,
+      pendingQuestionId,
+      pendingQuestionPrompt: resolvePendingQuestionPrompt(pendingQuestionId, getLanguage(nextProfile)),
+      language: getLanguage(nextProfile),
+      answeredQuestions: nextProfile.answeredQuestions,
+    });
+
+    if (interruption) {
+      logTurnDecision(rawMessage, profileBeforeTurn, profile, `interruption:${interruption.detection.type}`);
+      return {
+        thinkingContext: "general",
+        reply: interruption.fullReply,
+        profileUpdates: nextProfile,
+        humanAssistanceRequested: interruption.humanAssistanceRequested,
+      };
+    }
+  }
+
+  const answeredQuestionId = pendingQuestionId;
 
   if (answeredQuestionId) {
     nextProfile = recordAnswer(nextProfile, answeredQuestionId, rawMessage.trim());

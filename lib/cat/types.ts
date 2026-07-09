@@ -6,6 +6,9 @@ export type BusinessProfile = {
   existingSoftware?: string[];
   communicationChannels?: string[];
   notes?: string[];
+  pendingQuestionId?: string;
+  pendingQuestionPrompt?: string;
+  answeredQuestions?: string[];
 };
 
 export type CatMessageRole = "user" | "cat";

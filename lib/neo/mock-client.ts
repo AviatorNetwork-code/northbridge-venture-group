@@ -43,6 +43,7 @@ export class MockNeoClient implements NeoClient {
           progressiveReply: result.progressiveReply,
           thinkingContext: result.thinkingContext,
           cards: result.cards,
+          humanAssistanceRequested: result.humanAssistanceRequested,
         },
       };
     }

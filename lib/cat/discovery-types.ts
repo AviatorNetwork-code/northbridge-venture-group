@@ -66,6 +66,7 @@ export type DiscoveryEngineResult = {
   deliverPendingInsight?: boolean;
   showWebsiteAnalyzing?: boolean;
   cards?: NordiMessageCard[];
+  humanAssistanceRequested?: boolean;
 };
 
 export type StructuredRecommendation = {

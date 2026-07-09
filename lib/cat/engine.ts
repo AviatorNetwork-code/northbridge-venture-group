@@ -17,6 +17,7 @@ import {
   getCatConnectorMessages,
   explainConnectorPurpose,
 } from "@/lib/connectors/connector-recommendations";
+import { tryConversationInterruption } from "@/lib/cat/interruption-bridge";
 import type {
   BusinessProfile,
   CatEngineContext,
@@ -213,6 +214,47 @@ function buildDiscoveryFollowUp(profile: BusinessProfile): string | undefined {
   return undefined;
 }
 
+function resolveCatPendingQuestion(profile: BusinessProfile): { id: string; prompt: string } | undefined {
+  const followUp = buildDiscoveryFollowUp(profile);
+  if (!followUp) return undefined;
+
+  if (!profile.employeeCount) {
+    return { id: "cat-team-size", prompt: followUp };
+  }
+  if (!profile.communicationChannels?.length) {
+    return { id: "cat-customer-contact", prompt: followUp };
+  }
+  if (!profile.existingSoftware?.length) {
+    return { id: "cat-software", prompt: followUp };
+  }
+  return { id: "cat-crm", prompt: followUp };
+}
+
+function attachCatPendingState(result: CatEngineResult, profile: BusinessProfile): CatEngineResult {
+  const merged = mergeProfile(profile, result.profileUpdates ?? {});
+  const pending = resolveCatPendingQuestion(merged);
+
+  if (!pending) {
+    return {
+      ...result,
+      profileUpdates: {
+        ...result.profileUpdates,
+        pendingQuestionId: undefined,
+        pendingQuestionPrompt: undefined,
+      },
+    };
+  }
+
+  return {
+    ...result,
+    profileUpdates: {
+      ...result.profileUpdates,
+      pendingQuestionId: pending.id,
+      pendingQuestionPrompt: pending.prompt,
+    },
+  };
+}
+
 function uniqueStrings(...groups: (string[] | undefined)[]): string[] {
   return Array.from(new Set(groups.flatMap((group) => group ?? [])));
 }
@@ -232,6 +274,7 @@ function mergeProfile(
       updates.communicationChannels,
     ),
     notes: uniqueStrings(current.notes, updates.notes),
+    answeredQuestions: updates.answeredQuestions ?? current.answeredQuestions,
   };
 }
 
@@ -269,7 +312,27 @@ export function processCatMessage(
 ): CatEngineResult {
   const text = rawMessage.trim().toLowerCase();
   const { currentModule, session } = context;
-  const profile = session.businessProfile ?? {};
+  let profile = session.businessProfile ?? {};
+
+  if (profile.pendingQuestionId && profile.pendingQuestionPrompt) {
+    const interruption = tryConversationInterruption({
+      message: rawMessage,
+      pendingQuestionId: profile.pendingQuestionId,
+      pendingQuestionPrompt: profile.pendingQuestionPrompt,
+      answeredQuestions: profile.answeredQuestions,
+    });
+
+    if (interruption) {
+      return { reply: interruption.fullReply };
+    }
+
+    profile = mergeProfile(profile, {
+      ...inferProfileFromMessage(text, profile),
+      answeredQuestions: [...(profile.answeredQuestions ?? []), profile.pendingQuestionId!],
+      pendingQuestionId: undefined,
+      pendingQuestionPrompt: undefined,
+    });
+  }
 
   const blocked = isBlockedRequest(text);
   if (blocked) {
@@ -455,11 +518,16 @@ export function processCatMessage(
     const followUp = buildDiscoveryFollowUp(merged);
 
     if (followUp && !extractIndustry(text) && Object.keys(profileUpdates).length === 0) {
-      return {
-        reply: "I'd like to understand your business first so I recommend the minimum you actually need. " + followUp,
-        quickReplies: ["I own a dental clinic", "About 8 employees", "Yes, we use WhatsApp"],
-        profileUpdates: merged,
-      };
+      return attachCatPendingState(
+        {
+          reply:
+            "I'd like to understand your business first so I recommend the minimum you actually need. " +
+            followUp,
+          quickReplies: ["I own a dental clinic", "About 8 employees", "Yes, we use WhatsApp"],
+          profileUpdates: merged,
+        },
+        merged,
+      );
     }
 
     const discoveryLines: string[] = [];
@@ -502,6 +570,22 @@ export function processCatMessage(
     const quickReplies = followUp
       ? [followUp, "Take me to Workforce", "Show onboarding status"]
       : ["Why these recommendations?", "Take me to Onboarding", "Explain pricing"];
+
+    if (followUp) {
+      return attachCatPendingState(
+        {
+          reply,
+          quickReplies,
+          recommendations,
+          profileUpdates: merged,
+          actions: [
+            { type: "navigate", label: "Open Workforce", href: "/operations/workforce" },
+            { type: "navigate", label: "View Onboarding", href: "/operations/onboarding" },
+          ],
+        },
+        merged,
+      );
+    }
 
     return {
       reply,
@@ -590,11 +674,14 @@ export function processCatMessage(
     const followUp = buildDiscoveryFollowUp(merged);
 
     if (followUp) {
-      return {
-        reply: `Got it — that helps. ${followUp}`,
-        quickReplies: ["About 8 employees", "Yes, WhatsApp", "We use Google Calendar"],
-        profileUpdates: merged,
-      };
+      return attachCatPendingState(
+        {
+          reply: `Got it — that helps. ${followUp}`,
+          quickReplies: ["About 8 employees", "Yes, WhatsApp", "We use Google Calendar"],
+          profileUpdates: merged,
+        },
+        merged,
+      );
     }
 
     const recommendations = buildRecommendations(merged);
