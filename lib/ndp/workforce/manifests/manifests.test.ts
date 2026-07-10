@@ -123,6 +123,8 @@ describe("Digital Employee Manifest Framework", () => {
 
     expect(manifest?.displayName).toBe("Appointment Specialist");
     expect(manifest?.connectorCapabilities).toEqual([
+      "appointment.schedule",
+      "appointment.reschedule",
       "schedule.create",
       "schedule.update",
       "schedule.cancel",
@@ -149,6 +151,8 @@ describe("Digital Employee Manifest Framework", () => {
       getManifestBySpecialistId("appointment-specialist")!,
     );
     expect(appointmentPreview.requiredToolCapabilities).toEqual([
+      "appointment.schedule",
+      "appointment.reschedule",
       "schedule.create",
       "schedule.update",
       "schedule.cancel",

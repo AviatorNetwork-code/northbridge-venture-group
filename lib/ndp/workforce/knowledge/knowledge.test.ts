@@ -17,8 +17,8 @@ import {
 describe("Knowledge Pack Framework", () => {
   const registry = createKnowledgePackRegistry(NDP_LAUNCH_KNOWLEDGE_PACKS);
 
-  it("defines twenty-five launch knowledge packs", () => {
-    expect(NDP_LAUNCH_KNOWLEDGE_PACKS).toHaveLength(25);
+  it("defines thirty-one launch knowledge packs", () => {
+    expect(NDP_LAUNCH_KNOWLEDGE_PACKS).toHaveLength(31);
   });
 
   it("passes catalog validation with acyclic dependency graph", () => {
@@ -117,6 +117,7 @@ describe("Knowledge Pack Framework", () => {
       "knowledge-pack-business-writing",
       "knowledge-pack-business-operations-fundamentals",
       "knowledge-pack-scheduling-fundamentals",
+      "knowledge-pack-appointment-handling",
       "knowledge-pack-northbridge-communication-standards",
     ]);
   });
