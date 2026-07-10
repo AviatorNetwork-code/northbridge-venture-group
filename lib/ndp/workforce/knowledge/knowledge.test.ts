@@ -17,8 +17,8 @@ import {
 describe("Knowledge Pack Framework", () => {
   const registry = createKnowledgePackRegistry(NDP_LAUNCH_KNOWLEDGE_PACKS);
 
-  it("defines thirty-one launch knowledge packs", () => {
-    expect(NDP_LAUNCH_KNOWLEDGE_PACKS).toHaveLength(31);
+  it("defines thirty-seven launch knowledge packs", () => {
+    expect(NDP_LAUNCH_KNOWLEDGE_PACKS).toHaveLength(37);
   });
 
   it("passes catalog validation with acyclic dependency graph", () => {
