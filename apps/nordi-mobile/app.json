@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "Nordi",
+    "slug": "nordi-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "nordi",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.northbridge.nordi",
+      "infoPlist": {
+        "CFBundleDisplayName": "Nordi"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      },
+      "package": "com.northbridge.nordi"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-localization"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "00000000-0000-4000-8000-000000000000"
+      }
+    }
+  }
+}
