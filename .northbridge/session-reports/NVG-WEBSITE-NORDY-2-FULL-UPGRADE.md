@@ -100,7 +100,9 @@ Automatic preview via PR; Nordy environment resolver maps Vercel preview → `PR
 
 ## W. Branch / PR
 
-Branch: `cursor/nvg-website-nordy-2-completion-440f`
+Branch: `cursor/nvg-website-nordy-2-completion-440f`  
+HEAD: `fb626cf`  
+Draft PR: https://github.com/AviatorNetwork-code/northbridge-venture-group/pull/21
 
 ## X. Remaining blockers
 
