@@ -3,20 +3,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useNordiPublicCtaLabel } from "@/components/home/NordiPublicCta";
+import { openNordyHref } from "@/lib/nordy/routes";
 
 export default function NordiFloatingButton() {
   const pathname = usePathname();
   const label = useNordiPublicCtaLabel();
 
-  if (pathname === "/" || pathname.startsWith("/operations")) {
+  if (pathname?.startsWith("/operations")) {
     return null;
   }
 
   return (
     <Link
-      href="/"
+      href={openNordyHref("GENERAL")}
       aria-label={label}
-      className="fixed bottom-5 right-5 z-40 flex h-14 min-w-14 items-center justify-center gap-2 rounded-full bg-red px-4 text-white shadow-lg transition-colors hover:bg-red-hover focus:outline-none focus:ring-2 focus:ring-red/50 sm:bottom-6 sm:right-6 sm:px-5"
+      className="fixed bottom-5 right-5 z-40 flex h-14 min-w-14 items-center justify-center gap-2 rounded-full bg-red px-4 text-white shadow-lg transition-colors hover:bg-red-hover focus:outline-none focus:ring-2 focus:ring-red/50 sm:bottom-6 sm:right-6 sm:px-5 illum-l3"
     >
       <span
         aria-hidden

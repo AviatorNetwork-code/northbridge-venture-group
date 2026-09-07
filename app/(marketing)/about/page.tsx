@@ -1,105 +1,100 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
+import { SectionHeader } from "@/components/marketing/IntentCard";
+import { openNordyHref } from "@/lib/nordy/routes";
 
 export const metadata: Metadata = {
-  title: "About | Northbridge Digital",
+  title: "About",
   description:
-    "Northbridge Digital is a software company. Nordi is our flagship platform. We also build custom digital solutions for organizations with unique operational needs.",
+    "Northbridge Venture Group operates ventures, builds technology, provides Engineering & AI services, and delivers Digital products nationally from Central Florida.",
 };
 
 export default function AboutPage() {
   return (
-    <main className="pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 bg-black min-h-screen">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white mb-6 sm:mb-8">
-          About Northbridge Digital
+    <main className="min-h-screen bg-black px-4 pb-16 pt-24 sm:px-6 sm:pb-24 sm:pt-28 md:pt-32">
+      <div className="mx-auto max-w-4xl">
+        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-red">
+          Who we are
+        </p>
+        <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl md:text-5xl">
+          Northbridge Venture Group
         </h1>
+        <p className="mt-5 max-w-2xl text-sm leading-relaxed text-silver sm:text-base">
+          We build companies, software, and intelligent systems. Northbridge operates ventures,
+          delivers Engineering & AI for complex operational problems, and ships Digital products
+          with predictable scope.
+        </p>
 
-        <MarketingPrimaryCta
-          secondaryHref="/services"
-          secondaryLabel="Digital Solutions"
-        />
+        <div className="mt-8">
+          <MarketingPrimaryCta
+            href={openNordyHref("EXPLORE")}
+            primaryLabel="Explore with Nordi"
+            secondaryHref="/ventures"
+            secondaryLabel="View ventures"
+          />
+        </div>
 
         <section className="mb-10 sm:mb-12">
-          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4">
-            Who We Are
-          </h2>
-          <div className="space-y-4 text-silver text-sm sm:text-base leading-relaxed">
+          <SectionHeader title="What Northbridge is" />
+          <div className="mt-5 space-y-4 text-sm leading-relaxed text-silver sm:text-base">
             <p>
-              Northbridge Digital is a software company focused on helping
-              businesses operate more intelligently.
+              Northbridge Venture Group is the parent organization behind our ventures and service
+              divisions. We are not a generic consulting brochure — we build and operate real
+              products while offering Engineering & AI and Digital delivery to outside teams.
             </p>
             <p>
-              Our flagship platform, Nordi, learns how a business operates,
-              connects existing systems, and helps owners understand what is
-              happening across their organization.
-            </p>
-            <p>
-              For businesses with unique operational requirements, our
-              engineering team also develops custom digital solutions.
+              NEO is the shared engineering, intelligence, learning, and capability layer underneath
+              Northbridge. It is not a commercial division customers buy as a product name.
             </p>
           </div>
         </section>
 
-        <section className="mb-10 sm:mb-12">
-          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4">
-            Our Approach
-          </h2>
-          <div className="space-y-4 text-silver text-sm sm:text-base leading-relaxed">
-            <p>
-              We build technology that helps businesses operate with greater
-              clarity, confidence, and efficiency — not generic automation, and
-              not a consulting engagement.
-            </p>
-            <p>
-              Nordi starts with conversation. You describe your business, Nordi
-              builds an evidence-based understanding, and recommends operational
-              support that fits how you actually work.
-            </p>
-            <p>
-              Human leadership stays in control. Software learns your business;
-              you make the decisions that matter.
-            </p>
-          </div>
-        </section>
-
-        <section className="mb-10 sm:mb-12">
-          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4">
-            Our Story
-          </h2>
-          <div className="space-y-4 text-silver text-sm sm:text-base leading-relaxed">
-            <p>
-              Northbridge Venture Group was founded to build and operate serious
-              digital platforms — starting with Aviator Network, a marketplace
-              connecting pilots and flight instructors.
-            </p>
-            <p>
-              While building real businesses, we saw the same pattern everywhere:
-              owners understand their operation deeply, but lack software that
-              reflects that understanding.
-            </p>
-            <p>
-              Nordi was built to close that gap — software that learns your
-              business, not a catalog you browse before anyone understands your
-              needs.
-            </p>
-          </div>
+        <section className="mb-10 grid gap-4 sm:mb-12 md:grid-cols-2">
+          {[
+            {
+              title: "Northbridge Ventures",
+              body: "Platform businesses we build and operate, including aviation products with public evidence.",
+              href: "/ventures",
+            },
+            {
+              title: "Engineering & AI",
+              body: "Outcome-led systems work: automation, custom software, AI copilots, integrations, modernization.",
+              href: "/engineering-ai",
+            },
+            {
+              title: "Northbridge Digital",
+              body: "Websites, ecommerce, portals, booking, payments, and mobile apps with clear scope.",
+              href: "/digital",
+            },
+            {
+              title: "Operating Ventures",
+              body: "Understated until ready for public presentation. We do not publish empty portfolio sections.",
+              href: "/ventures",
+            },
+          ].map((item) => (
+            <Link
+              key={item.title}
+              href={item.href}
+              className="rounded-2xl border border-white/10 bg-[#0b1017] p-5 transition hover:border-white/20"
+            >
+              <h2 className="text-lg font-semibold text-white">{item.title}</h2>
+              <p className="mt-2 text-sm leading-relaxed text-silver">{item.body}</p>
+            </Link>
+          ))}
         </section>
 
         <section>
-          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-red mb-4">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-red sm:text-sm">
             Founder
           </h2>
-          <h3 className="text-lg sm:text-xl font-semibold text-white">
-            Andres Suarez
-          </h3>
-          <p className="text-silver text-sm sm:text-base mt-1 mb-3">
+          <h3 className="mt-3 text-lg font-semibold text-white sm:text-xl">Andres Suarez</h3>
+          <p className="mt-1 text-sm text-silver sm:text-base">
             Founder, Northbridge Venture Group
           </p>
-          <p className="text-silver text-sm sm:text-base leading-relaxed">
-            Entrepreneur and aviation professional focused on building software
-            that helps operators run better businesses — with human judgment
-            always in the lead.
+          <p className="mt-3 text-sm leading-relaxed text-silver sm:text-base">
+            Entrepreneur and aviation professional focused on building software that helps
+            operators run better businesses — with human judgment always in the lead.
           </p>
         </section>
       </div>

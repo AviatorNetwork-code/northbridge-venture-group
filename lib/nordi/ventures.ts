@@ -11,8 +11,8 @@ export const northbridgeVentures: NorthbridgeVenture[] = [
     id: "northbridge-digital",
     name: "Northbridge Digital",
     description:
-      "Builds AI assistants and digital workforce systems for business operators. Nordi is the flagship product from this venture.",
-    focus: "Business operating intelligence · Nordi",
+      "Builds AI assistants, Digital products, and customer-facing software systems. Public entry for Northbridge Digital offerings.",
+    focus: "Digital products · websites · mobile · portals",
     status: "active",
   },
   {

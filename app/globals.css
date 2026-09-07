@@ -208,6 +208,139 @@
   }
 }
 
+/* --- Northbridge marketing illumination hierarchy --- */
+:root {
+  --nb-charcoal: #07090d;
+  --nb-glow: rgba(177, 18, 38, 0.28);
+  --nb-edge: rgba(255, 255, 255, 0.14);
+  --nb-cyan: rgba(120, 170, 210, 0.2);
+}
+
+.hero-atmosphere {
+  background:
+    radial-gradient(ellipse 80% 55% at 50% -10%, rgba(177, 18, 38, 0.18), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 20%, rgba(90, 140, 190, 0.08), transparent 55%),
+    linear-gradient(180deg, #07090d 0%, #000 100%);
+}
+
+.hero-tech-plane {
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.03), transparent 40%),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 18px,
+      rgba(255, 255, 255, 0.035) 18px,
+      rgba(255, 255, 255, 0.035) 19px
+    ),
+    #0b1017;
+  box-shadow: inset 0 0 40px rgba(177, 18, 38, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-tech-plane::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.06) 45%,
+    transparent 70%
+  );
+  transform: translateX(-40%);
+  animation: nb-light-sweep 5.5s ease-in-out infinite;
+}
+
+.intent-card {
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.intent-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.intent-card-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(circle at 30% 20%, black 0%, transparent 70%);
+}
+
+.intent-card-engineering {
+  background-image: linear-gradient(160deg, rgba(177, 18, 38, 0.08), transparent 45%);
+}
+
+.intent-card-digital {
+  background-image: linear-gradient(160deg, rgba(120, 170, 210, 0.08), transparent 45%);
+}
+
+.illum-l1 {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 0 24px rgba(255, 255, 255, 0.02);
+}
+
+.illum-l2 {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 28px rgba(177, 18, 38, 0.08);
+}
+
+.illum-l3 {
+  position: relative;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 36px var(--nb-glow);
+}
+
+.illum-l3::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    120deg,
+    transparent 10%,
+    rgba(255, 255, 255, 0.35) 45%,
+    transparent 80%
+  );
+  background-size: 200% 200%;
+  animation: nb-border-sweep 2.4s linear infinite;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.55;
+}
+
+@keyframes nb-border-sweep {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes nb-light-sweep {
+  0%,
+  100% {
+    transform: translateX(-45%);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateX(35%);
+    opacity: 0.45;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-slide-up,
   .animate-fade-in,
@@ -217,9 +350,16 @@
   .nordi-activity-orb-active,
   .nordi-chat-scan::after,
   .cat-caret,
-  .cat-typing-dot {
+  .cat-typing-dot,
+  .illum-l3::before,
+  .hero-tech-plane::after {
     animation: none !important;
   }
+
+  .intent-card:hover {
+    transform: none;
+  }
+
   html {
     scroll-behavior: auto;
   }

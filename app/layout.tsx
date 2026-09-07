@@ -1,23 +1,50 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Manrope, Source_Serif_4 } from "next/font/google";
 import { AppProviders } from "@/components/providers/AppProviders";
+import { OrganizationJsonLd } from "@/components/marketing/OrganizationJsonLd";
 import "./globals.css";
 
-const inter = Inter({
+const manrope = Manrope({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-inter",
+  variable: "--font-manrope",
+});
+
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-display",
 });
 
 export const metadata: Metadata = {
-  title: "Nordi | Northbridge Digital",
+  metadataBase: new URL("https://northbridgeventuregroup.com"),
+  title: {
+    default: "Northbridge Venture Group",
+    template: "%s | Northbridge Venture Group",
+  },
   description:
-    "Northbridge Digital is a software company. Nordi is our flagship platform for business operating intelligence. We also build custom digital solutions.",
+    "Northbridge Venture Group builds companies, software, and intelligent systems — Engineering & AI, Digital products, and operating ventures. Serving nationally from Central Florida.",
   openGraph: {
-    title: "Nordi | Northbridge Digital",
+    title: "Northbridge Venture Group",
     description:
-      "Northbridge Digital builds Nordi — software that learns your business. We also deliver custom digital solutions for organizations with unique operational needs.",
+      "Companies, software, and intelligent systems. Ventures, Engineering & AI, and Northbridge Digital.",
     images: ["/og-image.png"],
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Northbridge Venture Group",
+    description:
+      "Builds companies, software, and intelligent systems. Talk to Nordi to start.",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: "/",
   },
 };
 
@@ -27,8 +54,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${manrope.variable} ${sourceSerif.variable}`}>
       <body className="antialiased bg-black text-white font-sans overflow-x-hidden">
+        <OrganizationJsonLd />
         <AppProviders>{children}</AppProviders>
       </body>
     </html>
