@@ -4,6 +4,9 @@ export type ConnectorCategory =
   | "accounting"
   | "messaging"
   | "marketing"
+  | "sales"
+  | "customer-experience"
+  | "finance"
   | "storage";
 
 export interface ConnectorCapability {

@@ -1,8 +1,6 @@
 export {
   OPERATIONS_VIEW_REPORT_VERSION,
-  OPERATIONS_VIEW_VERSION,
   LAUNCH_OPERATIONS_TEAM_IDS,
-  DEFAULT_STALE_REPORT_THRESHOLD_MS,
   type LaunchOperationsTeamId,
   type NormalizedTeamReport,
   type NormalizedTeamRecommendation,
@@ -22,6 +20,11 @@ export {
   type MultiTeamOperationsView,
   type BuildMultiTeamOperationsViewInput,
 } from "./types.js";
+
+export {
+  OPERATIONS_VIEW_VERSION,
+  DEFAULT_STALE_REPORT_THRESHOLD_MS,
+} from "./builder.js";
 
 export {
   isKnownOperationalReport,

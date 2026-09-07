@@ -31,7 +31,6 @@ export type {
   MobileDashboardTelemetryEmitter,
   MobileOperationsIntelligenceLoader,
   OrganizationAccessResolver,
-  MOBILE_DASHBOARD_OIL_POLICY,
 } from "./types.js";
 
 export { MOBILE_DASHBOARD_OIL_POLICY } from "./types.js";

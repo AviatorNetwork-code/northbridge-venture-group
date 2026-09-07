@@ -142,7 +142,13 @@ function resolveDefaultProvider(
         priority: descriptor.binding.priority ?? 0,
       };
     })
-    .filter((entry): entry is ProviderCandidate => entry !== undefined)
+    .filter((entry): entry is {
+      providerId: string;
+      connectorId: string;
+      enabled: boolean;
+      healthy: boolean;
+      priority: number;
+    } => entry !== undefined)
     .sort((left, right) => right.priority - left.priority);
 
   return candidates[0];
