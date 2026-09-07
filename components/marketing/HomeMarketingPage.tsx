@@ -57,7 +57,11 @@ export default function HomeMarketingPage() {
             View ventures
           </IlluminatedButton>
         </div>
-        <div className="hero-tech-plane mt-12 hidden h-28 w-full max-w-3xl md:block" aria-hidden />
+        <div className="hero-tech-plane mt-12 hidden h-28 w-full max-w-3xl md:block" aria-hidden>
+          <span className="absolute bottom-3 left-4 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/35">
+            Systems · Software · Ventures
+          </span>
+        </div>
       </section>
 
       {/* 2. THREE INTENT CARDS */}

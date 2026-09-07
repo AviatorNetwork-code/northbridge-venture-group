@@ -42,10 +42,16 @@ function nextIntakeQuestion(
 
   if (entryPath === "ENGINEERING_AI") {
     if (!facts.industry && !facts.company) {
+      if (facts.employeeCount || facts.currentSystems.length > 0) {
+        return "What industry or type of business is this for?";
+      }
       return "What does your business do, and roughly how many people are involved in the workflow?";
     }
     if (!facts.problem && facts.currentSystems.length === 0) {
       return "What is the main operational friction today — manual work, disconnected systems, or something else?";
+    }
+    if (facts.currentSystems.length > 0 && !facts.problem) {
+      return "Which part of that workflow hurts most — lead intake, handoffs, scheduling, or invoicing?";
     }
     if (!facts.requestedSolution) {
       return "What outcome would make this project successful for you?";
