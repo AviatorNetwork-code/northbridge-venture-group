@@ -7,6 +7,11 @@ export const metadata: Metadata = {
   title: "Mobile App Launch",
   description:
     "Production-ready mobile apps built in days, not months. iOS and Android with branding, auth, core screens, backend, analytics, and store submission preparation.",
+  openGraph: {
+    title: "Mobile App Launch | Northbridge Venture Group",
+    description:
+      "iOS and Android apps with branding, auth, core screens, backend, analytics, and store submission prep.",
+  },
 };
 
 const scope = [
@@ -33,7 +38,7 @@ export default function MobileAppsPage() {
 
         <div className="mt-8">
           <MarketingPrimaryCta
-            href={openNordyHref("DIGITAL")}
+            href={openNordyHref("MOBILE_APPS")}
             primaryLabel="Tell Nordi about your app"
             secondaryHref="/digital"
             secondaryLabel="All Digital offerings"

@@ -47,7 +47,7 @@ export default function HomeMarketingPage() {
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <IlluminatedButton
-            href={openNordyHref("GENERAL")}
+            href={openNordyHref("HOME")}
             illumination={3}
             onClick={() => trackAnalytics("project_cta_clicked", { location: "hero" })}
           >
@@ -291,7 +291,7 @@ export default function HomeMarketingPage() {
             Engineering & AI work without forcing a long form.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <IlluminatedButton href={openNordyHref("GENERAL")} illumination={3}>
+            <IlluminatedButton href={openNordyHref("HOME")} illumination={3}>
               Talk to Nordi
             </IlluminatedButton>
             <IlluminatedButton href="/contact" variant="secondary">

@@ -1,5 +1,8 @@
 import type { DeploymentEnvironment, NordyAiGapClass, NordyEntryPath } from "@/lib/nordy/types";
-import { isProductionCustomerEvidenceEnv, resolveDeploymentEnvironment } from "@/lib/nordy/environment";
+import {
+  isProductionLearningEmitEnabled,
+  resolveDeploymentEnvironment,
+} from "@/lib/nordy/environment";
 
 /**
  * CAP-LEARN-001 compatible learning evidence emitter.
@@ -42,8 +45,8 @@ export function emitNordyLearningEvidence(
 ): NordyLearningEvidence | null {
   const environment = input.environment ?? resolveDeploymentEnvironment();
 
-  // Test/preview/local interactions must not masquerade as production customer evidence.
-  if (!isProductionCustomerEvidenceEnv(environment) && environment === "PRODUCTION") {
+  // Production customer evidence remains gated — default OFF.
+  if (environment === "PRODUCTION" && !isProductionLearningEmitEnabled()) {
     return null;
   }
 

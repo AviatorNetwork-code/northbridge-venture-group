@@ -16,12 +16,12 @@ type NordiPublicCtaProps = {
 
 export default function NordiPublicCta({
   variant = "primary",
-  href = openNordyHref("GENERAL"),
+  href = openNordyHref("HOME"),
   className = "",
 }: NordiPublicCtaProps) {
   const label = useNordiPublicCtaLabel();
   const pathname = usePathname();
-  const resolvedHref = href || openNordyHref("GENERAL");
+  const resolvedHref = href || openNordyHref("HOME");
 
   const classes =
     variant === "header"

@@ -1,7 +1,11 @@
 export type NordyEntryPath =
+  | "HOME"
   | "EXPLORE"
   | "ENGINEERING_AI"
   | "DIGITAL"
+  | "MOBILE_APPS"
+  | "CAPABILITIES"
+  | "VENTURES"
   | "GENERAL";
 
 export type NordyFit =

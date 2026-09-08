@@ -99,6 +99,32 @@ export function matchCapabilities(text: string): CapabilityOffering[] {
   );
 }
 
+/** True when the utterance is asking about offerings rather than narrating intake facts. */
+export function isCapabilityInquiry(text: string): boolean {
+  return /\b(can you|do you|offer|offers|capability|capabilities|services|what.*(build|provide|help)|tell me about|help with)\b/i.test(
+    text,
+  );
+}
+
+export function answerFromCapabilityRegistry(
+  text: string,
+): { reply: string; ids: string[] } | null {
+  if (!isCapabilityInquiry(text)) return null;
+  const matches = matchCapabilities(text);
+  if (matches.length === 0) return null;
+
+  const top = matches.slice(0, 3);
+  const lines = top.map(
+    (offering) =>
+      `• ${offering.title} (${offering.division.replace("_", " ")}): ${offering.summary}`,
+  );
+
+  return {
+    ids: top.map((offering) => offering.id),
+    reply: `Here is what matches from our capability registry:\n${lines.join("\n")}\n\nI can go deeper on any of these, or help classify whether this is Digital or Engineering & AI.`,
+  };
+}
+
 export function recommendDivisionFromText(text: string): {
   fit: NordyFit;
   division: NordyRecommendedDivision;

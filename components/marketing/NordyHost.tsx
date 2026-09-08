@@ -4,16 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import NordyLauncher from "@/components/marketing/NordyLauncher";
 import type { NordyEntryPath } from "@/lib/nordy";
-import { trackAnalytics } from "@/lib/nordy";
+import { parseNordyEntryPath, trackAnalytics } from "@/lib/nordy";
 
 export { openNordyHref } from "@/lib/nordy/routes";
-
-function parseEntryPath(value: string | null): NordyEntryPath {
-  if (value === "ENGINEERING_AI") return "ENGINEERING_AI";
-  if (value === "DIGITAL") return "DIGITAL";
-  if (value === "EXPLORE") return "EXPLORE";
-  return "GENERAL";
-}
 
 export function useNordyLauncherControls() {
   const router = useRouter();
@@ -42,7 +35,7 @@ export default function NordyHost() {
 
   useEffect(() => {
     const shouldOpen = searchParams?.get("nordy") === "open";
-    const path = parseEntryPath(searchParams?.get("entry") ?? null);
+    const path = parseNordyEntryPath(searchParams?.get("entry") ?? null);
     setOpen(Boolean(shouldOpen));
     setEntryPath(path);
   }, [searchParams]);

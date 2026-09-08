@@ -35,16 +35,23 @@ export default function NordyLauncher({ open, entryPath, onClose }: NordyLaunche
   const [busy, setBusy] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const dialogRef = useRef<HTMLElement>(null);
+  const previouslyFocused = useRef<HTMLElement | null>(null);
 
   const title = useMemo(() => {
+    if (entryPath === "HOME") return "Nordi · Home";
     if (entryPath === "ENGINEERING_AI") return "Nordi · Engineering & AI";
     if (entryPath === "DIGITAL") return "Nordi · Digital";
+    if (entryPath === "MOBILE_APPS") return "Nordi · Mobile Apps";
+    if (entryPath === "CAPABILITIES") return "Nordi · Capabilities";
+    if (entryPath === "VENTURES") return "Nordi · Ventures";
     if (entryPath === "EXPLORE") return "Nordi · Explore Northbridge";
     return "Nordi";
   }, [entryPath]);
 
   useEffect(() => {
     if (!open) return;
+    previouslyFocused.current = document.activeElement as HTMLElement | null;
     setState(createNordyEngineState(entryPath));
     setLines([
       {
@@ -58,21 +65,45 @@ export default function NordyLauncher({ open, entryPath, onClose }: NordyLaunche
     if (entryPath === "ENGINEERING_AI") {
       trackAnalytics("nordy_engineering_started", { entryPath });
     }
-    if (entryPath === "DIGITAL") {
+    if (entryPath === "DIGITAL" || entryPath === "MOBILE_APPS") {
       trackAnalytics("nordy_digital_started", { entryPath });
     }
     const timer = window.setTimeout(() => inputRef.current?.focus(), 80);
-    return () => window.clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+      previouslyFocused.current?.focus?.();
+    };
   }, [open, entryPath]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    bottomRef.current?.scrollIntoView({
+      behavior: reduceMotion ? "auto" : "smooth",
+      block: "end",
+    });
   }, [lines, busy]);
 
   useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab" || !dialogRef.current) return;
+      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), textarea:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -134,23 +165,26 @@ export default function NordyLauncher({ open, entryPath, onClose }: NordyLaunche
         onClick={onClose}
       />
       <section
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        aria-labelledby="nordy-dialog-title"
         className="relative z-10 flex max-h-[92vh] w-full max-w-xl flex-col overflow-hidden rounded-t-2xl border border-white/10 bg-[#090d13] shadow-2xl sm:rounded-2xl illum-l3"
       >
         <header className="flex items-center justify-between border-b border-white/10 px-4 py-3 sm:px-5">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-red">Nordi</p>
-            <h2 className="text-sm font-semibold text-white sm:text-base">{title}</h2>
+            <h2 id="nordy-dialog-title" className="text-sm font-semibold text-white sm:text-base">
+              {title}
+            </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-white/10 text-silver hover:text-white"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-white/10 text-silver hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
             aria-label="Close conversation"
           >
-            ✕
+            <span aria-hidden="true">Close</span>
           </button>
         </header>
 
@@ -199,12 +233,12 @@ export default function NordyLauncher({ open, entryPath, onClose }: NordyLaunche
                 }
               }}
               placeholder="Ask about Northbridge or describe what you need…"
-              className="min-h-11 w-full resize-none rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 text-sm text-white placeholder:text-stone focus:border-red/50 focus:outline-none"
+              className="min-h-11 w-full resize-none rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 text-sm text-white placeholder:text-stone focus:border-red/50 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
             />
             <button
               type="submit"
               disabled={busy || !input.trim()}
-              className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl bg-red px-4 text-sm font-semibold text-white hover:bg-red-hover disabled:opacity-40"
+              className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl bg-red px-4 text-sm font-semibold text-white hover:bg-red-hover disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               Send
             </button>

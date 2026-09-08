@@ -1,5 +1,8 @@
 import { escalateToNeoAi } from "@/lib/nordy/ai-adapter";
-import { recommendDivisionFromText } from "@/lib/nordy/capability-registry";
+import {
+  answerFromCapabilityRegistry,
+  recommendDivisionFromText,
+} from "@/lib/nordy/capability-registry";
 import {
   createEmptyFacts,
   factsSummary,
@@ -34,13 +37,30 @@ export function createNordyEngineState(
   };
 }
 
+function isDigitalFamily(entryPath: NordyEntryPath): boolean {
+  return entryPath === "DIGITAL" || entryPath === "MOBILE_APPS";
+}
+
+function isEngineeringFamily(entryPath: NordyEntryPath): boolean {
+  return entryPath === "ENGINEERING_AI";
+}
+
+function isExploreFamily(entryPath: NordyEntryPath): boolean {
+  return (
+    entryPath === "EXPLORE" ||
+    entryPath === "VENTURES" ||
+    entryPath === "CAPABILITIES" ||
+    entryPath === "HOME"
+  );
+}
+
 function nextIntakeQuestion(
   entryPath: NordyEntryPath,
   facts: NordyConversationFacts,
 ): string | null {
-  if (entryPath === "EXPLORE") return null;
+  if (entryPath === "EXPLORE" || entryPath === "VENTURES") return null;
 
-  if (entryPath === "ENGINEERING_AI") {
+  if (isEngineeringFamily(entryPath)) {
     if (!facts.industry && !facts.company) {
       if (facts.employeeCount || facts.currentSystems.length > 0) {
         return "What industry or type of business is this for?";
@@ -59,6 +79,19 @@ function nextIntakeQuestion(
     return null;
   }
 
+  if (entryPath === "MOBILE_APPS") {
+    if (!facts.requestedSolution && !facts.needsMobile) {
+      return "Who is the app for, and what is the single most important job it must do on day one?";
+    }
+    if (facts.features.length < 2) {
+      return "Which capabilities matter most — auth, booking, payments, notifications, or offline use?";
+    }
+    if (!facts.platforms.length && !facts.timeline && !facts.urgency) {
+      return "Do you need iOS, Android, or both — and is there a target launch window?";
+    }
+    return null;
+  }
+
   if (entryPath === "DIGITAL") {
     if (!facts.requestedSolution && !facts.needsWebsite && !facts.needsMobile) {
       return "Are you looking for a website, ecommerce, client portal, booking system, or mobile app?";
@@ -72,9 +105,22 @@ function nextIntakeQuestion(
     return null;
   }
 
-  if (!facts.requestedSolution && !facts.problem) {
-    return "Are you exploring Northbridge, or do you already know whether you need Digital or Engineering & AI help?";
+  if (entryPath === "CAPABILITIES" || entryPath === "HOME" || entryPath === "GENERAL") {
+    // Light routing only after we already hold some conversation facts.
+    // Novel / out-of-scope first turns should reach NEO retrieval + AI fallback.
+    if (
+      !facts.requestedSolution &&
+      !facts.problem &&
+      (Boolean(facts.industry) ||
+        Boolean(facts.company) ||
+        facts.currentSystems.length > 0 ||
+        facts.features.length > 0)
+    ) {
+      return "Are you exploring Northbridge, or do you already know whether you need Digital or Engineering & AI help?";
+    }
+    return null;
   }
+
   return null;
 }
 
@@ -92,13 +138,17 @@ function buildLead(
   let fit = recommendation.fit;
   let division = recommendation.division;
 
-  if (entryPath === "ENGINEERING_AI" && fit === "UNKNOWN") {
+  if (isEngineeringFamily(entryPath) && fit === "UNKNOWN") {
     fit = "ENGINEERING_AI";
     division = "ENGINEERING_AI";
   }
-  if (entryPath === "DIGITAL" && fit === "UNKNOWN") {
+  if (isDigitalFamily(entryPath) && fit === "UNKNOWN") {
     fit = facts.needsMobile || facts.needsWebsite ? "DIGITAL_FAST_PATH" : "DIGITAL_CUSTOM";
     division = "DIGITAL";
+  }
+  if (entryPath === "VENTURES" && fit === "UNKNOWN") {
+    fit = "EXPLORE_ONLY";
+    division = "VENTURES";
   }
 
   // Restaurant website + menu + booking + payments + basic mobile → fast-path Digital
@@ -125,7 +175,7 @@ function buildLead(
     "Prospect conversation in progress — details still being collected.";
 
   return {
-    visitorType: entryPath === "EXPLORE" ? "explorer" : "service_prospect",
+    visitorType: isExploreFamily(entryPath) ? "explorer" : "service_prospect",
     entryPath,
     company: facts.company,
     industry: facts.industry,
@@ -215,13 +265,46 @@ export async function processNordyTurn(
     return { state: { entryPath, facts, turns }, result };
   }
 
+  // Capability registry — documented hop between company knowledge and intake/AI.
+  const capability = answerFromCapabilityRegistry(utterance);
+  if (capability) {
+    const question = nextIntakeQuestion(entryPath, facts);
+    const reply = question ? `${capability.reply}\n\n${question}` : capability.reply;
+    const result: NordyTurnResult = {
+      reply,
+      entryPath,
+      facts,
+      lead: buildLead(entryPath, facts, utterance),
+      usedAi: false,
+      aiGapClass: "NONE",
+      confidence: "high",
+      handoffSuggested: false,
+      refusedSensitive: false,
+      source: "capability_registry",
+    };
+    emitNordyLearningEvidence({
+      entryPath,
+      intent: "capability_registry",
+      aiEscalated: false,
+      gapClass: "NONE",
+      retrievalPath: "capability_registry",
+      result: "answered",
+      reusableGap: false,
+      outcome: capability.ids.join(","),
+    });
+    return { state: { entryPath, facts, turns }, result };
+  }
+
   // Continue intake when we can ask one useful question
   const intakeQuestion = nextIntakeQuestion(entryPath, facts);
   const carried = factsSummary(facts);
-  if (intakeQuestion && (entryPath === "ENGINEERING_AI" || entryPath === "DIGITAL" || carried)) {
+  if (
+    intakeQuestion &&
+    (isEngineeringFamily(entryPath) || isDigitalFamily(entryPath) || carried)
+  ) {
     const prefix = carried
       ? `Understood — I am tracking ${carried}.`
-      : entryPath === "ENGINEERING_AI"
+      : isEngineeringFamily(entryPath)
         ? "Understood."
         : "Got it.";
     const lead = buildLead(entryPath, facts, utterance);

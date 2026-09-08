@@ -42,3 +42,13 @@ export function isProductionCustomerEvidenceEnv(
 ): boolean {
   return environment === "PRODUCTION";
 }
+
+/**
+ * Production CAP-LEARN emit is gated OFF by default.
+ * Set NORDY_PRODUCTION_LEARNING_EMIT=true only after founder authorization.
+ */
+export function isProductionLearningEmitEnabled(
+  env: NodeJS.ProcessEnv = process.env,
+): boolean {
+  return env.NORDY_PRODUCTION_LEARNING_EMIT === "true";
+}

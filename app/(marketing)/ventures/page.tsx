@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   title: "Ventures",
   description:
     "Northbridge Ventures — Aviator Network, AirTax Financial, and other verified portfolio companies from Northbridge Venture Group.",
+  openGraph: {
+    title: "Ventures | Northbridge Venture Group",
+    description:
+      "Aviator Network, AirTax Financial, and verified Northbridge portfolio companies.",
+  },
 };
 
 const sectors = [
@@ -32,7 +37,7 @@ export default function VenturesPage() {
 
         <div className="mt-8">
           <MarketingPrimaryCta
-            href={openNordyHref("EXPLORE")}
+            href={openNordyHref("VENTURES")}
             primaryLabel="Ask Nordi about ventures"
             secondaryHref="/engineering-ai"
             secondaryLabel="Engineering & AI"

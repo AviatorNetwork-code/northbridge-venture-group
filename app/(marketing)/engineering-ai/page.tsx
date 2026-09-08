@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   title: "Engineering & AI",
   description:
     "Northbridge Engineering & AI — business systems audits, automation, custom software, AI copilots, integrations, and modernization for operators.",
+  openGraph: {
+    title: "Engineering & AI | Northbridge Venture Group",
+    description:
+      "Systems audits, automation, custom software, AI copilots, and integrations for operators.",
+  },
 };
 
 const offers = [

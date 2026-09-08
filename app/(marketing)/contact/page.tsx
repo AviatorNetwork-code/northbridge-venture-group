@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ContactForm from "@/components/contact/ContactForm";
+import { openNordyHref } from "@/lib/nordy/routes";
 
 export const metadata: Metadata = {
-  title: "Contact | Northbridge Digital",
+  title: "Contact",
   description:
-    "Talk to Nordi or request a custom digital solution from the Northbridge Digital engineering team.",
+    "Talk to Nordi or request a custom solution from Northbridge Venture Group — Engineering & AI and Digital.",
+  openGraph: {
+    title: "Contact | Northbridge Venture Group",
+    description:
+      "Start with Nordi or request a custom Engineering & AI or Digital project.",
+  },
 };
 
 export default function ContactPage() {
@@ -31,8 +37,8 @@ export default function ContactPage() {
               own words and let Nordi build an understanding of how you work.
             </p>
             <Link
-              href="/"
-              className="inline-flex min-h-11 items-center justify-center rounded-xl bg-red px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover"
+              href={openNordyHref("HOME")}
+              className="inline-flex min-h-11 items-center justify-center rounded-xl bg-red px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               Talk to Nordi
             </Link>

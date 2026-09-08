@@ -56,7 +56,7 @@ export default function Footer() {
                   Engineering & AI project.
                 </p>
                 <Link
-                  href={openNordyHref("GENERAL")}
+                  href={openNordyHref("HOME")}
                   className="inline-flex min-h-11 items-center mt-4 text-sm font-medium text-red hover:text-red-hover transition-colors"
                 >
                   Talk to Nordi →

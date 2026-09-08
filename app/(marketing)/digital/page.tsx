@@ -9,6 +9,11 @@ export const metadata: Metadata = {
   title: "Northbridge Digital",
   description:
     "Northbridge Digital builds websites, ecommerce, client portals, booking systems, lightweight SaaS, and mobile apps with speed, quality, and predictable scope.",
+  openGraph: {
+    title: "Northbridge Digital | Northbridge Venture Group",
+    description:
+      "Websites, ecommerce, portals, booking systems, lightweight SaaS, and mobile apps.",
+  },
 };
 
 export default function DigitalPage() {

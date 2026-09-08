@@ -116,7 +116,16 @@ function buildHundredTurns(): Array<{ entryPath: NordyEntryPath; text: string; e
   const out = [...base];
   while (out.length < 100) {
     const filler = fillers[out.length % fillers.length];
-    const paths: NordyEntryPath[] = ["EXPLORE", "DIGITAL", "ENGINEERING_AI", "GENERAL"];
+    const paths: NordyEntryPath[] = [
+      "HOME",
+      "EXPLORE",
+      "DIGITAL",
+      "ENGINEERING_AI",
+      "MOBILE_APPS",
+      "CAPABILITIES",
+      "VENTURES",
+      "GENERAL",
+    ];
     out.push({
       entryPath: paths[out.length % paths.length],
       text: `${filler} (turn ${out.length + 1})`,

@@ -9,6 +9,11 @@ export const metadata: Metadata = {
   title: "Capabilities",
   description:
     "Northbridge capabilities across Engineering & AI and Digital — automation, AI integration, custom software, websites, portals, and mobile apps.",
+  openGraph: {
+    title: "Capabilities | Northbridge Venture Group",
+    description:
+      "Automation, AI integration, custom software, websites, portals, and mobile app development.",
+  },
 };
 
 export default function CapabilitiesPage() {
@@ -26,7 +31,7 @@ export default function CapabilitiesPage() {
 
         <div className="mt-8">
           <MarketingPrimaryCta
-            href={openNordyHref("GENERAL")}
+            href={openNordyHref("CAPABILITIES")}
             primaryLabel="Talk to Nordi"
             secondaryHref="/contact"
             secondaryLabel="Contact"

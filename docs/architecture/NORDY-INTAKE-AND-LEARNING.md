@@ -15,9 +15,13 @@ Discovery of product type, features, screens, branding, integrations, auth, paym
 - `ESCALATE_ENGINEERING_AI`
 - `NOT_FIT`
 
-### Explore
+### Mobile Apps (`entryPath=MOBILE_APPS`)
 
-Company questions only — no forced qualification.
+Mobile-focused Digital intake — audience, day-one job, features, platforms, and launch window.
+
+### Capabilities / Home / Ventures / Explore
+
+Capability discovery and company Q&A. Ventures and Explore avoid forced qualification.
 
 ## Lead output
 
@@ -35,6 +39,8 @@ Structured opportunity object (`NordyLeadOpportunity`) with optional fields. Mis
 - reusable-gap classification
 
 **No raw transcript persistence by default.**
+
+**Production emit:** gated OFF unless `NORDY_PRODUCTION_LEARNING_EMIT=true`.
 
 AI gap classes include `KNOWLEDGE_MISSING`, `CAPABILITY_UNKNOWN`, `INTENT_AMBIGUOUS`, `AI_REQUIRED_FOR_REASONING`, `PORTFOLIO_CONTEXT_MISSING`, `RETRIEVAL_MISS`.
 

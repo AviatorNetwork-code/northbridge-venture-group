@@ -26,14 +26,15 @@ USER → NORDY → VERIFIED COMPANY KNOWLEDGE → STRUCTURED CAPABILITY DATA
 - No second learning pipeline — CAP-LEARN-001 emitter only
 - No model training / fine-tuning / dataset export (`TRAINING_AUTHORIZED = false`)
 - INTERNAL_ONLY knowledge never exposed publicly
+- Production learning emit gated via `NORDY_PRODUCTION_LEARNING_EMIT` (default OFF)
 
 ## Live connectivity status
 
-Organization-wide NEO GitHub App credentials may not be configured.
+GitHub App secrets may be present in cloud agent environments. Nordy chat retrieval still requires `NEXT_PUBLIC_NEO_PROVIDER` (non-mock) + `NEXT_PUBLIC_NEO_BASE_URL`.
 
-**Status:** `NEO_LIVE_CROSS_REPO_VERIFICATION_PENDING`
+**Status:** `NEO_LIVE_CROSS_REPO_VERIFICATION_PENDING` / `EXTERNAL_CONFIGURATION` when base URL unset.
 
-Local/mock adapters keep the integration boundary correct. Do **not** claim `NORDY_NEO_E2E_PRODUCTION_VERIFIED` until live cross-repo connection is proven.
+Inspect with `inspectNeoConnection()` in `lib/nordy/neo-retrieval.ts`. Local/mock adapters keep the integration boundary correct. Do **not** claim `NORDY_NEO_E2E_PRODUCTION_VERIFIED` until live cross-repo retrieve is proven.
 
 ## Environment awareness
 
@@ -43,9 +44,13 @@ Local/mock adapters keep the integration boundary correct. Do **not** claim `NOR
 
 | Path | Meaning |
 | --- | --- |
+| `HOME` | Homepage entry |
 | `EXPLORE` | Company Q&A, no forced qualification |
 | `ENGINEERING_AI` | Operational / AI intake |
 | `DIGITAL` | Fast Digital product intake |
-| `GENERAL` | Default launcher |
+| `MOBILE_APPS` | Mobile App Launch intake |
+| `CAPABILITIES` | Capability discovery / light routing |
+| `VENTURES` | Portfolio / ventures exploration |
+| `GENERAL` | Default launcher fallback |
 
 Opened via `/?nordy=open&entry=<PATH>`.
