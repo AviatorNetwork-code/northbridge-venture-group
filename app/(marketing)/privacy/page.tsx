@@ -1,11 +1,12 @@
-import type { Metadata } from "next";
 import Link from "next/link";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Privacy | Northbridge Digital",
+export const metadata = pageMetadata({
+  title: "Privacy",
   description:
-    "How Northbridge Digital and Nordi handle your business information, conversations, and privacy.",
-};
+    "How Northbridge Venture Group, Northbridge Digital, and Nordi handle business information, conversations, and privacy.",
+  path: "/privacy",
+});
 
 const sections = [
   {

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import NordiPublicCta from "@/components/home/NordiPublicCta";
+import { openNordyHref } from "@/lib/nordy/routes";
 
 type MarketingPrimaryCtaProps = {
   href?: string;
@@ -9,10 +10,10 @@ type MarketingPrimaryCtaProps = {
 };
 
 const primaryLinkClassName =
-  "inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover sm:w-auto";
+  "inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover sm:w-auto illum-l3";
 
 export default function MarketingPrimaryCta({
-  href = "/",
+  href = openNordyHref("HOME"),
   primaryLabel,
   secondaryHref,
   secondaryLabel,

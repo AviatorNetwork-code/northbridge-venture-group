@@ -44,7 +44,7 @@ export class InMemoryConnectorRegistry implements ConnectorRegistry {
   }
 
   listCapabilities(query?: ConnectorCapabilityQuery): ConnectorCapability[] {
-    let entries = [...this.capabilities.values()];
+    let entries = Array.from(this.capabilities.values());
     if (query?.category) {
       entries = entries.filter((entry) => entry.category === query.category);
     }
@@ -55,7 +55,7 @@ export class InMemoryConnectorRegistry implements ConnectorRegistry {
   }
 
   listProviders(query?: ConnectorProviderQuery): ConnectorProvider[] {
-    let entries = [...this.providers.values()];
+    let entries = Array.from(this.providers.values());
     if (query?.category) {
       entries = entries.filter((entry) => entry.category === query.category);
     }
@@ -76,13 +76,13 @@ export class InMemoryConnectorRegistry implements ConnectorRegistry {
   }
 
   listDescriptors(orgId: string): ConnectorDescriptor[] {
-    return [...this.descriptors.values()].filter(
+    return Array.from(this.descriptors.values()).filter(
       (entry) => entry.orgId === orgId,
     );
   }
 
   listOrgPolicies(orgId: string): ProviderSelectionPolicy[] {
-    return [...this.orgPolicies.values()].filter(
+    return Array.from(this.orgPolicies.values()).filter(
       (entry) => entry.orgId === orgId,
     );
   }

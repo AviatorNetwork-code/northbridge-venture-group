@@ -13,13 +13,15 @@ const config: Config = {
         white: "#ffffff",
         red: "#B11226",
         "red-hover": "#8B0E1D",
-        charcoal: "#0a0a0a",
-        slate: "#141414",
+        charcoal: "#07090d",
+        slate: "#0e1218",
         stone: "#525252",
         silver: "#a3a3a3",
+        mist: "#c8d0db",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        sans: ["var(--font-manrope)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Georgia", "serif"],
       },
       backgroundImage: {
         "grid-pattern":

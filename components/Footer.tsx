@@ -1,6 +1,7 @@
 import Link from "next/link";
 import NorthbridgeLogo from "@/components/NorthbridgeLogo";
 import { primaryPublicNavLinks, secondaryPublicNavLinks } from "@/lib/public-navigation";
+import { openNordyHref } from "@/lib/nordy/routes";
 
 const footerNavLinks = [...primaryPublicNavLinks, ...secondaryPublicNavLinks];
 
@@ -14,9 +15,9 @@ export default function Footer() {
               <Link href="/" className="inline-block w-fit">
                 <NorthbridgeLogo className="h-8 sm:h-9" />
               </Link>
-              <p className="text-silver text-sm max-w-[280px] leading-relaxed">
-                Northbridge Digital is a software company. Nordi is our flagship
-                platform. We also build custom digital solutions when needed.
+              <p className="text-silver text-sm max-w-[320px] leading-relaxed">
+                Northbridge Venture Group builds companies, software, and intelligent
+                systems — ventures, Engineering & AI, and Digital products.
               </p>
               <p className="text-silver text-xs sm:text-sm max-w-sm leading-relaxed">
                 Questions?{" "}
@@ -50,12 +51,12 @@ export default function Footer() {
                 <h4 className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-silver/80 mb-3">
                   Start Here
                 </h4>
-                <p className="text-sm text-white/60 leading-relaxed max-w-[200px]">
-                  Talk to Nordi on the homepage. Software that learns your
-                  business — conversation first.
+                <p className="text-sm text-white/60 leading-relaxed max-w-[220px]">
+                  Talk to Nordi to explore Northbridge or qualify a Digital or
+                  Engineering & AI project.
                 </p>
                 <Link
-                  href="/"
+                  href={openNordyHref("HOME")}
                   className="inline-flex min-h-11 items-center mt-4 text-sm font-medium text-red hover:text-red-hover transition-colors"
                 >
                   Talk to Nordi →

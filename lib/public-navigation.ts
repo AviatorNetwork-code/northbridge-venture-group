@@ -3,16 +3,18 @@ export type PublicNavLink = {
   label: string;
 };
 
-/** Primary public website navigation — no internal /operations routes. */
+/** Primary public website navigation — premium, not overloaded. */
 export const primaryPublicNavLinks: PublicNavLink[] = [
   { href: "/about", label: "About" },
-  { href: "/services", label: "Services" },
-  { href: "/portfolio", label: "Ventures" },
-  { href: "/services#products", label: "Products" },
+  { href: "/ventures", label: "Ventures" },
+  { href: "/engineering-ai", label: "Engineering & AI" },
+  { href: "/digital", label: "Digital" },
+  { href: "/capabilities", label: "Capabilities" },
   { href: "/contact", label: "Contact" },
 ];
 
 export const secondaryPublicNavLinks: PublicNavLink[] = [
+  { href: "/mobile-apps", label: "Mobile Apps" },
   { href: "/privacy", label: "Privacy" },
   { href: "/privacy/settings", label: "Privacy Settings" },
   { href: "/help", label: "Help" },

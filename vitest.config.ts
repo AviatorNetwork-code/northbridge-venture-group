@@ -12,7 +12,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "."),
       "@northbridge/operations-intelligence": path.resolve(
         __dirname,
-        "../../NEOS - Northbridge Engineering Operating System/packages/platform/operations-intelligence/src/index.ts",
+        "./packages/operations-intelligence/src/index.ts",
       ),
     },
   },

@@ -1,48 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import {
-  getNordiPublicCtaLabel,
-  readStoredNordiConversation,
-} from "@/lib/nordi/public-conversation-state";
+import { usePathname } from "next/navigation";
+import { openNordyHref } from "@/lib/nordy/routes";
 
-type NordiPublicCtaVariant = "header" | "primary" | "secondary";
+export function useNordiPublicCtaLabel(): string {
+  return "Talk to Nordi";
+}
 
 type NordiPublicCtaProps = {
-  variant?: NordiPublicCtaVariant;
+  variant?: "header" | "primary" | "footer";
   href?: string;
   className?: string;
 };
 
-const variantClasses: Record<NordiPublicCtaVariant, string> = {
-  header:
-    "inline-flex min-h-11 items-center justify-center rounded-full border border-red/40 bg-red/10 px-4 text-sm font-semibold text-white transition-colors hover:border-red/60 hover:bg-red/20",
-  primary:
-    "inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-red-hover sm:w-auto",
-  secondary:
-    "inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-white/15 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:border-white/30 hover:bg-white/10 sm:w-auto",
-};
-
-export function useNordiPublicCtaLabel(fallback = "Talk to Nordi"): string {
-  const [label, setLabel] = useState(fallback);
-
-  useEffect(() => {
-    setLabel(getNordiPublicCtaLabel(readStoredNordiConversation()));
-  }, [fallback]);
-
-  return label;
-}
-
 export default function NordiPublicCta({
   variant = "primary",
-  href = "/",
+  href = openNordyHref("HOME"),
   className = "",
 }: NordiPublicCtaProps) {
   const label = useNordiPublicCtaLabel();
+  const pathname = usePathname();
+  const resolvedHref = href || openNordyHref("HOME");
+
+  const classes =
+    variant === "header"
+      ? "inline-flex min-h-11 items-center justify-center rounded-xl bg-red px-4 text-sm font-semibold text-white transition hover:bg-red-hover"
+      : "inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-red px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-red-hover sm:w-auto";
 
   return (
-    <Link href={href} className={[variantClasses[variant], className].join(" ")}>
+    <Link
+      href={resolvedHref}
+      className={`${classes} ${className}`}
+      aria-current={pathname?.includes("nordy=open") ? "page" : undefined}
+    >
       {label}
     </Link>
   );
