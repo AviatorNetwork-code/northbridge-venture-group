@@ -1,14 +1,15 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 import { SectionHeader } from "@/components/marketing/IntentCard";
 import { openNordyHref } from "@/lib/nordy/routes";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "About",
   description:
     "Northbridge Venture Group operates ventures, builds technology, provides Engineering & AI services, and delivers Digital products nationally from Central Florida.",
-};
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

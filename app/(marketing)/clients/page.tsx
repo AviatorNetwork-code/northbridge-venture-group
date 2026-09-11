@@ -1,11 +1,12 @@
-import type { Metadata } from "next";
 import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Clients | Northbridge Digital",
+export const metadata = pageMetadata({
+  title: "Clients",
   description:
-    "Organizations that trust Northbridge Digital for serious digital infrastructure and operational systems.",
-};
+    "Selected organizations supported by Northbridge Digital infrastructure and operational systems.",
+  path: "/clients",
+});
 
 const clients = [
   {

@@ -1,11 +1,12 @@
-import type { Metadata } from "next";
 import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Partner With Us | Northbridge Venture Group",
+export const metadata = pageMetadata({
+  title: "Partner With Us",
   description:
     "Northbridge Venture Group partners with selected founders on platform ventures. For business operations support, start with Nordi.",
-};
+  path: "/partner",
+});
 
 export default function PartnerPage() {
   return (

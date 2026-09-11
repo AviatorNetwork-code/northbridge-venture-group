@@ -1,18 +1,17 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import ContactForm from "@/components/contact/ContactForm";
 import { openNordyHref } from "@/lib/nordy/routes";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Contact",
   description:
     "Talk to Nordi or request a custom solution from Northbridge Venture Group — Engineering & AI and Digital.",
-  openGraph: {
-    title: "Contact | Northbridge Venture Group",
-    description:
-      "Start with Nordi or request a custom Engineering & AI or Digital project.",
-  },
-};
+  path: "/contact",
+  openGraphTitle: "Contact | Northbridge Venture Group",
+  openGraphDescription:
+    "Start with Nordi or request a custom Engineering & AI or Digital project.",
+});
 
 export default function ContactPage() {
   return (

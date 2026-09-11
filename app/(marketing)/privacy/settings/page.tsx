@@ -1,9 +1,13 @@
-import type { Metadata } from "next";
 import PrivacySettingsPanel from "@/components/home/PrivacySettingsPanel";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Privacy Settings | Northbridge Digital",
-  description: "Manage how Nordi uses your conversations for product learning.",
+export const metadata = {
+  ...pageMetadata({
+    title: "Privacy Settings",
+    description: "Manage how Nordi uses conversations for product learning.",
+    path: "/privacy/settings",
+  }),
+  robots: { index: true, follow: true },
 };
 
 export default function PrivacySettingsPage() {

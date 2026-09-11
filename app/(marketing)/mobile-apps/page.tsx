@@ -1,18 +1,17 @@
-import type { Metadata } from "next";
 import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 import { SectionHeader } from "@/components/marketing/IntentCard";
 import { openNordyHref } from "@/lib/nordy/routes";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Mobile App Launch",
   description:
     "Production-ready mobile apps built in days, not months. iOS and Android with branding, auth, core screens, backend, analytics, and store submission preparation.",
-  openGraph: {
-    title: "Mobile App Launch | Northbridge Venture Group",
-    description:
-      "iOS and Android apps with branding, auth, core screens, backend, analytics, and store submission prep.",
-  },
-};
+  path: "/mobile-apps",
+  openGraphTitle: "Mobile App Launch | Northbridge Venture Group",
+  openGraphDescription:
+    "iOS and Android apps with branding, auth, core screens, backend, analytics, and store submission prep.",
+});
 
 const scope = [
   "iOS + Android",

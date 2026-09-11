@@ -1,19 +1,18 @@
-import type { Metadata } from "next";
 import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 import { SectionHeader } from "@/components/marketing/IntentCard";
 import { capabilityRegistry } from "@/lib/nordy/capability-registry";
 import { openNordyHref } from "@/lib/nordy/routes";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Engineering & AI",
   description:
     "Northbridge Engineering & AI — business systems audits, automation, custom software, AI copilots, integrations, and modernization for operators.",
-  openGraph: {
-    title: "Engineering & AI | Northbridge Venture Group",
-    description:
-      "Systems audits, automation, custom software, AI copilots, and integrations for operators.",
-  },
-};
+  path: "/engineering-ai",
+  openGraphTitle: "Engineering & AI | Northbridge Venture Group",
+  openGraphDescription:
+    "Systems audits, automation, custom software, AI copilots, and integrations for operators.",
+});
 
 const offers = [
   "Systems Audit",

@@ -1,19 +1,18 @@
-import type { Metadata } from "next";
 import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 import { SectionHeader } from "@/components/marketing/IntentCard";
 import { northbridgeVentures } from "@/lib/nordi/ventures";
 import { openNordyHref } from "@/lib/nordy/routes";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Ventures",
   description:
     "Northbridge Ventures — Aviator Network, AirTax Financial, and other verified portfolio companies from Northbridge Venture Group.",
-  openGraph: {
-    title: "Ventures | Northbridge Venture Group",
-    description:
-      "Aviator Network, AirTax Financial, and verified Northbridge portfolio companies.",
-  },
-};
+  path: "/ventures",
+  openGraphTitle: "Ventures | Northbridge Venture Group",
+  openGraphDescription:
+    "Aviator Network, AirTax Financial, and verified Northbridge portfolio companies.",
+});
 
 const sectors = [
   {

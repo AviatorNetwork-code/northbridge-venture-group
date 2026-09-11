@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
 import Link from "next/link";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Help | Northbridge Digital",
-  description:
-    "Get help using Nordi, or reach our team directly.",
-};
+export const metadata = pageMetadata({
+  title: "Help",
+  description: "Get help using Nordi, or reach the Northbridge Venture Group team directly.",
+  path: "/help",
+});
 
 const topics = [
   {

@@ -1,20 +1,19 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 import { SectionHeader } from "@/components/marketing/IntentCard";
 import { capabilityRegistry } from "@/lib/nordy/capability-registry";
 import { openNordyHref } from "@/lib/nordy/routes";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Northbridge Digital",
   description:
     "Northbridge Digital builds websites, ecommerce, client portals, booking systems, lightweight SaaS, and mobile apps with speed, quality, and predictable scope.",
-  openGraph: {
-    title: "Northbridge Digital | Northbridge Venture Group",
-    description:
-      "Websites, ecommerce, portals, booking systems, lightweight SaaS, and mobile apps.",
-  },
-};
+  path: "/digital",
+  openGraphTitle: "Northbridge Digital | Northbridge Venture Group",
+  openGraphDescription:
+    "Websites, ecommerce, portals, booking systems, lightweight SaaS, and mobile apps.",
+});
 
 export default function DigitalPage() {
   const offerings = capabilityRegistry.filter((item) => item.division === "DIGITAL");

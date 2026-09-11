@@ -47,3 +47,12 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 npm run build
 npm start
 ```
+
+## Production delivery
+
+Canonical production domain: **https://northbridgeventuregroup.com**
+
+See:
+
+- `docs/operations/NVG-WEBSITE-DELIVERY.md` — merge / deploy / rollback runbook
+- `docs/operations/NVG-WEBSITE-SEO-BASELINE.md` — SEO indexability baseline

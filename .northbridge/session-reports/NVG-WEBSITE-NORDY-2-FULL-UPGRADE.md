@@ -2,7 +2,8 @@
 
 ## Status
 
-`NVG_NORDY_P2_LIVE_VERIFICATION_PENDING`
+`NVG_NORDY_P2_LIVE_VERIFICATION_PENDING` → superseded by founder merge/deploy authorization on 2026-09-11  
+See `.northbridge/session-reports/NVG-WEBSITE-DELIVERY-2026-09-11.md`
 
 `NEO_LIVE_CROSS_REPO_VERIFICATION_PENDING` / `EXTERNAL_CONFIGURATION`
 

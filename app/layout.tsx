@@ -43,9 +43,8 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  alternates: {
-    canonical: "/",
-  },
+  // Per-page canonicals are set via lib/seo.ts — do not pin "/" here
+  // (that incorrectly canonicalized every route to the homepage).
 };
 
 export default function RootLayout({

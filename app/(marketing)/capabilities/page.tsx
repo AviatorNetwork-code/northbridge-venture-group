@@ -1,20 +1,19 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import MarketingPrimaryCta from "@/components/MarketingPrimaryCta";
 import { SectionHeader } from "@/components/marketing/IntentCard";
 import { capabilityRegistry } from "@/lib/nordy/capability-registry";
 import { openNordyHref } from "@/lib/nordy/routes";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Capabilities",
   description:
     "Northbridge capabilities across Engineering & AI and Digital — automation, AI integration, custom software, websites, portals, and mobile apps.",
-  openGraph: {
-    title: "Capabilities | Northbridge Venture Group",
-    description:
-      "Automation, AI integration, custom software, websites, portals, and mobile app development.",
-  },
-};
+  path: "/capabilities",
+  openGraphTitle: "Capabilities | Northbridge Venture Group",
+  openGraphDescription:
+    "Automation, AI integration, custom software, websites, portals, and mobile app development.",
+});
 
 export default function CapabilitiesPage() {
   const engineering = capabilityRegistry.filter((c) => c.division === "ENGINEERING_AI");
